@@ -1,0 +1,25 @@
+.workerName {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 37px;
+  /* identical to box height */
+
+  text-align: right;
+
+  color: #000000;
+}
+
+.jobTitle {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 37px;
+  /* identical to box height */
+
+  text-align: right;
+
+  color: rgba(0, 0, 0, 0.85);
+}

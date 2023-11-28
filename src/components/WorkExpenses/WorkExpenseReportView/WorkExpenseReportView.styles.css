@@ -1,0 +1,35 @@
+.headerText {
+  font-family: "Heebo";
+  font-style: "normal";
+  font-weight: "400";
+  font-size: "24px";
+  text-align: "center";
+  color: "rgba(0, 0, 0, 0.85)";
+}
+
+.sumLabel {
+  font-family: "Heebo";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 35px;
+
+  color: #000000;
+}
+
+.sumValueText {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 33px;
+  /* identical to box height */
+
+  text-align: center;
+
+  color: #000000;
+}
+
+.right {
+  text-align: right;
+}

@@ -1,0 +1,37 @@
+.database {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 24px;
+  line-height: 31px;
+  text-align: right;
+  background: #f4f4f4;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.tableHeaderCell {
+  background: #ffad4a;
+  border-bottom: 2px solid #000000;
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 44px;
+
+  text-align: right;
+
+  color: #000000;
+}
+
+.tableCell {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 38px;
+  text-align: right;
+
+  color: #000000;
+}

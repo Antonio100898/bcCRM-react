@@ -1,0 +1,25 @@
+.jobTypeDiv {
+  font-family: "Rubik";
+  height: 100%;
+  width: 177px;
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+
+  border-top-right-radius: 51px;
+  border-bottom-right-radius: 51px;
+
+  align-self: stretch;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 52px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}

@@ -1,0 +1,49 @@
+.cboDateMonth {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0px 5px 10px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  /* identical to box height */
+
+  text-align: right;
+
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.cboDetail {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 33px;
+  text-align: right;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.tableLblHeader {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 33px;
+  text-align: center;
+  color: #000000;
+}
+
+.sumExpens {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0px 5px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 31px;
+  text-align: center;
+}

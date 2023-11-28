@@ -1,0 +1,39 @@
+.dayDiv {
+  background: #ffc7d1;
+  border-radius: 26px;
+  max-width: 24px;
+}
+
+.jobType {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 21px;
+  text-align: right;
+  color: #000000;
+}
+
+.placeName {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 17px;
+  text-align: right;
+  color: #000000;
+  box-shadow: none;
+}
+
+.hours {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  text-align: right;
+
+  color: #000000;
+}

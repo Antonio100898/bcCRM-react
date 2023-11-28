@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+  font-family:
+    'Rubik',
+    sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'Rubik', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.MuiTableCell-root {
+  border-bottom: 1px solid black !important;
+}
+
+.MuiList-root .MuiButtonBase-root {
+  text-align: right;
+}
+
+.MuiDialogContent-root {
+  border-radius: 25px;
+  padding: 0px;
+}
+
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+
+* {
+  user-select: none;
+  -webkit-user-select: none !important; /* Chrome, Opera, Safari */
+  -moz-user-select: none !important; /* Firefox 2+ */
+  -ms-user-select: none !important; /* IE 10+ */
+  user-select: none !important; /* Standard syntax */
+}
