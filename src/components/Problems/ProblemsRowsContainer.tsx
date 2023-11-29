@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { IProblem } from '../../Model/IProblem';
-import { ProblemRow } from './ProblemRow';
-import { NivTextField } from '../BaseCompnents/NivTextField/NivTextField';
-import { useUser } from '../../Context/useUser';
+import { IProblem } from "../../Model";
+import { ProblemRow } from "./ProblemRow";
+import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   someProblems: IProblem[] | null;
@@ -11,12 +11,12 @@ export type Props = {
 
 export function ProblemsRowsContainer({ someProblems }: Props) {
   const [problems, setProblems] = useState<IProblem[] | null>([]);
-  const [filterWokrerCreate, setFilterWokrerCreate] = useState('');
-  const [filterPhone, setFilterPhone] = useState('');
-  const [filterPlace, setFilterPlace] = useState('');
-  const [filterCusName, setFilterCusName] = useState('');
-  const [filterDesc, setFilterDesc] = useState('');
-  const [filterDepartment, setFilterDepartment] = useState('');
+  const [filterWokrerCreate, setFilterWokrerCreate] = useState("");
+  const [filterPhone, setFilterPhone] = useState("");
+  const [filterPlace, setFilterPlace] = useState("");
+  const [filterCusName, setFilterCusName] = useState("");
+  const [filterDesc, setFilterDesc] = useState("");
+  const [filterDepartment, setFilterDepartment] = useState("");
 
   const {
     updateShowProblemDialog,
@@ -41,20 +41,20 @@ export function ProblemsRowsContainer({ someProblems }: Props) {
   );
 
   return (
-    <div className="App" style={{ marginRight: 10, borderLeft: '0px' }}>
+    <div className="App" style={{ marginRight: 10, borderLeft: "0px" }}>
       {problems && problems.length > 0 && (
         <div>
           <div
             className="row"
             style={{
-              fontFamily: 'Rubik',
-              fontStyle: 'normal',
+              fontFamily: "Rubik",
+              fontStyle: "normal",
               fontWeight: 700,
-              fontSize: '24px',
-              lineHeight: '33px',
-              textAlign: 'center',
-              color: '#000000',
-              background: '#FFAD4A',
+              fontSize: "24px",
+              lineHeight: "33px",
+              textAlign: "center",
+              color: "#000000",
+              background: "#FFAD4A",
             }}
           >
             <div className="col-1">תאריך</div>
@@ -89,7 +89,7 @@ export function ProblemsRowsContainer({ someProblems }: Props) {
               />
             </div>
             <div className="col-1">
-              {' '}
+              {" "}
               <NivTextField
                 style={{}}
                 variant="standard"
@@ -100,7 +100,7 @@ export function ProblemsRowsContainer({ someProblems }: Props) {
               />
             </div>
             <div className="col-4">
-              {' '}
+              {" "}
               <NivTextField
                 style={{}}
                 variant="standard"
@@ -111,7 +111,7 @@ export function ProblemsRowsContainer({ someProblems }: Props) {
               />
             </div>
             <div className="col-1">
-              {' '}
+              {" "}
               <NivTextField
                 style={{}}
                 variant="standard"

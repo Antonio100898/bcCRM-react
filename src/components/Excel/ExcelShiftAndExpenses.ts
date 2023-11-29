@@ -1,5 +1,5 @@
-import { utils, writeFileXLSX } from '@sheet/core';
-import { IExpenseAndShift } from '../../Model/IExpenseAndShiftWeek';
+import { utils, writeFileXLSX } from "@sheet/core";
+import { IExpenseAndShift } from "../../Model";
 
 export class ExcelShiftAndExpenses {
   static exportFile = (workerExpenses: IExpenseAndShift[]) => {
@@ -7,14 +7,14 @@ export class ExcelShiftAndExpenses {
     const wsData1 = workerExpenses.map((expense: IExpenseAndShift) => {
       return [
         expense.workerName,
-        expense.dDayEN.replace('00:00', ''),
+        expense.dDayEN.replace("00:00", ""),
         expense.sumExpense,
         expense.expensNames,
         `${Math.floor(expense.totalMinutes / 60)
           .toString()
-          .padStart(2, '0')}:${(expense.totalMinutes % 60)
+          .padStart(2, "0")}:${(expense.totalMinutes % 60)
           .toString()
-          .padStart(2, '0')}`,
+          .padStart(2, "0")}`,
         expense.remark,
       ];
     });
@@ -25,19 +25,19 @@ export class ExcelShiftAndExpenses {
     const wb = utils.book_new();
     utils.sheet_add_aoa(
       ws,
-      [['שם עובד', 'תאריך', 'הוצאות', 'פירוט הוצאות', 'שעות', 'פירוט שעות']],
-      { origin: 'A1' }
+      [["שם עובד", "תאריך", "הוצאות", "פירוט הוצאות", "שעות", "פירוט שעות"]],
+      { origin: "A1" }
     );
-    utils.book_append_sheet(wb, ws, 'הוצאות ומשמרות');
+    utils.book_append_sheet(wb, ws, "הוצאות ומשמרות");
 
-    utils.sheet_set_range_style(ws, ws['!ref']!, {
-      alignment: { horizontal: 'center' },
-      incol: { style: 'thin', color: { rgb: '000000' } },
-      inrow: { style: 'thin', color: { rgb: '000000' } },
-      bottom: { style: 'thin', color: { rgb: '000000' } },
-      left: { style: 'thin', color: { rgb: '000000' } },
+    utils.sheet_set_range_style(ws, ws["!ref"]!, {
+      alignment: { horizontal: "center" },
+      incol: { style: "thin", color: { rgb: "000000" } },
+      inrow: { style: "thin", color: { rgb: "000000" } },
+      bottom: { style: "thin", color: { rgb: "000000" } },
+      left: { style: "thin", color: { rgb: "000000" } },
     });
 
-    return writeFileXLSX(wb, 'הוצאות עבודה ומשמרות.xlsx');
+    return writeFileXLSX(wb, "הוצאות עבודה ומשמרות.xlsx");
   };
 }

@@ -1,4 +1,4 @@
-import './V3Settings.styles.css';
+import "./V3Settings.styles.css";
 import {
   Table,
   TableBody,
@@ -17,16 +17,16 @@ import {
   Box,
   FormControlLabel,
   Checkbox,
-} from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import EditIcon from '@mui/icons-material/Edit';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { NivTextField } from '../../components/BaseCompnents/NivTextField/NivTextField';
-import { Iv3Branch, Iv3City, Iv3Group } from '../../Model/Iv3Group';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import EditIcon from "@mui/icons-material/Edit";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
+import { Iv3Branch, Iv3City, Iv3Group } from "../../Model";
+import { useUser } from "../../Context/useUser";
 
 export type Option = { label: string; id: number };
 
@@ -38,15 +38,15 @@ export default function V3Settings() {
   const [currentBranch, setCurrentBranch] = useState<Partial<Iv3Branch>>();
   const [cities, setCities] = useState<Option[]>([]);
 
-  const [filterWorkerName, setFilterWorkerName] = useState('');
-  const media = useMediaQuery('(max-width: 600px)');
+  const [filterWorkerName, setFilterWorkerName] = useState("");
+  const media = useMediaQuery("(max-width: 600px)");
 
   const [showBranchEdit, setShowBranchEdit] = useState<boolean>(false);
 
   const getGroups = useCallback(() => {
     updateShowLoader(true);
     api
-      .post('/GetV3Groups', {
+      .post("/GetV3Groups", {
         workerKey: localStorage.getItem(TOKEN_KEY),
       })
       .then(({ data }) => {
@@ -107,7 +107,7 @@ export default function V3Settings() {
   }, []);
 
   return (
-    <div style={{ marginRight: '10px' }}>
+    <div style={{ marginRight: "10px" }}>
       <h2>V3</h2>
 
       <div>
@@ -115,10 +115,10 @@ export default function V3Settings() {
           <div className="col-4">
             <Autocomplete
               style={{
-                background: '#FFFFFF',
-                border: '1px solid rgba(0, 0, 0, 0.25)',
-                boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-                borderRadius: '8px',
+                background: "#FFFFFF",
+                border: "1px solid rgba(0, 0, 0, 0.25)",
+                boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+                borderRadius: "8px",
               }}
               fullWidth
               disablePortal
@@ -133,13 +133,13 @@ export default function V3Settings() {
               <TextField
                 value={currentGroup?.database}
                 className="database"
-                style={{ width: '450px' }}
+                style={{ width: "450px" }}
                 InputProps={{
                   endAdornment: (
                     <IconButton onClick={copyDBName}>
                       <Tooltip title="העתק">
                         <ContentCopyIcon
-                          style={{ fontSize: 30, marginLeft: '3px' }}
+                          style={{ fontSize: 30, marginLeft: "3px" }}
                         />
                       </Tooltip>
                     </IconButton>
@@ -150,13 +150,13 @@ export default function V3Settings() {
           </div>
         </div>
 
-        <TableContainer sx={{ maxHeight: 800, marginTop: '20px' }}>
+        <TableContainer sx={{ maxHeight: 800, marginTop: "20px" }}>
           <Table
             stickyHeader
             aria-label="תקלות"
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >
@@ -165,7 +165,7 @@ export default function V3Settings() {
                 <TableCell
                   align="right"
                   className="tableHeaderCell"
-                  style={{ borderRadius: '0px 8px 0px 0px' }}
+                  style={{ borderRadius: "0px 8px 0px 0px" }}
                 >
                   ID
                 </TableCell>
@@ -191,7 +191,7 @@ export default function V3Settings() {
                 <TableCell
                   align="right"
                   className="tableHeaderCell"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   כתובת
                 </TableCell>
@@ -202,18 +202,18 @@ export default function V3Settings() {
                 <TableCell
                   align="right"
                   className="tableHeaderCell"
-                  style={{ borderRadius: '8px 0px 0px 0px' }}
+                  style={{ borderRadius: "8px 0px 0px 0px" }}
                 >
                   <IconButton
                     onClick={() => {}}
                     style={{
-                      background: '#FFF0DE',
-                      border: '1px solid #000000',
-                      boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-                      textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                      background: "#FFF0DE",
+                      border: "1px solid #000000",
+                      boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+                      textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
                     }}
                   >
-                    <AddCircleIcon style={{ color: 'blue' }} />
+                    <AddCircleIcon style={{ color: "blue" }} />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -227,9 +227,9 @@ export default function V3Settings() {
                       key={branch.id}
                       hover
                       style={{
-                        background: '#FFE5C6',
-                        borderBottom: '2px solid #000000',
-                        borderRadius: '0px',
+                        background: "#FFE5C6",
+                        borderBottom: "2px solid #000000",
+                        borderRadius: "0px",
                       }}
                     >
                       <TableCell align="right" className="tableCell">
@@ -274,7 +274,7 @@ export default function V3Settings() {
 
       <div className="center">
         <Dialog
-          sx={{ textAlign: 'right' }}
+          sx={{ textAlign: "right" }}
           fullWidth
           maxWidth="xs"
           open={showBranchEdit}
@@ -286,10 +286,10 @@ export default function V3Settings() {
                 noValidate
                 component="form"
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  m: 'auto',
-                  width: 'fit-content',
+                  display: "flex",
+                  flexDirection: "column",
+                  m: "auto",
+                  width: "fit-content",
                 }}
               >
                 <div className="row">
@@ -297,9 +297,9 @@ export default function V3Settings() {
                     <div
                       style={{
                         paddingTop: 10,
-                        justifyContent: 'space-between',
-                        display: 'flex',
-                        flexDirection: 'row',
+                        justifyContent: "space-between",
+                        display: "flex",
+                        flexDirection: "row",
                       }}
                     >
                       <div>
@@ -315,7 +315,7 @@ export default function V3Settings() {
                           type="text"
                           value={currentBranch?.branchName}
                           onChange={(e) =>
-                            onChange('branchName', e.target.value)
+                            onChange("branchName", e.target.value)
                           }
                         />
 
@@ -324,7 +324,7 @@ export default function V3Settings() {
                           className="col-12"
                           type="text"
                           value={currentBranch?.ip}
-                          onChange={(e) => onChange('ip', e.target.value)}
+                          onChange={(e) => onChange("ip", e.target.value)}
                         />
 
                         <Tooltip title="כשר">
@@ -332,7 +332,7 @@ export default function V3Settings() {
                             control={
                               <Checkbox
                                 onChange={(e) =>
-                                  onChange('kosher', Boolean(e.target.value))
+                                  onChange("kosher", Boolean(e.target.value))
                                 }
                               />
                             }
@@ -363,7 +363,7 @@ export default function V3Settings() {
                           className="col-12"
                           type="text"
                           value={currentBranch?.address}
-                          onChange={(e) => onChange('address', e.target.value)}
+                          onChange={(e) => onChange("address", e.target.value)}
                         />
 
                         <NivTextField
@@ -372,7 +372,7 @@ export default function V3Settings() {
                           type="text"
                           value={currentBranch?.biCommEmail}
                           onChange={(e) =>
-                            onChange('biCommEmail', e.target.value)
+                            onChange("biCommEmail", e.target.value)
                           }
                         />
                       </div>

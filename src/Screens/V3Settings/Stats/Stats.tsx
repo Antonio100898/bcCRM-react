@@ -5,14 +5,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { api } from '../../../API/Api';
-import { TOKEN_KEY } from '../../../Consts/Consts';
-import { IStats } from '../../../Model/IStats';
-import ChartHours from '../../../components/Stats/ChartHours';
-import ChartSum from '../../../components/Stats/ChartSum';
-import { useUser } from '../../../Context/useUser';
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { api } from "../../../API/Api";
+import { TOKEN_KEY } from "../../../Consts/Consts";
+import { IStats } from "../../../Model";
+import ChartHours from "../../../components/Stats/ChartHours";
+import ChartSum from "../../../components/Stats/ChartSum";
+import { useUser } from "../../../Context/useUser";
 
 export default function Stats() {
   const { updateShowLoader } = useUser();
@@ -22,7 +22,7 @@ export default function Stats() {
     updateShowLoader(true);
 
     api
-      .post('/GetStats', {
+      .post("/GetStats", {
         workerKey: localStorage.getItem(TOKEN_KEY),
       })
       .then(({ data }) => {
@@ -53,10 +53,10 @@ export default function Stats() {
           <Table
             stickyHeader
             aria-label="סטיסטיקה"
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: "center" }}
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >

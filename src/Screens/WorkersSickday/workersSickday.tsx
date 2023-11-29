@@ -1,5 +1,5 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
   Box,
   Button,
@@ -16,17 +16,17 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-} from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-import SaveIcon from '@mui/icons-material/Save';
-import { useCallback, useEffect, useState } from 'react';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { api } from '../../API/Api';
-import { sickdaysImagePath, TOKEN_KEY } from '../../Consts/Consts';
-import { IWorkerSickday } from '../../Model/IWorkerSickday';
-import { useConfirm } from '../../Context/useConfirm';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import SaveIcon from "@mui/icons-material/Save";
+import { useCallback, useEffect, useState } from "react";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { api } from "../../API/Api";
+import { sickdaysImagePath } from "../../Consts/Consts";
+import { IWorkerSickday } from "../../Model";
+import { useConfirm } from "../../Context/useConfirm";
+import { useUser } from "../../Context/useUser";
 
 export default function WorkersSickday() {
   const { confirm } = useConfirm();
@@ -47,26 +47,24 @@ export default function WorkersSickday() {
   );
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
-  const getWorkersSickdays = useCallback(() => {
+  const getWorkersSickdays = async () => {
     updateShowLoader(true);
-    // console.clear();
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-    api
-      .post('/GetWorkersSickdays', {
-        workerKey,
-        year: filterYear,
-        month: filterMonth,
-        justMe: !showAllWorkers,
-      })
-      .then(({ data }) => {
-        setWorkerSickday(data.d.workerSickDay);
-        updateShowLoader(false);
-      });
-  }, [filterMonth, filterYear, showAllWorkers, updateShowLoader]);
+    try {
+      const data = await api.getWorkersSickdays(
+        filterYear,
+        filterMonth,
+        !showAllWorkers
+      );
+      if (data?.d.success) setWorkerSickday(data.d.workerSickDay);
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
     getWorkersSickdays();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterYear, filterMonth, showAllWorkers]);
 
   const toBase64 = (file: File): Promise<string> =>
@@ -85,15 +83,15 @@ export default function WorkersSickday() {
     setCurrentWorkerSickday({
       id: 0,
       workerId: 0,
-      workerName: '',
+      workerName: "",
       startDate: new Date(),
       finishDate: new Date(),
       daysLen: 0,
-      fileName: '',
+      fileName: "",
       startDateEN: new Date().toDateString(),
       finishDateEN: new Date().toDateString(),
       cancel: false,
-      imgContent: '',
+      imgContent: "",
     });
     setShowDialog(true);
   }, []);
@@ -104,33 +102,27 @@ export default function WorkersSickday() {
     ).getFullYear()} ${new Date(d).getHours()}:${new Date(d).getMinutes()}`;
   }
 
-  const updateSickDay = useCallback(
-    (w: IWorkerSickday) => {
-      updateShowLoader(true);
-      const workerKey = localStorage.getItem(TOKEN_KEY);
+  const updateSickDay = async (w: IWorkerSickday) => {
+    updateShowLoader(true);
 
-      const sickDays = {
-        ...w,
-        startDate: new Date(GetDateTimeFormatEN(w.startDateEN)),
-        finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
-      };
+    const sickDay: IWorkerSickday = {
+      ...w,
+      startDate: new Date(GetDateTimeFormatEN(w.startDateEN)),
+      finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
+    };
+    try {
+      const data = await api.updateWorkerSickday(sickDay);
+      if (data.d.success) getWorkersSickdays();
+    } catch (error) {
+      console.error(error);
+    }
 
-      api
-        .post('/UpdateWorkerSickday', {
-          workerKey,
-          sickday: sickDays,
-        })
-        .then(() => {
-          getWorkersSickdays();
-          setShowDialog(false);
-        });
-    },
-    [getWorkersSickdays, updateShowLoader]
-  );
+    setShowDialog(false);
+  };
 
   const cancelSickDay = useCallback(
     async (w: IWorkerSickday) => {
-      if (await confirm('האם ברצונך למחוק את היום מחלה הזה?')) {
+      if (await confirm("האם ברצונך למחוק את היום מחלה הזה?")) {
         updateSickDay({ ...w, cancel: true });
       }
     },
@@ -148,7 +140,7 @@ export default function WorkersSickday() {
     <div style={{ marginRight: 10, marginLeft: 10 }}>
       <h2>ימי מחלה</h2>
 
-      <div className="row" style={{ marginTop: '15px' }}>
+      <div className="row" style={{ marginTop: "15px" }}>
         <div className="col-xs-12 col-sm-6 col-md-2 col-lg-2 right">
           <Select
             fullWidth
@@ -156,7 +148,7 @@ export default function WorkersSickday() {
             value={filterMonth}
             className="cboDateMonth"
             onChange={(e) => setFilterMonth(e.target.value)}
-            style={{ height: '56px' }}
+            style={{ height: "56px" }}
           >
             <MenuItem value="1">01</MenuItem>
             <MenuItem value="2">02</MenuItem>
@@ -179,7 +171,7 @@ export default function WorkersSickday() {
             value={filterYear}
             className="cboDateMonth"
             onChange={(e) => setFilterYear(e.target.value)}
-            style={{ height: '56px' }}
+            style={{ height: "56px" }}
           >
             <MenuItem value="2023">2023</MenuItem>
             <MenuItem value="2024">2024</MenuItem>
@@ -189,7 +181,7 @@ export default function WorkersSickday() {
         </div>
         <div className="col-xs-12 col-sm-6 col-md-2 col-lg-2 right">
           {user?.userType === 1 && (
-            <Tooltip title={showAllWorkers ? 'הצג את כולם' : 'הצג פירוט'}>
+            <Tooltip title={showAllWorkers ? "הצג את כולם" : "הצג פירוט"}>
               <Switch
                 onChange={() => setShowAllWorkers(!showAllWorkers)}
                 color="primary"
@@ -205,8 +197,8 @@ export default function WorkersSickday() {
             stickyHeader
             aria-label="תקלות"
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >
@@ -218,21 +210,21 @@ export default function WorkersSickday() {
                 <TableCell align="right">ימי מחלה</TableCell>
                 <TableCell align="right">אישור מחלה</TableCell>
                 <TableCell align="right">
-                  {' '}
+                  {" "}
                   <Tooltip title="הוסף יום מחלה">
                     <IconButton
                       onClick={showDialogNow}
                       style={{
-                        background: 'green',
-                        border: '1px solid rgba(0, 0, 0, 0.25)',
-                        boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-                        borderRadius: '12px',
+                        background: "green",
+                        border: "1px solid rgba(0, 0, 0, 0.25)",
+                        boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+                        borderRadius: "12px",
                       }}
                     >
                       <SaveIcon
                         style={{
                           fontSize: 35,
-                          color: 'rgba(255, 255, 255, 0.9)',
+                          color: "rgba(255, 255, 255, 0.9)",
                         }}
                       />
                     </IconButton>
@@ -247,10 +239,10 @@ export default function WorkersSickday() {
                     <TableRow key={worker.id} hover>
                       <TableCell align="right">{worker.workerName}</TableCell>
                       <TableCell align="right">
-                        {dayjs(worker.startDateEN).format('DD/MM/YYYY')}
+                        {dayjs(worker.startDateEN).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell align="right">
-                        {dayjs(worker.finishDateEN).format('DD/MM/YYYY')}
+                        {dayjs(worker.finishDateEN).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell align="right">{worker.daysLen + 1}</TableCell>
                       <TableCell align="right">
@@ -266,8 +258,8 @@ export default function WorkersSickday() {
                         <Tooltip title="מחק אישור מחלה">
                           <IconButton
                             style={{
-                              background: 'red',
-                              borderRadius: '12px',
+                              background: "red",
+                              borderRadius: "12px",
                             }}
                             onClick={() => {
                               cancelSickDay(worker);
@@ -276,7 +268,7 @@ export default function WorkersSickday() {
                             <DeleteForeverIcon
                               style={{
                                 fontSize: 40,
-                                color: 'rgba(255, 255, 255, 0.9)',
+                                color: "rgba(255, 255, 255, 0.9)",
                               }}
                             />
                           </IconButton>
@@ -292,7 +284,7 @@ export default function WorkersSickday() {
 
       <div>
         <Dialog
-          sx={{ textAlign: 'right' }}
+          sx={{ textAlign: "right" }}
           fullWidth
           maxWidth="xs"
           open={showDialog}
@@ -303,16 +295,16 @@ export default function WorkersSickday() {
               <Box
                 noValidate
                 component="form"
-                style={{ maxHeight: 600, overflowY: 'auto', padding: '5px' }}
+                style={{ maxHeight: 600, overflowY: "auto", padding: "5px" }}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  m: 'auto',
-                  width: 'fit-content',
+                  display: "flex",
+                  flexDirection: "column",
+                  m: "auto",
+                  width: "fit-content",
                 }}
               >
                 <div className="row">
-                  {' '}
+                  {" "}
                   <div className="col-xs-12">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DesktopDatePicker
@@ -321,8 +313,8 @@ export default function WorkersSickday() {
                         value={dayjs(currentWorkerSickday?.startDateEN)}
                         onChange={(val) => {
                           onChange(
-                            'startDateEN',
-                            val?.format() || '01/01/2000'
+                            "startDateEN",
+                            val?.format() || "01/01/2000"
                           );
                         }}
                       />
@@ -336,8 +328,8 @@ export default function WorkersSickday() {
                         value={dayjs(currentWorkerSickday?.finishDateEN)}
                         onChange={(val) => {
                           onChange(
-                            'finishDateEN',
-                            val?.format() || '01/01/2000'
+                            "finishDateEN",
+                            val?.format() || "01/01/2000"
                           );
                         }}
                       />
@@ -347,13 +339,13 @@ export default function WorkersSickday() {
                     <input
                       type="file"
                       name="myImage"
-                      style={{ marginTop: '15px' }}
+                      style={{ marginTop: "15px" }}
                       onChange={async (event) => {
                         if (event) {
                           if (event.target) {
                             if (event.target.files) {
                               const b = await toBase64(event.target.files[0]);
-                              onChange('imgContent', b);
+                              onChange("imgContent", b);
                             }
                           }
                         }
@@ -366,7 +358,7 @@ export default function WorkersSickday() {
                 <Button
                   variant="outlined"
                   onClick={() => updateSickDay(currentWorkerSickday!)}
-                  style={{ marginTop: 40, fontSize: 20, width: '100%' }}
+                  style={{ marginTop: 40, fontSize: 20, width: "100%" }}
                 >
                   עדכן
                 </Button>

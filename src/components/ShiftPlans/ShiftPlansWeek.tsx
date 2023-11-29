@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { IshiftWeek } from '../../Model/IShifsForShiftType';
-import ShiftPlan from './ShiftPlan';
+import { IshiftWeek } from "../../Model";
+import ShiftPlan from "./ShiftPlan";
 
 export type Props = {
   shiftsList: IshiftWeek[] | null;
@@ -41,30 +41,30 @@ export function ShiftPlansWeek({
   return (
     <div
       style={{
-        borderLeft: '0px',
-        border: ' 2px solid #FFE5C6',
-        borderRadius: '8px 8px 0px 0px',
-        marginBottom: '5px',
+        borderLeft: "0px",
+        border: " 2px solid #FFE5C6",
+        borderRadius: "8px 8px 0px 0px",
+        marginBottom: "5px",
       }}
     >
       {title && title.length > 0 && (
         <div>
           <p
             style={{
-              fontFamily: 'Rubik',
-              fontStyle: 'normal',
-              fontWeight: '700',
-              fontSize: '25px',
-              lineHeight: '35px',
-              textAlign: 'center',
-              background: '#FFE5C6',
-              border: '1px solid #FFE5C6',
+              fontFamily: "Rubik",
+              fontStyle: "normal",
+              fontWeight: "700",
+              fontSize: "25px",
+              lineHeight: "35px",
+              textAlign: "center",
+              background: "#FFE5C6",
+              border: "1px solid #FFE5C6",
             }}
           >
             {title}
           </p>
-          <div style={{ display: 'flex', flex: 'row' }}>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+          <div style={{ display: "flex", flex: "row" }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].sunday.map((shift) => {
@@ -79,7 +79,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].monday.map((shift) => {
@@ -94,7 +94,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].tuesday.map((shift) => {
@@ -109,7 +109,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].wendsday.map((shift) => {
@@ -124,7 +124,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].thursday.map((shift) => {
@@ -139,7 +139,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].friday.map((shift) => {
@@ -154,7 +154,7 @@ export function ShiftPlansWeek({
                   );
                 })}
             </div>
-            <div style={{ width: '14.2%', minWidth: '140px' }}>
+            <div style={{ width: "14.2%", minWidth: "140px" }}>
               {week &&
                 week.length > 0 &&
                 week[0].saturday.map((shift) => {

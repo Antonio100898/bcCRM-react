@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { IshiftDetail, IshiftWeek } from "../../Model/IShifsForShiftType";
+import { IshiftDetail, IshiftWeek } from "../../Model";
 import Shift from "./Shift";
 import "./ShiftWeek.styles.css";
 import { useUser } from "../../Context/useUser";

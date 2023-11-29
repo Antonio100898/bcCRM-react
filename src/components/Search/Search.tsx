@@ -1,15 +1,14 @@
-import { Box, IconButton, TextField } from '@mui/material';
+import { Box, IconButton, TextField } from "@mui/material";
 import {
   FilterAltOutlined as FilterIcon,
   Search as SearchIcon,
-} from '@mui/icons-material';
-import { useCallback, useState } from 'react';
-import { useSnackbar } from 'notistack';
-import { ISearchProblem } from '../../Model/ISearchProblem';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { api } from '../../API/Api';
-import { useUser } from '../../Context/useUser';
-import { SearchFilterDialog } from '../../Dialogs/SearchFilterDialog';
+} from "@mui/icons-material";
+import { useCallback, useState } from "react";
+import { useSnackbar } from "notistack";
+import { ISearchProblem } from "../../Model";
+import { api } from "../../API/Api";
+import { useUser } from "../../Context/useUser";
+import { SearchFilterDialog } from "../../Dialogs/SearchFilterDialog";
 
 export default function Search() {
   const { enqueueSnackbar } = useSnackbar();
@@ -25,46 +24,41 @@ export default function Search() {
   const { updateAllProblems, updateShowLoader, updateRefreshProblems } =
     useUser();
 
-  const searchProblems = useCallback(() => {
+  const searchProblems = async () => {
     if (
-      typeof searchFilter.searchValue !== 'string' ||
+      typeof searchFilter.searchValue !== "string" ||
       !searchFilter.searchValue.length
     ) {
       enqueueSnackbar({
-        message: 'אנא הזן משהו לחיפוש',
-        variant: 'error',
+        message: "אנא הזן משהו לחיפוש",
+        variant: "error",
       });
       return;
     }
+    try {
+      updateShowLoader(true);
 
-    updateShowLoader(true);
+      const data = await api.searchProblems(searchFilter);
 
-    api
-      .post('/SearchProblems', {
-        search: {
-          ...searchFilter,
-          key: localStorage.getItem(TOKEN_KEY),
-        },
-      })
-      .then(({ data }) => {
-        if (data.d.success) {
-          updateAllProblems(data.d.problems);
-          updateRefreshProblems(false);
-          updateShowLoader(false);
-        } else {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: 'error',
-          });
-        }
-      });
-  }, [
-    enqueueSnackbar,
-    searchFilter,
-    updateAllProblems,
-    updateRefreshProblems,
-    updateShowLoader,
-  ]);
+      if (data?.d.success) {
+        updateAllProblems(data.d.problems);
+        updateRefreshProblems(false);
+        updateShowLoader(false);
+      } else {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+    }
+  };
 
   const handleFilterChange = useCallback(
     (filter: Partial<ISearchProblem>) => {
@@ -72,7 +66,7 @@ export default function Search() {
       setSearchFilter(newFilter);
 
       if (
-        typeof newFilter.searchValue === 'string' &&
+        typeof newFilter.searchValue === "string" &&
         newFilter.searchValue.length
       ) {
         searchProblems();
@@ -89,7 +83,7 @@ export default function Search() {
   );
 
   const handleKeywordKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       searchProblems();
     }
@@ -100,24 +94,24 @@ export default function Search() {
       <TextField
         placeholder="חפש"
         onKeyDown={handleKeywordKeyPress}
-        onChange={(e) => onChange('searchValue', e.target.value)}
+        onChange={(e) => onChange("searchValue", e.target.value)}
         InputProps={{
           sx: {
             maxWidth: 1000,
             fontSize: 20,
             borderRadius: 30,
-            '& .MuiInputBase-input': {
-              py: '0 !important',
+            "& .MuiInputBase-input": {
+              py: "0 !important",
             },
-            '& .MuiOutlinedInput-notchedOutline': {
-              '& legend': {
-                textAlign: 'right',
-                float: 'left',
+            "& .MuiOutlinedInput-notchedOutline": {
+              "& legend": {
+                textAlign: "right",
+                float: "left",
               },
             },
           },
           endAdornment: (
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: "flex" }}>
               <IconButton onClick={() => setSearchFilterOpen(true)}>
                 <FilterIcon />
               </IconButton>

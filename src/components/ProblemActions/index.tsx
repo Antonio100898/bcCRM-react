@@ -1,9 +1,7 @@
 import { Box, Switch, useTheme } from "@mui/material";
 import { SetStateAction, useCallback, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
-import { IProblem, IProblemsResponse } from "../../Model/IProblem";
-import { IProblemType } from "../../Model/IProblemType";
-import { User } from "../../Model/User";
+import { IProblem, IProblemType, User } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { api } from "../../API/Api";
 import { useConfirm } from "../../Context/useConfirm";
@@ -91,45 +89,43 @@ export default function ProblemActions({
 
         selfProblem.problemTypesList = newProblemTypes;
       }
-      api
-        .post<IProblemsResponse>("/UpdateProblem", {
-          problem: { ...selfProblem, crmFiles: null, newFiles: null },
-        })
-        .then(async ({ data }) => {
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-              variant: "error",
-            });
-            await stopPending();
-            return;
-          }
-
-          setSelfProblemDialog({
-            ...selfProblem,
-            id: data.d.problemId || 0,
-            files: data.d.filesName,
-            newFiles: [],
-          });
-          setSelfProblem({
-            ...selfProblem,
-            id: data.d.problemId || 0,
-            files: data.d.filesName,
-            newFiles: [],
-          });
-
+      try {
+        const data = await api.updateProblem(selfProblem);
+        if (!data?.d.success) {
           enqueueSnackbar({
-            message: "התקלה העודכנה בהצלחה!",
-            variant: "success",
+            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+            variant: "error",
           });
-
-          if (close) {
-            updateProblem(selfProblem);
-            setTracking(null);
-            onDialogClose();
-          }
+          await stopPending();
+          return;
+        }
+        setSelfProblemDialog({
+          ...selfProblem,
+          id: data.d.problemId || 0,
+          files: data.d.filesName,
+          newFiles: [],
         });
-      await stopPending();
+        setSelfProblem({
+          ...selfProblem,
+          id: data.d.problemId || 0,
+          files: data.d.filesName,
+          newFiles: [],
+        });
+
+        enqueueSnackbar({
+          message: "התקלה העודכנה בהצלחה!",
+          variant: "success",
+        });
+
+        if (close) {
+          updateProblem(selfProblem);
+          setTracking(null);
+          onDialogClose();
+        }
+        await stopPending();
+      } catch (error) {
+        console.error(error);
+      }
     },
     [
       stopPending,

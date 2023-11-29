@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { IStats } from '../../Model/IStats';
+import { useEffect, useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { IStats } from "../../Model";
 
 export interface Props {
   stats: IStats[];
@@ -21,7 +21,7 @@ export default function ChartSum({ stats }: Props) {
   }, [stats]);
 
   return (
-    <div style={{ overflowX: 'auto', width: '100%' }}>
+    <div style={{ overflowX: "auto", width: "100%" }}>
       <BarChart width={1600} height={300} data={data}>
         <XAxis dataKey="workerName" stroke="black" />
         <YAxis />

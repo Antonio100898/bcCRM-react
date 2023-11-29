@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   TextField,
   Tooltip,
@@ -15,20 +15,19 @@ import {
   FormControlLabel,
   Checkbox,
   Fab,
-} from '@mui/material';
+} from "@mui/material";
 
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import EditIcon from '@mui/icons-material/Edit';
-import StarIcon from '@mui/icons-material/Star';
-import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import { useCallback } from 'react';
-import { useSnackbar } from 'notistack';
-import { IPlace } from '../../Model/IPlace';
-import { IProblem, IProblemsResponse } from '../../Model/IProblem';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { api } from '../../API/Api';
-import { useUser } from '../../Context/useUser';
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import EditIcon from "@mui/icons-material/Edit";
+import StarIcon from "@mui/icons-material/Star";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import { useCallback } from "react";
+import { useSnackbar } from "notistack";
+import { IPlace, IProblem, IProblemsResponse } from "../../Model";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { api } from "../../API/Api";
+import { useUser } from "../../Context/useUser";
 
 export default function SpeedDialAddNumber() {
   const { enqueueSnackbar } = useSnackbar();
@@ -36,19 +35,19 @@ export default function SpeedDialAddNumber() {
   const [placesOptions, setPlacesOptions] = React.useState<IPlace[]>();
   const [showSelectPlace, setShowSelectPlace] = React.useState(false);
   const [showAddNewPlace, setShowAddNewPlace] = React.useState(false);
-  const [phone, setPhone] = React.useState('');
+  const [phone, setPhone] = React.useState("");
   const [newPlaceId, setNewPlaceId] = React.useState(0);
-  const [newPlaceName, setNewPlaceName] = React.useState('');
-  const [newCusName, setNewCusName] = React.useState('');
-  const [newRemark, setNewRemark] = React.useState('');
+  const [newPlaceName, setNewPlaceName] = React.useState("");
+  const [newCusName, setNewCusName] = React.useState("");
+  const [newRemark, setNewRemark] = React.useState("");
   const [newVip, setNewVip] = React.useState(false);
   const history = useNavigate();
 
-  const workerKey: string = localStorage.getItem(TOKEN_KEY) || '';
+  const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
   const getPlaces = useCallback(() => {
     api
-      .post<IProblemsResponse>('/GetPlacesForPhone', {
+      .post<IProblemsResponse>("/GetPlacesForPhone", {
         phone,
       })
       .then(({ data }) => {
@@ -68,7 +67,7 @@ export default function SpeedDialAddNumber() {
   }, [phone]);
 
   const NewPhoneClicked = () => {
-    setPhone('');
+    setPhone("");
     setShowSelectPlace(true);
   };
 
@@ -76,7 +75,7 @@ export default function SpeedDialAddNumber() {
     (place: IPlace) => {
       const problem: Partial<IProblem> = {
         workerKey,
-        workerCreateName: user?.workerName || '',
+        workerCreateName: user?.workerName || "",
         customerName: place.customerName,
         phoneId: place.phoneId,
         phone: place.phone,
@@ -92,14 +91,14 @@ export default function SpeedDialAddNumber() {
       };
 
       api
-        .post<IProblemsResponse>('/UpdateProblem', {
+        .post<IProblemsResponse>("/UpdateProblem", {
           problem,
         })
         .then(({ data }) => {
           if (!data.d.success) {
             enqueueSnackbar({
               message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-              variant: 'error',
+              variant: "error",
             });
             return;
           }
@@ -110,8 +109,8 @@ export default function SpeedDialAddNumber() {
           updateCurrentProblem(problem);
           updateShowProblemDialog(true);
 
-          if (!window.location.href.endsWith('/Problems')) {
-            history('/Problems');
+          if (!window.location.href.endsWith("/Problems")) {
+            history("/Problems");
           }
         });
 
@@ -131,40 +130,40 @@ export default function SpeedDialAddNumber() {
   const InputNewPlace = useCallback(() => {
     if (newPlaceName && newPlaceName?.length === 0) {
       enqueueSnackbar({
-        message: 'אנא הזן שם מקום חדש',
-        variant: 'error',
+        message: "אנא הזן שם מקום חדש",
+        variant: "error",
       });
       return;
     }
 
-    if (newPlaceName === null || newPlaceName === '') {
+    if (newPlaceName === null || newPlaceName === "") {
       enqueueSnackbar({
-        message: 'אנא הזן שם מקום חדש',
-        variant: 'error',
+        message: "אנא הזן שם מקום חדש",
+        variant: "error",
       });
       return;
     }
 
     if (newCusName && newCusName?.length === 0) {
       enqueueSnackbar({
-        message: 'אנא הזן שם הלקוח',
-        variant: 'error',
+        message: "אנא הזן שם הלקוח",
+        variant: "error",
       });
       return;
     }
 
-    if (newCusName === null || newCusName === '') {
+    if (newCusName === null || newCusName === "") {
       enqueueSnackbar({
-        message: 'אנא הזן שם הלקוח',
-        variant: 'error',
+        message: "אנא הזן שם הלקוח",
+        variant: "error",
       });
       return;
     }
 
     if (phone && phone?.length < 8) {
       enqueueSnackbar({
-        message: 'אנא הזן טלפון',
-        variant: 'error',
+        message: "אנא הזן טלפון",
+        variant: "error",
       });
       return;
     }
@@ -177,13 +176,13 @@ export default function SpeedDialAddNumber() {
       placeName: newPlaceName!,
       customerName: newCusName!,
       vip: false,
-      placeRemark: '',
-      bizNumber: '',
+      placeRemark: "",
+      bizNumber: "",
       warrantyType: 0,
     };
 
     api
-      .post<IProblemsResponse>('/UpdatePhonePlace', {
+      .post<IProblemsResponse>("/UpdatePhonePlace", {
         workerKey: user?.key,
         placeId: newPlaceId,
         phone,
@@ -196,14 +195,14 @@ export default function SpeedDialAddNumber() {
         if (!data.d.success) {
           enqueueSnackbar({
             message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
 
-        setNewPlaceName('');
-        setNewCusName('');
-        setNewRemark('');
+        setNewPlaceName("");
+        setNewCusName("");
+        setNewRemark("");
         setShowAddNewPlace(false);
 
         if (newPlaceId === 0) {
@@ -250,7 +249,7 @@ export default function SpeedDialAddNumber() {
 
       <Dialog
         dir="rtl"
-        sx={{ textAlign: 'right' }}
+        sx={{ textAlign: "right" }}
         fullWidth
         onClose={() => setShowSelectPlace(false)}
         maxWidth="lg"
@@ -267,41 +266,41 @@ export default function SpeedDialAddNumber() {
                 type="text"
                 variant="outlined"
                 onChange={(e) => setPhone(e.target.value)}
-                inputProps={{ style: { fontSize: 48, textAlign: 'center' } }}
+                inputProps={{ style: { fontSize: 48, textAlign: "center" } }}
                 style={{
-                  fontFamily: 'Heebo',
-                  fontStyle: 'normal',
-                  fontWeight: '300',
-                  lineHeight: '70px',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  textAlign: 'center',
+                  fontFamily: "Heebo",
+                  fontStyle: "normal",
+                  fontWeight: "300",
+                  lineHeight: "70px",
+                  color: "rgba(0, 0, 0, 0.65)",
+                  textAlign: "center",
                   boxShadow:
-                    '0px 2px 4px rgba(0, 0, 0, 0.25) inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                  borderRadius: '8px',
+                    "0px 2px 4px rgba(0, 0, 0, 0.25) inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                  borderRadius: "8px",
                 }}
               />
             </div>
             <div
               className="col-4 left"
               style={{
-                fontFamily: 'Heebo',
-                fontStyle: 'normal',
-                fontWeight: '400',
-                fontSize: '26px',
-                lineHeight: '38px',
-                padding: '10px',
-                color: 'rgba(0, 0, 0, 0.75)',
+                fontFamily: "Heebo",
+                fontStyle: "normal",
+                fontWeight: "400",
+                fontSize: "26px",
+                lineHeight: "38px",
+                padding: "10px",
+                color: "rgba(0, 0, 0, 0.75)",
               }}
             >
               {`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().toLocaleDateString()}`}
               <br />
               <p
                 style={{
-                  fontFamily: 'Rubik',
-                  fontStyle: 'normal',
-                  fontWeight: '400',
-                  fontSize: '26px',
-                  lineHeight: '35px',
+                  fontFamily: "Rubik",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: "26px",
+                  lineHeight: "35px",
                 }}
               >
                 {user && user.workerName}
@@ -309,23 +308,23 @@ export default function SpeedDialAddNumber() {
             </div>
           </div>
 
-          <TableContainer style={{ height: '750px' }}>
+          <TableContainer style={{ height: "750px" }}>
             <Table aria-label="תקלות">
               <TableHead>
                 <TableRow
                   style={{
-                    background: '#FFE1BE',
-                    border: '1px black solid',
+                    background: "#FFE1BE",
+                    border: "1px black solid",
                   }}
                 >
                   <TableCell
                     align="center"
                     style={{
-                      fontFamily: 'Heebo',
-                      fontStyle: 'ExtraBold',
+                      fontFamily: "Heebo",
+                      fontStyle: "ExtraBold",
                       fontWeight: 800,
-                      fontSize: '32px',
-                      lineHeight: '47px',
+                      fontSize: "32px",
+                      lineHeight: "47px",
                       padding: 0,
                     }}
                   >
@@ -334,10 +333,10 @@ export default function SpeedDialAddNumber() {
                   <TableCell
                     align="center"
                     style={{
-                      fontFamily: 'Heebo',
-                      fontStyle: 'ExtraBold',
+                      fontFamily: "Heebo",
+                      fontStyle: "ExtraBold",
                       fontWeight: 800,
-                      fontSize: '32px',
+                      fontSize: "32px",
                       padding: 0,
                     }}
                   >
@@ -346,10 +345,10 @@ export default function SpeedDialAddNumber() {
                   <TableCell
                     align="center"
                     style={{
-                      fontFamily: 'Heebo',
-                      fontStyle: 'ExtraBold',
+                      fontFamily: "Heebo",
+                      fontStyle: "ExtraBold",
                       fontWeight: 800,
-                      fontSize: '32px',
+                      fontSize: "32px",
                       padding: 0,
                     }}
                   >
@@ -361,25 +360,25 @@ export default function SpeedDialAddNumber() {
                     <IconButton
                       onClick={() => {
                         setNewPlaceId(0);
-                        setNewPlaceName('');
-                        setNewCusName('');
-                        setNewRemark('');
+                        setNewPlaceName("");
+                        setNewCusName("");
+                        setNewRemark("");
                         setShowAddNewPlace(true);
                       }}
                       style={{
-                        background: '#F3BE80',
-                        border: '1px solid rgba(0, 0, 0, 0.25)',
-                        boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-                        borderRadius: '12px',
+                        background: "#F3BE80",
+                        border: "1px solid rgba(0, 0, 0, 0.25)",
+                        boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+                        borderRadius: "12px",
                       }}
                     >
                       <Tooltip title="הוסף עסק חדש">
                         <AddIcon
                           style={{
                             fontSize: 35,
-                            color: 'rgba(255, 255, 255, 0.9)',
-                            background: '#F3BE80',
-                            borderRadius: '12px',
+                            color: "rgba(255, 255, 255, 0.9)",
+                            background: "#F3BE80",
+                            borderRadius: "12px",
                           }}
                         />
                       </Tooltip>
@@ -400,10 +399,10 @@ export default function SpeedDialAddNumber() {
                         <TableCell
                           align="center"
                           style={{
-                            fontFamily: 'Heebo',
-                            fontStyle: 'normal',
+                            fontFamily: "Heebo",
+                            fontStyle: "normal",
                             fontWeight: 400,
-                            fontSize: '32px',
+                            fontSize: "32px",
                             padding: 0,
                           }}
                         >
@@ -412,10 +411,10 @@ export default function SpeedDialAddNumber() {
                         <TableCell
                           align="center"
                           style={{
-                            fontFamily: 'Heebo',
-                            fontStyle: 'normal',
+                            fontFamily: "Heebo",
+                            fontStyle: "normal",
                             fontWeight: 400,
-                            fontSize: '32px',
+                            fontSize: "32px",
                             padding: 0,
                           }}
                         >
@@ -424,10 +423,10 @@ export default function SpeedDialAddNumber() {
                         <TableCell
                           align="center"
                           style={{
-                            fontFamily: 'Heebo',
-                            fontStyle: 'normal',
+                            fontFamily: "Heebo",
+                            fontStyle: "normal",
                             fontWeight: 400,
-                            fontSize: '32px',
+                            fontSize: "32px",
                             padding: 0,
                           }}
                         >
@@ -436,17 +435,17 @@ export default function SpeedDialAddNumber() {
                         <TableCell
                           align="center"
                           style={{
-                            fontFamily: 'Heebo',
-                            fontStyle: 'normal',
+                            fontFamily: "Heebo",
+                            fontStyle: "normal",
                             fontWeight: 400,
-                            fontSize: '32px',
+                            fontSize: "32px",
                             padding: 0,
                           }}
                         >
                           {place.vip && (
                             <Tooltip title="vip">
                               <StarIcon
-                                style={{ color: 'goldenrod', fontSize: '30px' }}
+                                style={{ color: "goldenrod", fontSize: "30px" }}
                               />
                             </Tooltip>
                           )}
@@ -461,7 +460,7 @@ export default function SpeedDialAddNumber() {
                               }}
                             >
                               <EditIcon
-                                style={{ color: 'blue', marginRight: 5 }}
+                                style={{ color: "blue", marginRight: 5 }}
                               />
                             </IconButton>
                           </Tooltip>
@@ -489,7 +488,7 @@ export default function SpeedDialAddNumber() {
 
       <Dialog
         dir="rtl"
-        sx={{ textAlign: 'right' }}
+        sx={{ textAlign: "right" }}
         fullWidth
         onClose={() => setShowAddNewPlace(false)}
         maxWidth="xs"
@@ -503,10 +502,10 @@ export default function SpeedDialAddNumber() {
               placeholder="שם עסק"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
             <br />
@@ -516,10 +515,10 @@ export default function SpeedDialAddNumber() {
               placeholder="שם לקוח"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
             <TextField
@@ -528,10 +527,10 @@ export default function SpeedDialAddNumber() {
               placeholder="טלפון"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
             {user && user.userType === 1 && (
@@ -543,17 +542,17 @@ export default function SpeedDialAddNumber() {
                 multiline
                 fullWidth
                 style={{
-                  background: '#FFFFFF',
+                  background: "#FFFFFF",
                   boxShadow:
-                    '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                  borderRadius: '8px',
+                    "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                  borderRadius: "8px",
                 }}
               />
             )}
 
             {user && user.userType === 1 && (
               <FormControlLabel
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: "10px" }}
                 value="newVip"
                 checked={newVip}
                 control={
@@ -565,7 +564,7 @@ export default function SpeedDialAddNumber() {
             )}
 
             <Button variant="contained" fullWidth onClick={InputNewPlace}>
-              {newPlaceId > 0 ? 'עדכן' : 'הוסף חדש'}
+              {newPlaceId > 0 ? "עדכן" : "הוסף חדש"}
             </Button>
           </div>
         </DialogContent>

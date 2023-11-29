@@ -1,8 +1,5 @@
-import { utils, writeFileXLSX } from '@sheet/core';
-import {
-  IshiftDetail,
-  IshiftWeekReportExcel,
-} from '../../Model/IShifsForShiftType';
+import { utils, writeFileXLSX } from "@sheet/core";
+import { IshiftDetail, IshiftWeekReportExcel } from "../../Model";
 
 export type ReportObj = {
   workerName: string;
@@ -14,7 +11,7 @@ export type ReportObj = {
 
 function getDayName(dateStr: string) {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('he-il', { weekday: 'long' });
+  return date.toLocaleDateString("he-il", { weekday: "long" });
 }
 
 export class ExcelShiftPlans {
@@ -38,20 +35,20 @@ export class ExcelShiftPlans {
     // console.log(ws);
     const wb = utils.book_new();
 
-    utils.sheet_add_aoa(ws, [['עובד', 'יום', 'תאריך', 'משמרת', 'הערות']], {
-      origin: 'A1',
+    utils.sheet_add_aoa(ws, [["עובד", "יום", "תאריך", "משמרת", "הערות"]], {
+      origin: "A1",
     });
-    utils.book_append_sheet(wb, ws, 'זמינות עבודה');
+    utils.book_append_sheet(wb, ws, "זמינות עבודה");
 
-    utils.sheet_set_range_style(ws, ws['!ref']!, {
-      alignment: { horizontal: 'center' },
-      incol: { style: 'thin', color: { rgb: '000000' } },
-      inrow: { style: 'thin', color: { rgb: '000000' } },
-      bottom: { style: 'thin', color: { rgb: '000000' } },
-      left: { style: 'thin', color: { rgb: '000000' } },
+    utils.sheet_set_range_style(ws, ws["!ref"]!, {
+      alignment: { horizontal: "center" },
+      incol: { style: "thin", color: { rgb: "000000" } },
+      inrow: { style: "thin", color: { rgb: "000000" } },
+      bottom: { style: "thin", color: { rgb: "000000" } },
+      left: { style: "thin", color: { rgb: "000000" } },
     });
 
-    return writeFileXLSX(wb, 'זמינות עבודה.xlsx');
+    return writeFileXLSX(wb, "זמינות עבודה.xlsx");
   }
 
   static exportWeekFile(shiftPlans: IshiftWeekReportExcel[]) {
@@ -64,30 +61,30 @@ export class ExcelShiftPlans {
       ws,
       [
         [
-          'workerName',
-          'sunday',
-          'monday',
-          'tuesday',
-          'wendsday',
-          'thursday',
-          'friday',
-          'saturday',
+          "workerName",
+          "sunday",
+          "monday",
+          "tuesday",
+          "wendsday",
+          "thursday",
+          "friday",
+          "saturday",
         ],
       ],
       {
-        origin: 'A1',
+        origin: "A1",
       }
     );
-    utils.book_append_sheet(wb, ws, 'זמינות עבודה');
+    utils.book_append_sheet(wb, ws, "זמינות עבודה");
 
-    utils.sheet_set_range_style(ws, ws['!ref']!, {
-      alignment: { horizontal: 'center' },
-      incol: { style: 'thin', color: { rgb: '000000' } },
-      inrow: { style: 'thin', color: { rgb: '000000' } },
-      bottom: { style: 'thin', color: { rgb: '000000' } },
-      left: { style: 'thin', color: { rgb: '000000' } },
+    utils.sheet_set_range_style(ws, ws["!ref"]!, {
+      alignment: { horizontal: "center" },
+      incol: { style: "thin", color: { rgb: "000000" } },
+      inrow: { style: "thin", color: { rgb: "000000" } },
+      bottom: { style: "thin", color: { rgb: "000000" } },
+      left: { style: "thin", color: { rgb: "000000" } },
     });
 
-    return writeFileXLSX(wb, 'זמינות עבודה.xlsx');
+    return writeFileXLSX(wb, "זמינות עבודה.xlsx");
   }
 }

@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
-import { ListItemButton } from '@mui/material';
-import { useUser } from '../../Context/UserContext';
-import { IWorker } from '../../Model/IWorker';
-import { Group, GroupsList } from '../GroupsList/GroupsList';
-import { ToWorkersList } from './ToWorkersList';
-import { WorkerAvatar } from './WorkerAvatar';
-import './WorkersList.styles.css';
+import { useCallback, useMemo } from "react";
+import { ListItemButton } from "@mui/material";
+import { IWorker } from "../../Model";
+import { Group, GroupsList } from "../GroupsList/GroupsList";
+import { ToWorkersList } from "./ToWorkersList";
+import { WorkerAvatar } from "./WorkerAvatar";
+import "./WorkersList.styles.css";
+import { useUser } from "../../Context/useUser";
 
 interface Props {
   workersSelected: number[];
@@ -15,7 +15,7 @@ interface Props {
 const getWorkerGroupByDepartment = (workers: IWorker[]): Group<IWorker>[] => {
   const groups: { [department: string]: Group<IWorker> } = {};
   workers.forEach((worker) => {
-    const departmentName = worker.departmentName || 'כללי';
+    const departmentName = worker.departmentName || "כללי";
     if (!groups[departmentName]) {
       groups[departmentName] = { title: departmentName, options: [] };
     }
@@ -28,8 +28,8 @@ const getWorkerGroupByDepartment = (workers: IWorker[]): Group<IWorker>[] => {
 const getHandlersTitle = (selectedWorkers: IWorker[]) => {
   const count = selectedWorkers.length - 1;
   return count + 1
-    ? `${selectedWorkers[0].workerName} ${!count ? '' : `+ ${count}`}`
-    : 'מי מטפל ?';
+    ? `${selectedWorkers[0].workerName} ${!count ? "" : `+ ${count}`}`
+    : "מי מטפל ?";
 };
 
 export function WorkersList({ setWorkersSelected, workersSelected }: Props) {
@@ -74,7 +74,7 @@ export function WorkersList({ setWorkersSelected, workersSelected }: Props) {
     <GroupsList
       title={title}
       groups={groups}
-      idsDismissBlur={['toWorkersTooltip']}
+      idsDismissBlur={["toWorkersTooltip"]}
       optionIsSelected={(worker) => selectedSet.has(worker.Id)}
       endAdornment={
         <ToWorkersList

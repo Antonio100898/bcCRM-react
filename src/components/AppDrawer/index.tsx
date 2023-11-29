@@ -35,9 +35,8 @@ import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PunchClockIcon from "@mui/icons-material/PunchClock";
 import { MenuCategory } from "../../AppLayout";
-import { User } from "../../Model/User";
-import { ProblemSummery } from "../../Model/HeaderSummery";
 import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
+import { ProblemSummery, User } from "../../Model";
 
 const drawerWidth = 240;
 

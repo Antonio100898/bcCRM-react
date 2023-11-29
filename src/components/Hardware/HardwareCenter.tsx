@@ -13,7 +13,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { api } from "../../API/Api";
-import { IHardware } from "../../Model/IHardware";
+import { IHardware } from "../../Model";
 import HardwareCountSummery from "./HardwareCountSummery";
 import { useConfirm } from "../../Context/useConfirm";
 

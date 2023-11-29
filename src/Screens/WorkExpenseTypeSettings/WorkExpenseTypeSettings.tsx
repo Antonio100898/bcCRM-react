@@ -1,4 +1,4 @@
-import './WorkerExpenses.styles.css';
+import "./WorkerExpenses.styles.css";
 import {
   TableContainer,
   Table,
@@ -9,15 +9,14 @@ import {
   TextField,
   IconButton,
   Tooltip,
-} from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import SaveIcon from '@mui/icons-material/Save';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import WorkersHeader from '../../components/Workers/WorkersHeader';
-import { IWorkExpensesType } from '../../Model/IWorkExpensesType';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import SaveIcon from "@mui/icons-material/Save";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import WorkersHeader from "../../components/Workers/WorkersHeader";
+import { IWorkExpensesType } from "../../Model";
+import { useUser } from "../../Context/useUser";
 
 export default function WorkExpenseTypeSettings() {
   const { enqueueSnackbar } = useSnackbar();
@@ -26,31 +25,32 @@ export default function WorkExpenseTypeSettings() {
   );
   const { updateShowLoader } = useUser();
 
-  useEffect(() => {
+  const fetchWorkerExpensesType = async () => {
     updateShowLoader(true);
-    api
-      .post('/GetWorkExpensesTypes', {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
-          });
-          return;
-        }
+    try {
+      const data = await api.getWorkExpensesTypes();
 
-        // console.log(data.d);
-        if (data.d.success) {
-          // console.log(data.d.workExpensesTypes);
-          setWorkExpensesType(data.d.workExpensesTypes);
-        }
-
+      if (!data.d.success) {
         updateShowLoader(false);
-      });
-  }, [enqueueSnackbar, updateShowLoader]);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+      if (data.d.success) {
+        setWorkExpensesType(data.d.workExpensesTypes);
+      }
+
+      updateShowLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkerExpensesType();
+  }, []);
 
   const updateExpenceTypeName = (id: string, newValue: string) => {
     const newState = workExpensesType.map((obj) => {
@@ -88,35 +88,28 @@ export default function WorkExpenseTypeSettings() {
     setWorkExpensesType(newState);
   };
 
-  const updateExpensesType = useCallback(() => {
-    // ("updateExpensesType");
-    api
-      .post('/UpdateWorkExpensesTypes', {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        expensesType: workExpensesType,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
-          });
-          return;
-        }
+  const updateExpensesType = async () => {
+    try {
+      const data = await api.updateWorkExpensesTypes(workExpensesType);
 
-        // console.log(data.d);
-        if (data.d.success) {
-          enqueueSnackbar({
-            message: 'עדכן בהצלחה',
-            variant: 'error',
-          });
-          return;
-        }
-
+      if (!data?.d.success) {
         updateShowLoader(false);
-      });
-  }, [enqueueSnackbar, updateShowLoader, workExpensesType]);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar({
+          message: "עדכן בהצלחה",
+          variant: "error",
+        });
+      }
+
+      updateShowLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -128,15 +121,15 @@ export default function WorkExpenseTypeSettings() {
           <IconButton
             onClick={updateExpensesType}
             style={{
-              background: '#F3BE80',
-              border: '1px solid rgba(0, 0, 0, 0.25)',
-              boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-              borderRadius: '12px',
+              background: "#F3BE80",
+              border: "1px solid rgba(0, 0, 0, 0.25)",
+              boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+              borderRadius: "12px",
             }}
           >
             <Tooltip title="עדכן הגדרות">
               <SaveIcon
-                style={{ fontSize: 35, color: 'rgba(255, 255, 255, 0.9)' }}
+                style={{ fontSize: 35, color: "rgba(255, 255, 255, 0.9)" }}
               />
             </Tooltip>
           </IconButton>
@@ -145,8 +138,8 @@ export default function WorkExpenseTypeSettings() {
               stickyHeader
               aria-label="תקלות"
               sx={{
-                '& .MuiTableRow-root:hover': {
-                  backgroundColor: 'primary.light',
+                "& .MuiTableRow-root:hover": {
+                  backgroundColor: "primary.light",
                 },
               }}
             >
@@ -176,7 +169,7 @@ export default function WorkExpenseTypeSettings() {
                               onChange={(e) =>
                                 updateExpenceTypeName(eType.id, e.target.value)
                               }
-                            />{' '}
+                            />{" "}
                           </TableCell>
 
                           <TableCell align="right">

@@ -15,7 +15,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../API/Api";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
-import { IPlace } from "../../Model/IPlace";
+import { IPlace } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
 

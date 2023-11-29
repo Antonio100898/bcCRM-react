@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
+import { IshiftDetail } from '../../Model';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import './Shift.styles.css';

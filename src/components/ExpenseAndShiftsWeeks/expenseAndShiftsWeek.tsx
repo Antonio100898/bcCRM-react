@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { IExpenseAndShiftDay } from '../../Model/IExpenseAndShiftWeek';
-import { ExpenseAndShiftsDay } from './ExpenseAndShiftsDay';
-import { ExpenseDaySum } from './ExpenseDaySum';
+import { IExpenseAndShiftDay } from "../../Model";
+import { ExpenseAndShiftsDay } from "./ExpenseAndShiftsDay";
+import { ExpenseDaySum } from "./ExpenseDaySum";
 
 export type Props = {
   weekDays: IExpenseAndShiftDay[];
@@ -9,38 +8,35 @@ export type Props = {
 };
 
 export function ExpenseAndShiftsWeek({ weekDays, dayClicked }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [days, setDays] = useState<IExpenseAndShiftDay[]>(weekDays);
-
   return (
     <div
       style={{
-        display: 'flex',
-        flex: 'row',
-        fontFamily: 'Rubik',
+        display: "flex",
+        flex: "row",
+        fontFamily: "Rubik",
       }}
     >
-      {days &&
-        days.map((day: IExpenseAndShiftDay) => {
+      {weekDays &&
+        weekDays.map((day: IExpenseAndShiftDay) => {
           return (
             <div
               key={Math.random()}
               style={{
-                height: '230px',
-                width: '230px',
-                border: '1px solid black',
-                display: 'flex',
-                flexDirection: 'column',
-                alignContent: 'flex-start',
-                position: 'relative',
+                height: "230px",
+                width: "230px",
+                border: "1px solid black",
+                display: "flex",
+                flexDirection: "column",
+                alignContent: "flex-start",
+                position: "relative",
               }}
             >
               <div
                 style={{
-                  textAlign: 'left',
-                  fontWeight: 'bold',
-                  paddingLeft: '10px',
-                  fontSize: '20px',
+                  textAlign: "left",
+                  fontWeight: "bold",
+                  paddingLeft: "10px",
+                  fontSize: "20px",
                 }}
               >
                 {day.dayInMonth}

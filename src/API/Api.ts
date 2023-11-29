@@ -1,10 +1,23 @@
 import axios from "axios";
 import { TOKEN_KEY } from "../Consts/Consts";
-import { IProblemsResponse } from "../Model/IProblem";
-import { IProblemSummeryResponse } from "../Model/HeaderSummery";
-import { IChatLinesResponse } from "../Model/IMsgLine";
-import { IHardware } from "../Model/IHardware";
-import { IDepartmentResponse } from "../Model/IWorker";
+import { AxiosRequestConfig } from "axios";
+import {
+  IshiftDetail,
+  IProblemsResponse,
+  IProblemSummeryResponse,
+  IChatLinesResponse,
+  IHardware,
+  IDepartmentResponse,
+  IProblem,
+  ISearchProblem,
+  IDayInfo,
+  INotificationsCountResponse,
+  INotifictionsResponse,
+  IWorkExpensesType,
+  IWorkerSickday,
+  IWorker,
+  IDepartment,
+} from "../Model";
 
 const instance = axios.create({
   baseURL: "http://localhost:56967/CrmWS.asmx/",
@@ -118,7 +131,7 @@ export const api = {
     }
   },
 
-  async deleteFile(fileName: string, problemId: number) {
+  async deleteFile(fileName: string, problemId: number): Promise<any> {
     try {
       const { data } = await instance.post("/DeleteFile", {
         fileName,
@@ -154,6 +167,234 @@ export const api = {
       const { data } = await instance.post("/GetWorkerDepartments", {
         workerId,
         workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateProblem(
+    problem: IProblem
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateProblem", { problem });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async uploadProblemFiles(
+    problem: IProblem,
+    config: AxiosRequestConfig<{ problem: IProblem }>
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post(
+        "/UploadProblemFiles",
+        { problem },
+        config
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async deleteNotification(notificationId: number): Promise<any> {
+    try {
+      const { data } = await instance.post("/DeleteNotification", {
+        notificationId,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateNotificationHadSeen(
+    notificationId: number,
+    hadSeen: boolean
+  ): Promise<any> {
+    try {
+      const { data } = await instance.post("/UpdateNotificationHadSeen", {
+        notificationId,
+        hadSeen,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getNotificationsCount(): Promise<
+    INotificationsCountResponse | undefined
+  > {
+    try {
+      const { data } = await instance.post("/GetNotificationsCount", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getNotifications(): Promise<INotifictionsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetNotifications", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async deleteNotificationAll(): Promise<INotifictionsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/DeleteNotificationAll", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async searchProblems(
+    filter: Partial<ISearchProblem>
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/SearchProblems", {
+        ...filter,
+        key: workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateShiftPlan(shiftDetails: Partial<IshiftDetail>): Promise<any> {
+    try {
+      const { data } = await instance.post("/UpdateShiftPlan", {
+        workerKey,
+        shiftDetails,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async cancelShiftPlan(shiftPlanId: number): Promise<any> {
+    try {
+      const { data } = await instance.post("/CancelShiftPlan", {
+        workerKey,
+        shiftPlanId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateShiftDayRemark(
+    day: IDayInfo,
+    shiftGroupId: number
+  ): Promise<any> {
+    try {
+      const { data } = await instance.post("/UpdateShiftDayRemark", {
+        workerKey,
+        day,
+        shiftGroupId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getWorkExpensesTypes(): Promise<any> {
+    try {
+      const { data } = await instance.post("/GetWorkExpensesTypes", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateWorkExpensesTypes(
+    expensesType: IWorkExpensesType[]
+  ): Promise<any> {
+    try {
+      const data = await instance.post("/UpdateWorkExpensesTypes", {
+        workerKey,
+        expensesType,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getWorkersSickdays(
+    year: string,
+    month: string,
+    justMe: boolean
+  ): Promise<any> {
+    try {
+      const data = await instance.post("/GetWorkersSickdays", {
+        workerKey,
+        year,
+        month,
+        justMe,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateWorkerSickday(sickDay: IWorkerSickday): Promise<any> {
+    try {
+      const data = await instance.post("/UpdateWorkerSickday", {
+        workerKey,
+        sickDay,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getWorkers(): Promise<any> {
+    try {
+      const data = await instance.post("/GetWorkers", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateWorker(
+    worker: Partial<IWorker>,
+    departments: IDepartment[],
+    workerExpensesValue: IWorkExpensesType[]
+  ): Promise<any> {
+    try {
+      const data = await instance.post("/UpdateWorker", {
+        workerKey,
+        worker,
+        departments,
+        workerExpensesValue,
       });
       return data;
     } catch (error) {

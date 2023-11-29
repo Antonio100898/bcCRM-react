@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Tooltip,
   IconButton,
@@ -8,16 +8,16 @@ import {
   Button,
   TextField,
   ToggleButton,
-} from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import EditIcon from '@mui/icons-material/Edit';
-import { useSnackbar } from 'notistack';
-import { IWorkExpensesType } from '../../../Model/IWorkExpensesType';
-import { TOKEN_KEY } from '../../../Consts/Consts';
-import { api } from '../../../API/Api';
+} from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import EditIcon from "@mui/icons-material/Edit";
+import { useSnackbar } from "notistack";
+import { IWorkExpensesType } from "../../../Model";
+import { TOKEN_KEY } from "../../../Consts/Consts";
+import { api } from "../../../API/Api";
 
 export type Props = {
   workerExpenses: IWorkExpensesType;
@@ -50,8 +50,8 @@ export default function WorkExpenseEdit({
 
   const handleChange = (newValue: Dayjs | null) => {
     onChange(
-      'startExpenseDateEN',
-      newValue?.format('DD/MM/YYYY') || '01/01/2000'
+      "startExpenseDateEN",
+      newValue?.format("DD/MM/YYYY") || "01/01/2000"
     );
   };
 
@@ -65,15 +65,15 @@ export default function WorkExpenseEdit({
     );
 
     api
-      .post('/UpdateWorkerExpence', {
+      .post("/UpdateWorkerExpence", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         expense: currentExpence,
       })
       .then(({ data }) => {
         if (!data.d) {
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -81,7 +81,7 @@ export default function WorkExpenseEdit({
         if (!data.d.success) {
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -99,12 +99,12 @@ export default function WorkExpenseEdit({
         }}
       >
         <Tooltip title="ערוך הוצאה">
-          <EditIcon style={{ color: 'blue' }} />
+          <EditIcon style={{ color: "blue" }} />
         </Tooltip>
       </IconButton>
 
       <Dialog
-        sx={{ textAlign: 'center' }}
+        sx={{ textAlign: "center" }}
         maxWidth="xs"
         open={openDialog} // Use value directly here
         onClose={handleDialogClose}
@@ -131,7 +131,7 @@ export default function WorkExpenseEdit({
                           fullWidth
                           selected={currentExpence.freePass}
                           onChange={() =>
-                            onChange('freePass', currentExpence.freePass)
+                            onChange("freePass", currentExpence.freePass)
                           }
                         >
                           חופשי חודשי
@@ -145,7 +145,7 @@ export default function WorkExpenseEdit({
                     label="הערה"
                     fullWidth
                     value={currentExpence.remark}
-                    onChange={(e) => onChange('remark', e.target.value)}
+                    onChange={(e) => onChange("remark", e.target.value)}
                   />
 
                   <br />
@@ -153,14 +153,14 @@ export default function WorkExpenseEdit({
                   <TextField
                     label={
                       currentExpence.workExpensCategoryId === 4
-                        ? 'קילומטר'
-                        : 'סכום'
+                        ? "קילומטר"
+                        : "סכום"
                     }
                     type="number"
                     fullWidth
                     value={currentExpence.expenseValue}
                     onChange={(e) =>
-                      onChange('expenseValue', parseInt(e.target.value, 10))
+                      onChange("expenseValue", parseInt(e.target.value, 10))
                     }
                   />
                 </div>

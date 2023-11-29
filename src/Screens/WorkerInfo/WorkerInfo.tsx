@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { api } from "../../API/Api";
 import { IMAGES_PATH_WORKERS, TOKEN_KEY } from "../../Consts/Consts";
-import { IWorker } from "../../Model/IWorker";
+import { IWorker } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useUser } from "../../Context/useUser";

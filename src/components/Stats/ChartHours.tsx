@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -7,8 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from 'recharts';
-import { IStats } from '../../Model/IStats';
+} from "recharts";
+import { IStats } from "../../Model";
 
 export interface Props {
   stats: IStats[];
@@ -28,7 +28,7 @@ export default function ChartHours({ stats }: Props) {
   }, [stats]);
 
   return (
-    <div style={{ overflowX: 'auto', width: '100%' }}>
+    <div style={{ overflowX: "auto", width: "100%" }}>
       <LineChart width={1600} height={300} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="כולם" />

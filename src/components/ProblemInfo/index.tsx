@@ -8,14 +8,17 @@ import {
   TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
-import { IDepartment, IWorker } from "../../Model/IWorker";
-import { IProblem } from "../../Model/IProblem";
-import { IProblemType } from "../../Model/IProblemType";
+import {
+  IDepartment,
+  IWorker,
+  IProblem,
+  IProblemType,
+  IMsgLine,
+} from "../../Model";
 import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
 import ProblemMessages from "../ProblemMessages";
 import ProblemFiles from "../ProblemFiles";
 import { SetStateAction } from "react";
-import { IMsgLine } from "../../Model/IMsgLine";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;

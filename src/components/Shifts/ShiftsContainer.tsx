@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { IshiftDetail, IshiftWeek } from "../../Model/IShifsForShiftType";
+import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
 import ShiftEdit from "./ShiftEdit";
 

@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
-import Masonry from '@mui/lab/Masonry';
+import { useEffect, useMemo, useState } from "react";
+import Masonry from "@mui/lab/Masonry";
 
-import { useMediaQuery } from 'usehooks-ts';
-import { Typography, useTheme } from '@mui/material';
-import { IProblem } from '../../Model/IProblem';
-import { ProblemNote } from './ProblemNote';
-import { useUser } from '../../Context/useUser';
+import { useMediaQuery } from "usehooks-ts";
+import { Typography, useTheme } from "@mui/material";
+import { IProblem } from "../../Model";
+import { ProblemNote } from "./ProblemNote";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   someProblems: IProblem[] | null;
@@ -27,11 +27,11 @@ export function ProblemsContainer({
   const [problems, setProblems] = useState<IProblem[]>([]);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const media = useMediaQuery('(max-width: 820px)');
-  const media2 = useMediaQuery('(max-width: 1200px)');
-  const media3 = useMediaQuery('(max-width: 1900px)');
+  const media = useMediaQuery("(max-width: 820px)");
+  const media2 = useMediaQuery("(max-width: 1200px)");
+  const media3 = useMediaQuery("(max-width: 1900px)");
 
   const columns = useMemo(() => {
     if (media) return 1;
@@ -66,7 +66,7 @@ export function ProblemsContainer({
   }, [someProblems]);
 
   return (
-    <div className="App" style={{ marginRight: 10, borderLeft: '0px' }}>
+    <div className="App" style={{ marginRight: 10, borderLeft: "0px" }}>
       {problems && problems.length > 0 && (
         <div>
           <Typography variant="h5" textAlign="start" fontWeight="bold">
@@ -77,7 +77,7 @@ export function ProblemsContainer({
               columns={columns}
               spacing={1}
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
               }}
             >
               {problems &&

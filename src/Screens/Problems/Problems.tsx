@@ -3,7 +3,7 @@ import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
-import { IProblem, IProblemsResponse } from "../../Model/IProblem";
+import { IProblem, IProblemsResponse } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import ProblemsContainer from "../../components/Problems/ProblemsContainer";
 import ProblemsRowsContainer from "../../components/Problems/ProblemsRowsContainer";

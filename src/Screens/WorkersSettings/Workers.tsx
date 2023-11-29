@@ -1,4 +1,4 @@
-import './Workers.styles.css';
+import "./Workers.styles.css";
 import {
   Box,
   Button,
@@ -19,17 +19,16 @@ import {
   IconButton,
   useMediaQuery,
   Avatar,
-} from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import SaveIcon from '@mui/icons-material/Save';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { IMAGES_PATH_WORKERS, TOKEN_KEY } from '../../Consts/Consts';
-import { IDepartment, IWorker } from '../../Model/IWorker';
-import { IWorkExpensesType } from '../../Model/IWorkExpensesType';
-import WorkersHeader from '../../components/Workers/WorkersHeader';
-import { NivTextField } from '../../components/BaseCompnents/NivTextField/NivTextField';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import SaveIcon from "@mui/icons-material/Save";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { IMAGES_PATH_WORKERS, TOKEN_KEY } from "../../Consts/Consts";
+import { IDepartment, IWorker, IWorkExpensesType } from "../../Model";
+import WorkersHeader from "../../components/Workers/WorkersHeader";
+import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
+import { useUser } from "../../Context/useUser";
 
 export default function Workers() {
   const { enqueueSnackbar } = useSnackbar();
@@ -39,11 +38,11 @@ export default function Workers() {
   const [currentDepartments, setCurrentDepartments] = useState<IDepartment[]>(
     []
   );
-  const [filterWorkerName, setFilterWorkerName] = useState('');
-  const media = useMediaQuery('(max-width: 600px)');
+  const [filterWorkerName, setFilterWorkerName] = useState("");
+  const media = useMediaQuery("(max-width: 600px)");
 
-  const [addNewWorkerExpenseSum, setAddNewWorkerExpenseSum] = useState('0');
-  const [addNewWorkerExpenseType, setAddNewWorkerExpenseType] = useState('0');
+  const [addNewWorkerExpenseSum, setAddNewWorkerExpenseSum] = useState("0");
+  const [addNewWorkerExpenseType, setAddNewWorkerExpenseType] = useState("0");
 
   const [workExpensesTypes, setWorkExpensesTypes] = useState<
     IWorkExpensesType[]
@@ -54,41 +53,37 @@ export default function Workers() {
   ] = useState<IWorkExpensesType[]>([]);
   const [showWorkerDialog, updateShowWorkerDialog] = useState<boolean>(false);
 
-  const getWorkers = useCallback(() => {
+  const fetchWorkers = async () => {
     updateShowLoader(true);
 
-    // console.log("GetWorkers");
+    try {
+      const data = await api.getWorkers();
+      if (data.d.success) setWorkers(data.d.workers);
+    } catch (error) {
+      console.error(error);
+    }
 
-    api
-      .post('/GetWorkers', {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        setWorkers(data.d.workers);
-        updateShowLoader(false);
-      });
-
+    updateShowLoader(false);
     updateRefreshProblemCount(true);
-  }, [updateRefreshProblemCount, updateShowLoader]);
+  };
 
   useEffect(() => {
-    getWorkers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchWorkers();
   }, [filterWorkerName]);
 
   const validaWorker = useCallback(() => {
-    if (currentWorker!.firstName === '') {
+    if (currentWorker!.firstName === "") {
       enqueueSnackbar({
-        message: 'הזן שם פרטי',
-        variant: 'error',
+        message: "הזן שם פרטי",
+        variant: "error",
       });
       return false;
     }
 
-    if (currentWorker!.lastName === '') {
+    if (currentWorker!.lastName === "") {
       enqueueSnackbar({
-        message: 'הזן שם משפחה',
-        variant: 'error',
+        message: "הזן שם משפחה",
+        variant: "error",
       });
       return false;
     }
@@ -96,35 +91,27 @@ export default function Workers() {
     return true;
   }, [currentWorker, enqueueSnackbar]);
 
-  const saveWorker = useCallback(() => {
-    if (!validaWorker()) {
+  const saveWorker = async () => {
+    if (!validaWorker() || !currentWorker) {
       return;
     }
-
-    api
-      .post('/UpdateWorker', {
-        worker: currentWorker,
-        departments: currentDepartments,
-        workerExpensesValue: workExpensesTypes,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(() => {
-        getWorkers();
-        // setWorkers(data.d.workers);
-      });
+    try {
+      const data = await api.updateWorker(
+        currentWorker,
+        currentDepartments,
+        workExpensesTypes
+      );
+      if (data?.d.success) fetchWorkers();
+    } catch (error) {
+      console.error(error);
+    }
 
     updateShowWorkerDialog(false);
-  }, [
-    getWorkers,
-    validaWorker,
-    currentDepartments,
-    currentWorker,
-    workExpensesTypes,
-  ]);
+  };
 
   function GetWorkerDepartments(worker: IWorker) {
     api
-      .post('/GetWorkerDepartments', {
+      .post("/GetWorkerDepartments", {
         workerId: worker.Id,
         workerKey: localStorage.getItem(TOKEN_KEY),
       })
@@ -136,7 +123,7 @@ export default function Workers() {
 
   function GetWorkerExpensesValue(workerId: number) {
     api
-      .post('/GetWorkerExpensesValue', {
+      .post("/GetWorkerExpensesValue", {
         workerId,
         workerKey: localStorage.getItem(TOKEN_KEY),
       })
@@ -197,14 +184,14 @@ export default function Workers() {
   const updateWorkerExpensesValueForWorker = useCallback(() => {
     // AppendWorkerExpensesValue(string workerKey, int workerId, int workExpensesType, double sum)
     api
-      .post('/AppendWorkerExpensesValue', {
+      .post("/AppendWorkerExpensesValue", {
         workerId: currentWorker!.Id,
         workerKey: localStorage.getItem(TOKEN_KEY),
         workExpensesType: addNewWorkerExpenseType,
         sum: addNewWorkerExpenseSum,
       })
       .then(() => {
-        setAddNewWorkerExpenseSum('0');
+        setAddNewWorkerExpenseSum("0");
         GetWorkerExpensesValue(currentWorker!.Id || 0);
       });
   }, [addNewWorkerExpenseSum, addNewWorkerExpenseType, currentWorker]);
@@ -222,8 +209,8 @@ export default function Workers() {
             stickyHeader
             aria-label="תקלות"
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >
@@ -242,31 +229,31 @@ export default function Workers() {
                 <TableCell align="right">טלפון</TableCell>
                 <TableCell
                   align="right"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   משתמש
                 </TableCell>
                 <TableCell
                   align="right"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   סוג משתמש
                 </TableCell>
                 <TableCell
                   align="right"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   שלוחה
                 </TableCell>
                 <TableCell
                   align="right"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   מחלקה
                 </TableCell>
                 <TableCell
                   align="right"
-                  style={{ display: media ? 'none' : 'table-cell' }}
+                  style={{ display: media ? "none" : "table-cell" }}
                 >
                   תמונה
                 </TableCell>
@@ -295,8 +282,8 @@ export default function Workers() {
                         <TableCell align="right">
                           <div
                             style={{
-                              display: 'flex',
-                              flex: 'row',
+                              display: "flex",
+                              flex: "row",
                             }}
                           >
                             {worker &&
@@ -307,7 +294,7 @@ export default function Workers() {
                                   sx={{
                                     width: 35,
                                     height: 35,
-                                    marginLeft: '10px',
+                                    marginLeft: "10px",
                                   }}
                                 />
                               )}
@@ -319,34 +306,34 @@ export default function Workers() {
 
                         <TableCell
                           align="right"
-                          style={{ display: media ? 'none' : 'table-cell' }}
+                          style={{ display: media ? "none" : "table-cell" }}
                         >
                           {worker.userName}
                         </TableCell>
 
                         <TableCell
                           align="right"
-                          style={{ display: media ? 'none' : 'table-cell' }}
+                          style={{ display: media ? "none" : "table-cell" }}
                         >
-                          {worker.userTypeId === 1 ? 'אדמין' : 'רגיל'}
+                          {worker.userTypeId === 1 ? "אדמין" : "רגיל"}
                         </TableCell>
 
                         <TableCell
                           align="right"
-                          style={{ display: media ? 'none' : 'table-cell' }}
+                          style={{ display: media ? "none" : "table-cell" }}
                         >
                           {worker.shluha}
                         </TableCell>
                         <TableCell
                           align="right"
-                          style={{ display: media ? 'none' : 'table-cell' }}
+                          style={{ display: media ? "none" : "table-cell" }}
                         >
                           {worker.departmentName}
                         </TableCell>
 
                         <TableCell
                           align="right"
-                          style={{ display: media ? 'none' : 'table-cell' }}
+                          style={{ display: media ? "none" : "table-cell" }}
                         >
                           {worker &&
                             worker.imgPath &&
@@ -378,7 +365,7 @@ export default function Workers() {
 
       <div className="center">
         <Dialog
-          sx={{ textAlign: 'right' }}
+          sx={{ textAlign: "right" }}
           fullWidth
           maxWidth="md"
           open={showWorkerDialog}
@@ -389,12 +376,12 @@ export default function Workers() {
               <Box
                 noValidate
                 component="form"
-                style={{ maxHeight: 600, overflowY: 'auto' }}
+                style={{ maxHeight: 600, overflowY: "auto" }}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  m: 'auto',
-                  width: 'fit-content',
+                  display: "flex",
+                  flexDirection: "column",
+                  m: "auto",
+                  width: "fit-content",
                 }}
               >
                 <div className="row">
@@ -403,9 +390,9 @@ export default function Workers() {
                     <div
                       style={{
                         paddingTop: 10,
-                        justifyContent: 'space-between',
-                        display: 'flex',
-                        flexDirection: 'row',
+                        justifyContent: "space-between",
+                        display: "flex",
+                        flexDirection: "row",
                       }}
                     >
                       <div>
@@ -415,7 +402,7 @@ export default function Workers() {
                             label="שם פרטי"
                             value={currentWorker.firstName}
                             onChange={(e) =>
-                              onChange('firstName', e.target.value)
+                              onChange("firstName", e.target.value)
                             }
                           />
                         )}
@@ -426,7 +413,7 @@ export default function Workers() {
                             label="שם משפחה"
                             value={currentWorker.lastName}
                             onChange={(e) =>
-                              onChange('lastName', e.target.value)
+                              onChange("lastName", e.target.value)
                             }
                           />
                         )}
@@ -436,7 +423,7 @@ export default function Workers() {
                             label="טלפון"
                             className="col-6"
                             value={currentWorker.phone}
-                            onChange={(e) => onChange('phone', e.target.value)}
+                            onChange={(e) => onChange("phone", e.target.value)}
                           />
                         )}
 
@@ -445,7 +432,7 @@ export default function Workers() {
                             label="שלוחה"
                             className="col-6"
                             value={currentWorker.shluha}
-                            onChange={(e) => onChange('shluha', e.target.value)}
+                            onChange={(e) => onChange("shluha", e.target.value)}
                           />
                         )}
 
@@ -455,7 +442,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.userName}
                             onChange={(e) =>
-                              onChange('userName', e.target.value)
+                              onChange("userName", e.target.value)
                             }
                           />
                         )}
@@ -466,7 +453,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.password}
                             onChange={(e) =>
-                              onChange('password', e.target.value)
+                              onChange("password", e.target.value)
                             }
                           />
                         )}
@@ -478,7 +465,7 @@ export default function Workers() {
                           value={currentWorker && currentWorker.userTypeId}
                           onChange={(e) =>
                             onChange(
-                              'userTypeId',
+                              "userTypeId",
                               parseInt(`${e.target.value}`, 10)
                             )
                           }
@@ -494,7 +481,7 @@ export default function Workers() {
                             value={currentWorker.departmentId}
                             onChange={(e) =>
                               onChange(
-                                'departmentId',
+                                "departmentId",
                                 parseInt(`${e.target.value}`, 10)
                               )
                             }
@@ -523,7 +510,7 @@ export default function Workers() {
                             value={currentWorker && currentWorker.active}
                             className="col-6"
                             onChange={(e) =>
-                              onChange('active', Boolean(`${e.target.value}`))
+                              onChange("active", Boolean(`${e.target.value}`))
                             }
                           >
                             <MenuItem value="false">לא פעיל</MenuItem>
@@ -536,7 +523,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.jobTitle}
                             onChange={(e) =>
-                              onChange('jobTitle', e.target.value)
+                              onChange("jobTitle", e.target.value)
                             }
                           />
                         )}
@@ -547,7 +534,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.carType}
                             onChange={(e) =>
-                              onChange('carType', e.target.value)
+                              onChange("carType", e.target.value)
                             }
                           />
                         )}
@@ -558,7 +545,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.carNumber}
                             onChange={(e) =>
-                              onChange('carNumber', e.target.value)
+                              onChange("carNumber", e.target.value)
                             }
                           />
                         )}
@@ -569,7 +556,7 @@ export default function Workers() {
                             className="col-6"
                             value={currentWorker.teudatZehut}
                             onChange={(e) =>
-                              onChange('teudatZehut', e.target.value)
+                              onChange("teudatZehut", e.target.value)
                             }
                           />
                         )}
@@ -581,7 +568,7 @@ export default function Workers() {
                             value={currentWorker.marselWorkerCode}
                             onChange={(e) =>
                               onChange(
-                                'marselWorkerCode',
+                                "marselWorkerCode",
                                 parseInt(`${e.target.value}`, 10)
                               )
                             }
@@ -598,7 +585,7 @@ export default function Workers() {
                             style={{
                               maxHeight: 50,
                               maxWidth: 75,
-                              margin: '5px',
+                              margin: "5px",
                             }}
                           />
                         )}
@@ -608,11 +595,11 @@ export default function Workers() {
 
                   <div className="col-6">
                     <div id="divDepartments" className="row">
-                      <h2 style={{ marginRight: '20px' }}>מחלקות - תצוגה</h2>
+                      <h2 style={{ marginRight: "20px" }}>מחלקות - תצוגה</h2>
                       <div
                         className="row"
                         style={{
-                          alignContent: 'space-around',
+                          alignContent: "space-around",
                         }}
                       >
                         {currentDepartments &&
@@ -652,16 +639,16 @@ export default function Workers() {
                   <div
                     className="row"
                     style={{
-                      alignContent: 'space-around',
+                      alignContent: "space-around",
                     }}
                   >
                     <div className="row">
                       <div className="col-7">
-                        {' '}
+                        {" "}
                         <Select
                           label="להוסיף"
                           variant="outlined"
-                          style={{ width: '100%' }}
+                          style={{ width: "100%" }}
                           onChange={(e) =>
                             onChangeAddExpenseType(1, `${e.target.value}`)
                           }
@@ -676,7 +663,7 @@ export default function Workers() {
                                 );
                               }
                             )}
-                        </Select>{' '}
+                        </Select>{" "}
                       </div>
                       <div className="col-4">
                         <NivTextField
@@ -691,17 +678,17 @@ export default function Workers() {
                         <IconButton
                           onClick={updateWorkerExpensesValueForWorker}
                           style={{
-                            background: '#F3BE80',
-                            border: '1px solid rgba(0, 0, 0, 0.25)',
-                            boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-                            borderRadius: '12px',
+                            background: "#F3BE80",
+                            border: "1px solid rgba(0, 0, 0, 0.25)",
+                            boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+                            borderRadius: "12px",
                           }}
                         >
                           <Tooltip title="הוסף הגדרה חדשה לעובד">
                             <SaveIcon
                               style={{
                                 fontSize: 35,
-                                color: 'rgba(255, 255, 255, 0.9)',
+                                color: "rgba(255, 255, 255, 0.9)",
                               }}
                             />
                           </Tooltip>
@@ -714,8 +701,8 @@ export default function Workers() {
                         stickyHeader
                         aria-label="הוצאות עבודה"
                         sx={{
-                          '& .MuiTableRow-root:hover': {
-                            backgroundColor: 'primary.light',
+                          "& .MuiTableRow-root:hover": {
+                            backgroundColor: "primary.light",
                           },
                         }}
                       >
@@ -744,7 +731,7 @@ export default function Workers() {
                                             e.target.value
                                           )
                                         }
-                                      />{' '}
+                                      />{" "}
                                     </TableCell>
                                   </TableRow>
                                 );

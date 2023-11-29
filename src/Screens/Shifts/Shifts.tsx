@@ -1,24 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import {
   MenuItem,
   Select,
   SelectChangeEvent,
   Switch,
   Tooltip,
-} from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IshiftWeek } from '../../Model/IShifsForShiftType';
-import { ShiftsContainer } from '../../components/Shifts/ShiftsContainer';
-import { IDayInfo } from '../../Model/IDayInfo';
-import DaysHeader from '../../components/Shifts/DaysHeader';
-import './Shifts.styles.css';
-import DateSelect from '../../components/Shifts/DateSelect';
-import { useUser } from '../../Context/useUser';
-import { useConfirm } from '../../Context/useConfirm';
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { IshiftWeek, IDayInfo } from "../../Model";
+import { ShiftsContainer } from "../../components/Shifts/ShiftsContainer";
+import DaysHeader from "../../components/Shifts/DaysHeader";
+import "./Shifts.styles.css";
+import DateSelect from "../../components/Shifts/DateSelect";
+import { useUser } from "../../Context/useUser";
+import { useConfirm } from "../../Context/useConfirm";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -49,7 +48,7 @@ export default function Shifts() {
 
     // console.log("startDate: " + startDate);
     api
-      .post('/AppendDefultWeekShifts', {
+      .post("/AppendDefultWeekShifts", {
         workerKey,
         startTime: new Date(startDate).toDateString(),
         shiftGroupId,
@@ -58,7 +57,7 @@ export default function Shifts() {
         if (!data.d.success) {
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
         }
         // setShfits(data.d.shiftDetails);
@@ -68,7 +67,7 @@ export default function Shifts() {
         // your error handling goes here
         enqueueSnackbar({
           message: error,
-          variant: 'error',
+          variant: "error",
         });
       });
   }, [enqueueSnackbar, shiftGroupId, startDate]);
@@ -76,7 +75,7 @@ export default function Shifts() {
   const askAddDefaults = useCallback(async (): Promise<boolean> => {
     if (
       await confirm(
-        'לא נמצאו משמרות לשבוע זה, האם ברצונך להוסיף משמרות ברירת מחדל?'
+        "לא נמצאו משמרות לשבוע זה, האם ברצונך להוסיף משמרות ברירת מחדל?"
       )
     ) {
       updateShowLoader(true);
@@ -92,7 +91,7 @@ export default function Shifts() {
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
     api
-      .post('/GetShiftDetails', {
+      .post("/GetShiftDetails", {
         workerKey,
         startTime: startDate,
         shiftGroupID: shiftGroupId,
@@ -101,7 +100,7 @@ export default function Shifts() {
         if (!data.d.success) {
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -120,7 +119,7 @@ export default function Shifts() {
         // your error handling goes here
         enqueueSnackbar({
           message: error,
-          variant: 'error',
+          variant: "error",
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -137,7 +136,7 @@ export default function Shifts() {
 
     // console.log("startDate: " + startDate);
     api
-      .post('/GetWorkersMissingShiftsPlan', {
+      .post("/GetWorkersMissingShiftsPlan", {
         workerKey,
         start: new Date(startDate).toDateString(),
       })
@@ -145,20 +144,20 @@ export default function Shifts() {
         if (!data.d.success) {
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
 
-          if (data.d.msg === 'נכשל לעדכן תקלה. חסר פרטי משתמש') {
+          if (data.d.msg === "נכשל לעדכן תקלה. חסר פרטי משתמש") {
             enqueueSnackbar({
-              message: 'Log Out',
-              variant: 'error',
+              message: "Log Out",
+              variant: "error",
             });
           }
           return;
         }
         enqueueSnackbar({
           message: data.d.msg,
-          variant: 'error',
+          variant: "error",
         });
         // console.log(data.d.msg);
         // GetShifts();
@@ -169,7 +168,7 @@ export default function Shifts() {
         // your error handling goes here
         enqueueSnackbar({
           message: error,
-          variant: 'error',
+          variant: "error",
         });
       });
   }, [enqueueSnackbar, startDate, updateShowLoader]);
@@ -177,16 +176,16 @@ export default function Shifts() {
   return (
     <div
       style={{
-        marginRight: '5px',
-        background: '#F5F5F5',
+        marginRight: "5px",
+        background: "#F5F5F5",
       }}
     >
       <h2>סידור משמרות</h2>
       <div
         style={{
-          display: 'flex',
-          flex: 'row',
-          justifyContent: 'space-around',
+          display: "flex",
+          flex: "row",
+          justifyContent: "space-around",
         }}
       >
         {user?.userType === 1 && (
@@ -198,7 +197,7 @@ export default function Shifts() {
               onChange={(e: SelectChangeEvent<number>) =>
                 setShiftGroupId(parseInt(`${e.target.value}`, 10))
               }
-              style={{ marginBottom: '5px' }}
+              style={{ marginBottom: "5px" }}
             >
               <MenuItem value="1">ענן</MenuItem>
               <MenuItem value="2">תפריטים</MenuItem>
@@ -206,7 +205,7 @@ export default function Shifts() {
           </Tooltip>
         )}
 
-        <Tooltip title={showShiftDetails ? 'הצג פירוט' : 'הסתר פירוט'}>
+        <Tooltip title={showShiftDetails ? "הצג פירוט" : "הסתר פירוט"}>
           <Switch onChange={() => setShowShiftDetails(!showShiftDetails)} />
         </Tooltip>
 
@@ -214,13 +213,13 @@ export default function Shifts() {
           <IconButton
             onClick={showWorkersMissingShiftPlans}
             style={{
-              background: '#F3BE80',
-              borderRadius: '12px',
+              background: "#F3BE80",
+              borderRadius: "12px",
               margin: 5,
             }}
           >
             <SurfingOutlinedIcon
-              style={{ fontSize: 40, color: 'rgba(255, 255, 255, 0.9)' }}
+              style={{ fontSize: 40, color: "rgba(255, 255, 255, 0.9)" }}
             />
           </IconButton>
         </Tooltip>
@@ -229,14 +228,14 @@ export default function Shifts() {
       <DateSelect setDate={setStartDate} />
 
       <br />
-      <div style={{ overflow: 'scroll', position: 'relative' }}>
+      <div style={{ overflow: "scroll", position: "relative" }}>
         <div>
           <div
             style={{
-              position: 'relative',
+              position: "relative",
             }}
           >
-            <div style={{ position: 'sticky', top: '0', zIndex: '1000' }}>
+            <div style={{ position: "sticky", top: "0", zIndex: "1000" }}>
               <DaysHeader
                 weekDaysAll={myWeekDays}
                 shiftGroupId={shiftGroupId}

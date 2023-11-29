@@ -1,28 +1,28 @@
-import '../WorkerExpenses.styles.css';
+import "../WorkerExpenses.styles.css";
 import {
   MenuItem,
   Select,
   TextField,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Dispatch,
   SetStateAction,
   useCallback,
   useEffect,
   useState,
-} from 'react';
-import SaveIcon from '@mui/icons-material/Save';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { useSnackbar } from 'notistack';
-import { IWorkExpensesType } from '../../../Model/IWorkExpensesType';
-import { TOKEN_KEY } from '../../../Consts/Consts';
-import { api } from '../../../API/Api';
-import { useUser } from '../../../Context/useUser';
+} from "react";
+import SaveIcon from "@mui/icons-material/Save";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { useSnackbar } from "notistack";
+import { IWorkExpensesType } from "../../../Model";
+import { TOKEN_KEY } from "../../../Consts/Consts";
+import { api } from "../../../API/Api";
+import { useUser } from "../../../Context/useUser";
 
 export type Props = {
   workExpensCategoryId: number;
@@ -37,10 +37,10 @@ export default function AddWorkerExpenseBonusesToolBar({
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const [expensType, setExpensType] = useState(
-    workExpensCategoryId === 2 ? '7' : '31'
+    workExpensCategoryId === 2 ? "7" : "31"
   );
 
-  const [remarkExpens, setRemarkExpens] = useState('');
+  const [remarkExpens, setRemarkExpens] = useState("");
   const [startExpensDate, setStartExpensDate] = useState<Dayjs | null>(
     dayjs(new Date().toString())
   );
@@ -58,7 +58,7 @@ export default function AddWorkerExpenseBonusesToolBar({
     // console.log(new Date().getMonth().toString());
     // updateShowLoader(true);
     api
-      .post('/GetWorkExpensesTypesForWorker', {
+      .post("/GetWorkExpensesTypesForWorker", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         filterWorkerId: 0,
       })
@@ -66,8 +66,8 @@ export default function AddWorkerExpenseBonusesToolBar({
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -76,13 +76,13 @@ export default function AddWorkerExpenseBonusesToolBar({
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
 
         setWorkerExpensesTypes(data.d.workExpensesTypes);
-        setRemarkExpens('');
+        setRemarkExpens("");
         updateShowLoader(false);
         refreshlist();
       });
@@ -101,7 +101,7 @@ export default function AddWorkerExpenseBonusesToolBar({
     updateShowLoader(true);
 
     api
-      .post('/AppendWorkerExpence', {
+      .post("/AppendWorkerExpence", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         startExpenceDate: startExpensDate?.toDate(),
         finishExpenceDate: startExpensDate?.toDate(),
@@ -115,8 +115,8 @@ export default function AddWorkerExpenseBonusesToolBar({
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -125,12 +125,12 @@ export default function AddWorkerExpenseBonusesToolBar({
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
 
-        setRemarkExpens('');
+        setRemarkExpens("");
         refreshlist();
         updateShowLoader(false);
       });
@@ -196,15 +196,15 @@ export default function AddWorkerExpenseBonusesToolBar({
         <IconButton
           onClick={saveWorkerExpence}
           style={{
-            background: '#F3BE80',
-            border: '1px solid rgba(0, 0, 0, 0.25)',
-            boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-            borderRadius: '12px',
+            background: "#F3BE80",
+            border: "1px solid rgba(0, 0, 0, 0.25)",
+            boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+            borderRadius: "12px",
           }}
         >
           <Tooltip title="הוסף הוצאה חדשה">
             <SaveIcon
-              style={{ fontSize: 35, color: 'rgba(255, 255, 255, 0.9)' }}
+              style={{ fontSize: 35, color: "rgba(255, 255, 255, 0.9)" }}
             />
           </Tooltip>
         </IconButton>

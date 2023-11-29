@@ -9,9 +9,9 @@ import {
   Box,
   ToggleButton,
   ToggleButtonGroup,
-} from '@mui/material';
-import { useCallback, useState } from 'react';
-import { ISearchProblem } from 'Model/ISearchProblem';
+} from "@mui/material";
+import { useCallback, useState } from "react";
+import { ISearchProblem } from "../Model";
 
 export type SearchFilterDialogProps = {
   open: boolean;
@@ -44,13 +44,13 @@ export function SearchFilterDialog({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>פילטר חיפוש</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <FormControlLabel
             label="שם המקום"
             control={
               <Checkbox
                 checked={selfFilter.place}
-                onChange={(_, checked) => handleChange('place', checked)}
+                onChange={(_, checked) => handleChange("place", checked)}
               />
             }
           />
@@ -59,7 +59,7 @@ export function SearchFilterDialog({
             control={
               <Checkbox
                 checked={selfFilter.phone}
-                onChange={(_, checked) => handleChange('phone', checked)}
+                onChange={(_, checked) => handleChange("phone", checked)}
               />
             }
           />
@@ -68,7 +68,7 @@ export function SearchFilterDialog({
             control={
               <Checkbox
                 checked={selfFilter.workerName}
-                onChange={(_, checked) => handleChange('workerName', checked)}
+                onChange={(_, checked) => handleChange("workerName", checked)}
               />
             }
           />
@@ -77,25 +77,25 @@ export function SearchFilterDialog({
             control={
               <Checkbox
                 checked={selfFilter.desc}
-                onChange={(_, checked) => handleChange('desc', checked)}
+                onChange={(_, checked) => handleChange("desc", checked)}
               />
             }
           />
           <FormControlLabel
             label="כמות זמן לחיפוש"
             sx={{
-              display: 'flex',
-              flexDirection: 'column-reverse',
-              alignItems: 'start',
+              display: "flex",
+              flexDirection: "column-reverse",
+              alignItems: "start",
               gap: 1,
               mt: 2,
-              mx: 'inherit',
+              mx: "inherit",
             }}
             control={
               <ToggleButtonGroup
                 exclusive
                 value={selfFilter.daysBack}
-                onChange={(_, value) => handleChange('daysBack', value)}
+                onChange={(_, value) => handleChange("daysBack", value)}
               >
                 <ToggleButton value={3}>¼ שנה</ToggleButton>
                 <ToggleButton value={6}>½ שנה</ToggleButton>

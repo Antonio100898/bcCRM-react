@@ -1,4 +1,4 @@
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
+import { IshiftDetail } from '../../Model';
 import './WorkerShift.styles.css';
 
 interface Iprop {

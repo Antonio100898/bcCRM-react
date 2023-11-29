@@ -2,7 +2,7 @@ import { Box, IconButton, TextField, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import CreateIcon from "@mui/icons-material/Create";
-import { IMsgLine } from "../../Model/IMsgLine";
+import { IMsgLine } from "../../Model";
 import { api } from "../../API/Api";
 import PromptDialog from "../../Dialogs/PromptDialog";
 

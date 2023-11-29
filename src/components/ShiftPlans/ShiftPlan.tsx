@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-import { IconButton, Tooltip } from '@mui/material';
-import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
-import HailIcon from '@mui/icons-material/Hail';
-import { useSnackbar } from 'notistack';
-import ShiftPlanEdit from './ShiftPlanEdit';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
-import { useUser } from '../../Context/useUser';
+import { IconButton, Tooltip } from "@mui/material";
+import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import HailIcon from "@mui/icons-material/Hail";
+import { useSnackbar } from "notistack";
+import ShiftPlanEdit from "./ShiftPlanEdit";
+import { api } from "../../API/Api";
+import { IshiftDetail } from "../../Model";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -36,41 +35,36 @@ export default function ShiftPlan({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
 
-  const handleCloseEdit = useCallback(() => {
+  const handleCloseEdit = () => {
     setShowEditShift(false);
     refreshList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shift]);
+  };
 
-  // console.log(currentShift);
-
-  const showEmptyShift = useCallback(() => {
+  const showEmptyShift = useCallback(async () => {
     if (currentShift === null || currentShift.id === 0) {
       const d: Partial<IshiftDetail> = {
         id: 0,
         workerId: 199,
         shiftTypeId,
-        remark: '',
+        remark: "",
         startDate: defDate.toString(),
         finishTime: defDate.toString(),
         startDateEN: defDate.toString(),
         finishTimeEN: defDate.toString(),
       };
-
-      setCurrentShift(d);
-
-      api
-        .post('/UpdateShiftPlan', {
-          workerKey: localStorage.getItem(TOKEN_KEY),
-          shiftPlan: d,
-        })
-        .then(({ data }) => {
-          // console.log(data.d);
+      try {
+        const data = await api.updateShiftPlan(d);
+        if (!data?.d.success) {
           enqueueSnackbar({
             message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
-        });
+          return;
+        }
+        setCurrentShift(d);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       currentShift.shiftTypeId = shiftTypeId;
       currentShift.startDate = defDate.toString();
@@ -82,54 +76,46 @@ export default function ShiftPlan({
     }
   }, [currentShift, defDate, enqueueSnackbar, shiftTypeId]);
 
-  const addNewShiftPlan = useCallback(() => {
+  const addNewShiftPlan = useCallback(async () => {
     const d: Partial<IshiftDetail> = {
       id: 0,
       workerId: user!.workerId,
       shiftTypeId,
-      remark: '',
+      remark: "",
       startDate: defDate.toDateString(),
       finishTime: defDate.toDateString(),
       startDateEN: defDate.toDateString(),
       finishTimeEN: defDate.toDateString(),
     };
-
-    // setCurrentShift(d);
-    // console.log(d);
-
-    api
-      .post('/UpdateShiftPlan', {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        shiftPlan: d,
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
-          });
-          return;
-        }
-
-        refreshList();
-      });
+    try {
+      const data = await api.updateShiftPlan(d);
+      if (!data.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+      refreshList();
+    } catch (error) {
+      console.error(error);
+    }
   }, [defDate, enqueueSnackbar, refreshList, shiftTypeId, user]);
 
   return (
     <div
       style={{
-        background: '#FFFFFF',
-        border: '1px solid #A6A6A6',
-        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-        borderRadius: '8px',
-        margin: '2px',
-        minWidth: '120px',
+        background: "#FFFFFF",
+        border: "1px solid #A6A6A6",
+        boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.05)",
+        borderRadius: "8px",
+        margin: "2px",
+        minWidth: "120px",
       }}
     >
       {currentShift && currentShift.id! > 0 && (
         <IconButton onClick={showEmptyShift}>
-          <div style={{ fontSize: '1.3rem' }}>
+          <div style={{ fontSize: "1.3rem" }}>
             {currentShift.remark && currentShift.remark.length > 1 && (
               <Tooltip title={currentShift.remark}>
                 <HailIcon />
@@ -143,7 +129,7 @@ export default function ShiftPlan({
 
       {currentShift && currentShift.id === 0 && (
         <IconButton onClick={addNewShiftPlan}>
-          <DoNotDisturbIcon fontSize="large" style={{ color: 'red' }} />
+          <DoNotDisturbIcon fontSize="large" style={{ color: "red" }} />
         </IconButton>
       )}
 

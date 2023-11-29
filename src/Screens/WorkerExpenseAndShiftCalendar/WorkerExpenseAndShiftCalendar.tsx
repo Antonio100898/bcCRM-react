@@ -17,7 +17,7 @@ import {
   IExpenseAndShift,
   IExpenseAndShiftDay,
   IExpenseAndShiftWeek,
-} from "../../Model/IExpenseAndShiftWeek";
+} from "../../Model";
 import { ExcelShiftAndExpenses } from "../../components/Excel/ExcelShiftAndExpenses";
 import { useUser } from "../../Context/useUser";
 

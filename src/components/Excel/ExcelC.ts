@@ -1,8 +1,5 @@
-import { utils, writeFileXLSX } from '@sheet/core';
-import {
-  IWorkExpensesType,
-  IWorkExpensesTypeSum,
-} from '../../Model/IWorkExpensesType';
+import { utils, writeFileXLSX } from "@sheet/core";
+import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
 
 export class ExcelC {
   static exportFile = (
@@ -22,7 +19,7 @@ export class ExcelC {
           expense.expenseValue,
           expense.remark,
           expense.startExpenseDate,
-          expense.freePass ? 'כן' : 'לא',
+          expense.freePass ? "כן" : "לא",
         ];
       });
 
@@ -86,83 +83,83 @@ export class ExcelC {
       ws0,
       [
         [
-          'קוד עובד',
-          'שם עובד',
-          'סהכ',
-          'הוצאות עבודה',
-          'בונוסים',
-          'הדרכות',
-          'אחוז מענה',
-          'תעודת זהות',
-          'קוד עובד מרסל',
+          "קוד עובד",
+          "שם עובד",
+          "סהכ",
+          "הוצאות עבודה",
+          "בונוסים",
+          "הדרכות",
+          "אחוז מענה",
+          "תעודת זהות",
+          "קוד עובד מרסל",
         ],
       ],
-      { origin: 'A1' }
+      { origin: "A1" }
     );
-    utils.book_append_sheet(wb, ws0, 'סיכום');
+    utils.book_append_sheet(wb, ws0, "סיכום");
 
     utils.sheet_add_aoa(
       ws,
-      [['שם עובד', 'הוצאה', 'סכום', 'הערה', 'מתאריך', 'חופשי חודשי']],
-      { origin: 'A1' }
+      [["שם עובד", "הוצאה", "סכום", "הערה", "מתאריך", "חופשי חודשי"]],
+      { origin: "A1" }
     );
-    utils.book_append_sheet(wb, ws, 'הוצאות');
+    utils.book_append_sheet(wb, ws, "הוצאות");
 
     utils.sheet_add_aoa(
       ws2,
       [
         [
-          'שם עובד',
-          'הוצאה',
-          'סכום',
-          'סכום מוגדר להוצאה',
-          'הערה',
-          'מתאריך',
-          'עד תאריך',
+          "שם עובד",
+          "הוצאה",
+          "סכום",
+          "סכום מוגדר להוצאה",
+          "הערה",
+          "מתאריך",
+          "עד תאריך",
         ],
       ],
-      { origin: 'A1' }
+      { origin: "A1" }
     );
-    utils.book_append_sheet(wb, ws2, 'בונוסים');
+    utils.book_append_sheet(wb, ws2, "בונוסים");
 
     utils.sheet_add_aoa(
       ws3,
       [
         [
-          'שם עובד',
-          'הוצאה',
-          'מקום',
-          'סכום',
-          'סכום מוגדר להוצאה',
-          'מתאריך',
-          'עד תאריך',
+          "שם עובד",
+          "הוצאה",
+          "מקום",
+          "סכום",
+          "סכום מוגדר להוצאה",
+          "מתאריך",
+          "עד תאריך",
         ],
       ],
-      { origin: 'A1' }
+      { origin: "A1" }
     );
-    utils.book_append_sheet(wb, ws3, 'הדרכות');
+    utils.book_append_sheet(wb, ws3, "הדרכות");
 
-    utils.sheet_add_aoa(ws5, [['שם עובד', 'הוצאה', 'סכום', 'הערה', 'מתאריך']], {
-      origin: 'A1',
+    utils.sheet_add_aoa(ws5, [["שם עובד", "הוצאה", "סכום", "הערה", "מתאריך"]], {
+      origin: "A1",
     });
-    utils.book_append_sheet(wb, ws5, 'אחוז מענה');
+    utils.book_append_sheet(wb, ws5, "אחוז מענה");
 
-    utils.sheet_set_range_style(ws0, ws0['!ref']!, {
-      alignment: { horizontal: 'center' },
-      incol: { style: 'thin', color: { rgb: '000000' } },
-      inrow: { style: 'thin', color: { rgb: '000000' } },
-      bottom: { style: 'thin', color: { rgb: '000000' } },
-      left: { style: 'thin', color: { rgb: '000000' } },
-    });
-
-    utils.sheet_set_range_style(ws, ws['!ref']!, {
-      alignment: { horizontal: 'center' },
-      incol: { style: 'thin', color: { rgb: '000000' } },
-      inrow: { style: 'thin', color: { rgb: '000000' } },
-      bottom: { style: 'thin', color: { rgb: '000000' } },
-      left: { style: 'thin', color: { rgb: '000000' } },
+    utils.sheet_set_range_style(ws0, ws0["!ref"]!, {
+      alignment: { horizontal: "center" },
+      incol: { style: "thin", color: { rgb: "000000" } },
+      inrow: { style: "thin", color: { rgb: "000000" } },
+      bottom: { style: "thin", color: { rgb: "000000" } },
+      left: { style: "thin", color: { rgb: "000000" } },
     });
 
-    return writeFileXLSX(wb, 'הוצאות עבודה.xlsx');
+    utils.sheet_set_range_style(ws, ws["!ref"]!, {
+      alignment: { horizontal: "center" },
+      incol: { style: "thin", color: { rgb: "000000" } },
+      inrow: { style: "thin", color: { rgb: "000000" } },
+      bottom: { style: "thin", color: { rgb: "000000" } },
+      left: { style: "thin", color: { rgb: "000000" } },
+    });
+
+    return writeFileXLSX(wb, "הוצאות עבודה.xlsx");
   };
 }

@@ -1,6 +1,6 @@
 import { useSnackbar } from "notistack";
 import { api } from "../../API/Api";
-import { CrmFile, IProblem } from "../../Model/IProblem";
+import { CrmFile, IProblem } from "../../Model";
 import {
   useCallback,
   useState,
@@ -19,6 +19,7 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { AxiosProgressEvent } from "axios";
 
 type Props = {
   myProblem: IProblem;
@@ -124,25 +125,16 @@ export default function ProblemFiles({ myProblem, setSelfProblem }: Props) {
         };
 
         try {
-          const { data } = await api.post(
-            "/UploadProblemFiles",
-            {
-              problem: updatedProblem,
+          const data = await api.uploadProblemFiles(updatedProblem, {
+            signal: abortController.signal,
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / (progressEvent.total || 1)
+              );
+              setFileProgress(percentCompleted === 100 ? -1 : percentCompleted);
             },
-            {
-              signal: abortController.signal,
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.round(
-                  (progressEvent.loaded * 100) / (progressEvent.total || 1)
-                );
-                setFileProgress(
-                  percentCompleted === 100 ? -1 : percentCompleted
-                );
-              },
-            }
-          );
-
-          if (data.d.success) {
+          });
+          if (data?.d.success) {
             setSelfProblem({
               ...updatedProblem,
               files: [...new Set(data.d.filesName as string[])],

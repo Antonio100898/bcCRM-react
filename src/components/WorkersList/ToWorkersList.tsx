@@ -1,9 +1,9 @@
 // import { Chip, Popper } from "@material-ui/core";
-import { InfoOutlined } from '@mui/icons-material';
-import { Chip, Popper, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import { IWorker } from '../../Model/IWorker';
-import './WorkersList.styles.css';
+import { InfoOutlined } from "@mui/icons-material";
+import { Chip, Popper, Typography } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { IWorker } from "../../Model";
+import "./WorkersList.styles.css";
 
 interface Props {
   selectedWorkers: IWorker[];
@@ -47,8 +47,8 @@ export function ToWorkersList({
               className="chip"
               key={w.Id}
               sx={{
-                '& .MuiChip-deleteIcon': {
-                  color: 'white',
+                "& .MuiChip-deleteIcon": {
+                  color: "white",
                 },
               }}
               label={

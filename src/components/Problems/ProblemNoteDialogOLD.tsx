@@ -1,5 +1,5 @@
-import * as React from 'react';
-import './ProblemNoteDialog.styles.css';
+import * as React from "react";
+import "./ProblemNoteDialog.styles.css";
 import {
   Box,
   Dialog,
@@ -14,42 +14,41 @@ import {
   TextField,
   Tooltip,
   Typography,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import HistoryIcon from '@mui/icons-material/History';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import PhoneIcon from '@mui/icons-material/Phone';
-import ConnectedTvIcon from '@mui/icons-material/ConnectedTv';
-import LockIcon from '@mui/icons-material/Lock';
-import PendingActionsIcon from '@mui/icons-material/PendingActions';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import StarIcon from '@mui/icons-material/Star';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LoopIcon from '@mui/icons-material/Loop';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
-import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import HistoryIcon from "@mui/icons-material/History";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import PhoneIcon from "@mui/icons-material/Phone";
+import ConnectedTvIcon from "@mui/icons-material/ConnectedTv";
+import LockIcon from "@mui/icons-material/Lock";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import StarIcon from "@mui/icons-material/Star";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LoopIcon from "@mui/icons-material/Loop";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import {
   ChangeEvent,
   Dispatch,
   SetStateAction,
   useCallback,
   useState,
-} from 'react';
-import { useSnackbar } from 'notistack';
-import { IProblemLog } from '../../Model/IProblemLog';
-import { WorkersList } from '../WorkersList/WorkersList';
-import { ProblemTypeMultiSelect } from '../BaseCompnents/ProblemTypeMultiSelect/ProblemTypeMultiSelect';
-import { IWorker } from '../../Model/IWorker';
-import { api } from '../../API/Api';
-import { ISearchProblem } from '../../Model/ISearchProblem';
-import { IMAGES_PATH_PROBLEMS, TOKEN_KEY } from '../../Consts/Consts';
-import { CrmFile, IProblem, IProblemsResponse } from '../../Model/IProblem';
-import { IProblemType } from '../../Model/IProblemType';
-import { ProblemHistoryDialog } from '../../Dialogs/ProblemHistory';
-import { useConfirm } from '../../Context/useConfirm';
-import { useUser } from '../../Context/useUser';
+} from "react";
+import { useSnackbar } from "notistack";
+import { IProblemLog } from "../../Model/IProblemLog";
+import { WorkersList } from "../WorkersList/WorkersList";
+import { IWorker } from "../../Model/IWorker";
+import { api } from "../../API/Api";
+import { ISearchProblem } from "../../Model/ISearchProblem";
+import { IMAGES_PATH_PROBLEMS, TOKEN_KEY } from "../../Consts/Consts";
+import { CrmFile, IProblem, IProblemsResponse } from "../../Model/IProblem";
+import { IProblemType } from "../../Model/IProblemType";
+import { ProblemHistoryDialog } from "../../Dialogs/ProblemHistory";
+import { useConfirm } from "../../Context/useConfirm";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   fileLoading: boolean;
@@ -68,7 +67,7 @@ export default function ProblemNoteDialog({
 }: Props) {
   const { confirm } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
-  const [fileInput, setFileInput] = useState<string>('');
+  const [fileInput, setFileInput] = useState<string>("");
   const [myProblem, setMyProblem] = React.useState({ ...problem });
   const [fileProgress, setFileProgress] = useState(0);
   const fileInputRef = React.useRef<HTMLInputElement | null>();
@@ -100,7 +99,7 @@ export default function ProblemNoteDialog({
     // setToWorkersOptions(options);
 
     api
-      .post<IProblemsResponse>('/GetProblemHistorySummery', {
+      .post<IProblemsResponse>("/GetProblemHistorySummery", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         placeId: problem.placeId,
         problemId: problem.id,
@@ -109,7 +108,7 @@ export default function ProblemNoteDialog({
         if (!data.d.success) {
           enqueueSnackbar({
             message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
         } else {
           const updatedProblem = {
@@ -139,9 +138,9 @@ export default function ProblemNoteDialog({
         myProblem.statusId = 0;
       }
 
-      myProblem.workerKey = localStorage.getItem(TOKEN_KEY) || '';
+      myProblem.workerKey = localStorage.getItem(TOKEN_KEY) || "";
 
-      myProblem.workerCreateName = user?.workerName || '';
+      myProblem.workerCreateName = user?.workerName || "";
       // console.log(myProblem);
       // const options: string[] = [];
       const pTypes = new Map<string, number>();
@@ -157,21 +156,21 @@ export default function ProblemNoteDialog({
         return newPType.push({
           id: ptId as number,
           problemTypeName: name,
-          color: '',
+          color: "",
         });
       });
 
       myProblem.problemTypesList = newPType;
 
       api
-        .post<IProblemsResponse>('/UpdateProblem', {
+        .post<IProblemsResponse>("/UpdateProblem", {
           problem: { ...myProblem, crmFiles: null, newFiles: null },
         })
         .then(({ data }) => {
           if (!data.d.success) {
             enqueueSnackbar({
               message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-              variant: 'error',
+              variant: "error",
             });
             return;
           }
@@ -214,7 +213,7 @@ export default function ProblemNoteDialog({
     };
 
     try {
-      const { data } = await api.post('/SearchProblems', {
+      const { data } = await api.post("/SearchProblems", {
         search: {
           ...searchProblem,
           key: localStorage.getItem(TOKEN_KEY),
@@ -223,8 +222,8 @@ export default function ProblemNoteDialog({
       setProblemsHistory(data.d.problems);
     } catch (error) {
       enqueueSnackbar({
-        message: 'אופס, משהו השתבש.. נסה שוב',
-        variant: 'error',
+        message: "אופס, משהו השתבש.. נסה שוב",
+        variant: "error",
       });
     } finally {
       setShowHistoryLoading(false);
@@ -250,11 +249,11 @@ export default function ProblemNoteDialog({
 
   const deleteFile = useCallback(
     async (f: string) => {
-      setFileInput('');
+      setFileInput("");
 
-      if (await confirm('האם אתה בטוח שברצונך למחוק את הקובץ?')) {
+      if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
         api
-          .post('/DeleteFile', {
+          .post("/DeleteFile", {
             fileName: f,
             problemId: myProblem.id,
             workerKey: localStorage.getItem(TOKEN_KEY),
@@ -275,18 +274,18 @@ export default function ProblemNoteDialog({
 
   const setEmergency = useCallback(() => {
     if (myProblem.emergencyId === 0) {
-      onChange('emergencyId', 1);
+      onChange("emergencyId", 1);
     } else {
-      onChange('emergencyId', 0);
+      onChange("emergencyId", 0);
     }
   }, [myProblem.emergencyId, onChange]);
 
   const setTakeCare = useCallback(() => {
-    onChange('takingCare', !myProblem.takingCare);
+    onChange("takingCare", !myProblem.takingCare);
   }, [myProblem.takingCare, onChange]);
 
   const setIsLocked = useCallback(() => {
-    onChange('isLocked', !myProblem.isLocked);
+    onChange("isLocked", !myProblem.isLocked);
   }, [myProblem.isLocked, onChange]);
 
   const toWorkerChanged = useCallback(
@@ -300,7 +299,7 @@ export default function ProblemNoteDialog({
         //   `${user?.workerName} העביר לעובד ${worker.workerName}`,
         //   1
         // );
-        onChange('toWorker', workerId);
+        onChange("toWorker", workerId);
       }
     },
     [myProblem.toWorker, onChange, workers]
@@ -313,7 +312,7 @@ export default function ProblemNoteDialog({
       //   `${user?.workerName} העביר לעובד ${worker.workerName}`,
       //   1
       // );
-      onChange('departmentId', worker.departmentId);
+      onChange("departmentId", worker.departmentId);
     }
   }, [myProblem.toWorker, onChange, workers]);
 
@@ -329,7 +328,7 @@ export default function ProblemNoteDialog({
 
   const callToThisPhone = useCallback((phoneToCall: string) => {
     api
-      .post<IProblemsResponse>('/CallThisNumber', {
+      .post<IProblemsResponse>("/CallThisNumber", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         phone: phoneToCall,
       })
@@ -378,7 +377,7 @@ export default function ProblemNoteDialog({
 
   const onShowLogs = useCallback((problemId: number) => {
     api
-      .post('/GetProblemLogs', {
+      .post("/GetProblemLogs", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         problemId,
       })
@@ -390,14 +389,14 @@ export default function ProblemNoteDialog({
 
   const updateProblemTracking = useCallback(() => {
     api
-      .post('/UpdateProblemTracking', {
+      .post("/UpdateProblemTracking", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         problemId: myProblem.id,
         trackingId: myProblem.trackingId,
       })
       .then(({ data }) => {
         // console.log(data.d.trackingId);
-        onChange('trackingId', data.d.trackingId);
+        onChange("trackingId", data.d.trackingId);
       });
   }, [myProblem.id, myProblem.trackingId, onChange]);
 
@@ -407,7 +406,7 @@ export default function ProblemNoteDialog({
     } = event;
 
     const a: string[] =
-      typeof value === 'string' ? value.split(',') : (value as string[]);
+      typeof value === "string" ? value.split(",") : (value as string[]);
     a.sort((b: string, c: string) => {
       return b < c ? -1 : 1;
     });
@@ -415,7 +414,7 @@ export default function ProblemNoteDialog({
   }, []);
 
   const handleDrag = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    setDragActive(event.type === 'dragenter' || event.type === 'dragover');
+    setDragActive(event.type === "dragenter" || event.type === "dragover");
   }, []);
 
   const uploadFiles = useCallback(
@@ -428,9 +427,9 @@ export default function ProblemNoteDialog({
           if (
             isClipboard ||
             !(myProblem.files || []).includes(
-              `${myProblem.id}_${inputFiles?.[i].name || 'file.what'}`
-                .replaceAll('-', '_')
-                .replaceAll(' ', '_')
+              `${myProblem.id}_${inputFiles?.[i].name || "file.what"}`
+                .replaceAll("-", "_")
+                .replaceAll(" ", "_")
             )
           ) {
             filteredFiles.push(inputFiles?.[i]);
@@ -442,18 +441,18 @@ export default function ProblemNoteDialog({
         for (let i = 0; i < filteredFiles.length; i += 1) {
           promises.push(
             toBase64(filteredFiles[i]).then((base64) => ({
-              filename: `${isClipboard ? `${Date.now()}_` : ''}${
+              filename: `${isClipboard ? `${Date.now()}_` : ""}${
                 myProblem.id
-              }_${filteredFiles?.[i].name || 'file.what'}`
-                .replaceAll('-', '_')
-                .replaceAll(' ', '_'),
+              }_${filteredFiles?.[i].name || "file.what"}`
+                .replaceAll("-", "_")
+                .replaceAll(" ", "_"),
               content: base64,
             }))
           );
         }
 
         if (promises.length === 0) {
-          setFileInput('');
+          setFileInput("");
           return;
         }
 
@@ -471,7 +470,7 @@ export default function ProblemNoteDialog({
 
         try {
           const { data } = await api.post(
-            '/UploadProblemFiles',
+            "/UploadProblemFiles",
             {
               problem: updatedProblem,
             },
@@ -497,7 +496,7 @@ export default function ProblemNoteDialog({
         } catch (error) {
           enqueueSnackbar({
             message: `נכשל לטעון קבצים.`,
-            variant: 'error',
+            variant: "error",
           });
         } finally {
           setFileLoading(false);
@@ -518,7 +517,7 @@ export default function ProblemNoteDialog({
     (event: React.DragEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
-      setDragActive(event.type === 'dragover');
+      setDragActive(event.type === "dragover");
 
       if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
         uploadFiles(event.dataTransfer.files);
@@ -552,16 +551,16 @@ export default function ProblemNoteDialog({
       {dragActive && (
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 128, 255, 0.25)',
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 128, 255, 0.25)",
             zIndex: 100000,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Typography variant="h3" color="white" fontWeight="bold">
@@ -569,7 +568,7 @@ export default function ProblemNoteDialog({
           </Typography>
         </Box>
       )}
-      <div style={{ padding: 0, background: 'rgba(213, 213, 213, 0.15)' }}>
+      <div style={{ padding: 0, background: "rgba(213, 213, 213, 0.15)" }}>
         <div
           className="row"
           style={{
@@ -586,18 +585,18 @@ export default function ProblemNoteDialog({
                   variant="standard"
                   InputProps={{
                     sx: {
-                      '::before': {
+                      "::before": {
                         borderBottom: 0,
                       },
                     },
                   }}
                   className="placeName"
-                  onChange={(e) => onChange('placeName', e.target.value)}
+                  onChange={(e) => onChange("placeName", e.target.value)}
                 />
               </Tooltip>
               {myProblem.vip && (
                 <Tooltip title="vip">
-                  <StarIcon style={{ color: 'goldenrod', fontSize: '30px' }} />
+                  <StarIcon style={{ color: "goldenrod", fontSize: "30px" }} />
                 </Tooltip>
               )}
             </div>
@@ -619,13 +618,13 @@ export default function ProblemNoteDialog({
                 variant="standard"
                 InputProps={{
                   sx: {
-                    '::before': {
+                    "::before": {
                       borderBottom: 0,
                     },
                   },
                 }}
                 className="cusName"
-                onChange={(e) => onChange('customerName', e.target.value)}
+                onChange={(e) => onChange("customerName", e.target.value)}
               />
             </Tooltip>
           </div>
@@ -642,26 +641,26 @@ export default function ProblemNoteDialog({
             paddingLeft: 15,
             paddingTop: 10,
 
-            background: '#FAFAFA',
-            borderRadius: '16px 16px 1px 0px',
-            boxShadow: 'box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25)',
+            background: "#FAFAFA",
+            borderRadius: "16px 16px 1px 0px",
+            boxShadow: "box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25)",
           }}
         >
           <div className="col-6 right">
             <Tooltip title="IP">
               <TextField
-                style={{ width: '110px', marginLeft: 10 }}
+                style={{ width: "110px", marginLeft: 10 }}
                 value={myProblem.ip}
                 variant="standard"
                 InputProps={{
                   sx: {
-                    '::before': {
+                    "::before": {
                       borderBottom: 0,
                     },
                   },
                 }}
                 className="ip"
-                onChange={(e) => onChange('ip', e.target.value)}
+                onChange={(e) => onChange("ip", e.target.value)}
               />
             </Tooltip>
             <Tooltip title="התחבר ללקוח">
@@ -670,7 +669,7 @@ export default function ProblemNoteDialog({
               </IconButton>
             </Tooltip>
           </div>
-          <div className="col-6" style={{ textAlign: 'left' }}>
+          <div className="col-6" style={{ textAlign: "left" }}>
             <Tooltip title="החזר למחלקה של המטפל">
               <IconButton onClick={changeDepartmentByToWorker}>
                 <LoopIcon />
@@ -681,9 +680,9 @@ export default function ProblemNoteDialog({
               label="מחלקה"
               variant="standard"
               value={myProblem.departmentId}
-              style={{ borderBottom: 0, textAlign: 'left' }}
+              style={{ borderBottom: 0, textAlign: "left" }}
               onChange={(e) =>
-                onChange('departmentId', parseInt(`${e.target.value}`, 10))
+                onChange("departmentId", parseInt(`${e.target.value}`, 10))
               }
             >
               <MenuItem value="5">איפוסים</MenuItem>
@@ -705,12 +704,12 @@ export default function ProblemNoteDialog({
           <div className="col-6">
             <Tooltip title="טלפון">
               <TextField
-                style={{ width: '110px', marginLeft: 10 }}
+                style={{ width: "110px", marginLeft: 10 }}
                 value={myProblem.phone}
                 variant="standard"
                 InputProps={{
                   sx: {
-                    '::before': {
+                    "::before": {
                       borderBottom: 0,
                     },
                   },
@@ -728,9 +727,9 @@ export default function ProblemNoteDialog({
               </IconButton>
             </Tooltip>
           </div>
-          <div className="col-6" style={{ textAlign: 'left' }}>
+          <div className="col-6" style={{ textAlign: "left" }}>
             <div
-              style={{ display: 'flex', flex: 'row', justifyContent: 'left' }}
+              style={{ display: "flex", flex: "row", justifyContent: "left" }}
             >
               <Tooltip title="החזר לשולח">
                 <IconButton
@@ -773,7 +772,7 @@ export default function ProblemNoteDialog({
         <Box className="col-12" sx={{ px: 2 }}>
           <WorkersList
             workersSelected={myProblem.toWorkers || []}
-            setWorkersSelected={(selected) => onChange('toWorkers', selected)}
+            setWorkersSelected={(selected) => onChange("toWorkers", selected)}
           />
         </Box>
 
@@ -782,10 +781,10 @@ export default function ProblemNoteDialog({
             id="divDesc"
             className="col-6"
             style={{
-              position: 'relative',
-              marginTop: '10px',
-              paddingLeft: '5px',
-              paddingRight: '15px',
+              position: "relative",
+              marginTop: "10px",
+              paddingLeft: "5px",
+              paddingRight: "15px",
             }}
           >
             <Tooltip title="תיאור תקלה">
@@ -796,12 +795,12 @@ export default function ProblemNoteDialog({
                 multiline
                 fullWidth
                 className="inputBox desc"
-                onChange={(e) => onChange('desc', e.target.value)}
+                onChange={(e) => onChange("desc", e.target.value)}
                 style={{
-                  background: '#FFFFFF',
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                  boxShadow: 'inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                  borderRadius: '8px',
+                  background: "#FFFFFF",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
+                  boxShadow: "inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                  borderRadius: "8px",
                 }}
               />
             </Tooltip>
@@ -809,10 +808,10 @@ export default function ProblemNoteDialog({
               <NotificationsActiveIcon
                 onClick={setEmergency}
                 style={{
-                  position: 'absolute',
-                  bottom: '7px',
-                  left: '25px',
-                  color: 'red',
+                  position: "absolute",
+                  bottom: "7px",
+                  left: "25px",
+                  color: "red",
                   opacity: myProblem.emergencyId === 0 ? 0.2 : 1,
                 }}
               />
@@ -821,10 +820,10 @@ export default function ProblemNoteDialog({
               <AccessTimeIcon
                 onClick={setTakeCare}
                 style={{
-                  position: 'absolute',
-                  bottom: '7px',
-                  left: '55px',
-                  color: 'orange',
+                  position: "absolute",
+                  bottom: "7px",
+                  left: "55px",
+                  color: "orange",
                   opacity: myProblem.takingCare ? 1 : 0.2,
                 }}
               />
@@ -832,9 +831,9 @@ export default function ProblemNoteDialog({
             <Tooltip title="הצג לוגים">
               <VisibilityIcon
                 style={{
-                  position: 'absolute',
-                  bottom: '7px',
-                  right: '25px',
+                  position: "absolute",
+                  bottom: "7px",
+                  right: "25px",
                   opacity: 0.6,
                 }}
                 onClick={() => {
@@ -849,10 +848,10 @@ export default function ProblemNoteDialog({
                   <LockIcon
                     onClick={setIsLocked}
                     style={{
-                      position: 'absolute',
-                      bottom: '7px',
-                      left: '85px',
-                      color: 'blue',
+                      position: "absolute",
+                      bottom: "7px",
+                      left: "85px",
+                      color: "blue",
                       opacity: 1,
                     }}
                   />
@@ -860,10 +859,10 @@ export default function ProblemNoteDialog({
                   <LockOpenIcon
                     onClick={setIsLocked}
                     style={{
-                      position: 'absolute',
-                      bottom: '7px',
-                      left: '85px',
-                      color: 'blue',
+                      position: "absolute",
+                      bottom: "7px",
+                      left: "85px",
+                      color: "blue",
                       opacity: 0.2,
                     }}
                   />
@@ -876,9 +875,9 @@ export default function ProblemNoteDialog({
             id="divDesc"
             className="col-6"
             style={{
-              marginTop: '10px',
-              paddingLeft: '15px',
-              paddingRight: '5px',
+              marginTop: "10px",
+              paddingLeft: "15px",
+              paddingRight: "5px",
             }}
           >
             <Tooltip title="תיאור פיתרון">
@@ -891,7 +890,7 @@ export default function ProblemNoteDialog({
                   multiline
                   fullWidth
                   className="inputBox desc"
-                  onChange={(e) => onChange('solution', e.target.value)}
+                  onChange={(e) => onChange("solution", e.target.value)}
                 />
               </div>
             </Tooltip>
@@ -922,18 +921,18 @@ export default function ProblemNoteDialog({
           <div
             className="col-8"
             style={{
-              fontFamily: 'Rubik',
-              fontSize: '26px',
-              offset: '0px, 4px rgba(0, 0, 0, 0.25)',
-              paddingRight: '10px',
-              marginBottom: '3px',
+              fontFamily: "Rubik",
+              fontSize: "26px",
+              offset: "0px, 4px rgba(0, 0, 0, 0.25)",
+              paddingRight: "10px",
+              marginBottom: "3px",
             }}
           >
             <p
               style={{
-                fontWeight: '700',
-                margin: '0 !important',
-                marginBottom: '0px',
+                fontWeight: "700",
+                margin: "0 !important",
+                marginBottom: "0px",
               }}
             >
               {myProblem.historySummery}
@@ -941,9 +940,9 @@ export default function ProblemNoteDialog({
 
             <p
               style={{
-                fontWeight: '400',
-                margin: '0 !important',
-                marginBottom: '0px',
+                fontWeight: "400",
+                margin: "0 !important",
+                marginBottom: "0px",
               }}
             >
               {myProblem.lastSuppoter}
@@ -952,9 +951,9 @@ export default function ProblemNoteDialog({
             {myProblem.updaterWorkerName && (
               <p
                 style={{
-                  fontWeight: '400',
-                  margin: '0 !important',
-                  marginBottom: '0px',
+                  fontWeight: "400",
+                  margin: "0 !important",
+                  marginBottom: "0px",
                 }}
               >
                 מעדכן אחרון: {myProblem.updaterWorkerName}
@@ -965,14 +964,11 @@ export default function ProblemNoteDialog({
             {/* <ProblemTypes problem={myProblem} /> */}
           </div>
         </div>
-        <Box sx={{ margin: 2, display: 'flex', gap: 1 }}>
+        <Box sx={{ margin: 2, display: "flex", gap: 1 }}>
           {myProblem.files &&
             [...new Set(myProblem.files)].map((file, index) => {
               return (
-                <Box
-                  key={`${file}${index}`}
-                  sx={{ position: 'relative' }}
-                >
+                <Box key={`${file}${index}`} sx={{ position: "relative" }}>
                   <a
                     href={IMAGES_PATH_PROBLEMS + file}
                     target="_blank"
@@ -983,13 +979,13 @@ export default function ProblemNoteDialog({
                         src={IMAGES_PATH_PROBLEMS + file}
                         alt={file}
                         onError={(e) => {
-                          e.currentTarget.src = 'broken.png';
+                          e.currentTarget.src = "broken.png";
                         }}
                         style={{
-                          backgroundColor: '#0E0E0E',
+                          backgroundColor: "#0E0E0E",
                           height: 80,
                           width: 142.2,
-                          objectFit: 'contain',
+                          objectFit: "contain",
                           borderRadius: 8,
                         }}
                       />
@@ -999,7 +995,7 @@ export default function ProblemNoteDialog({
                     color="info"
                     sx={{
                       zIndex: 1000,
-                      position: 'absolute',
+                      position: "absolute",
                       left: 0,
                       bottom: 0,
                     }}
@@ -1022,13 +1018,13 @@ export default function ProblemNoteDialog({
           ref={(r) => {
             fileInputRef.current = r;
           }}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           onChange={handleUploadFile}
         />
 
         {fileLoading && (
           <LinearProgress
-            variant={fileProgress < 0 ? 'indeterminate' : 'determinate'}
+            variant={fileProgress < 0 ? "indeterminate" : "determinate"}
             value={fileProgress}
           />
         )}
@@ -1041,10 +1037,10 @@ export default function ProblemNoteDialog({
             paddingRight: 10,
             paddingBottom: 10,
             paddingTop: 10,
-            background: 'white',
-            borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-            boxShadow: 'inset 0px 4px 4px rgba(0, 0, 0, 0.05)',
-            borderRadius: '0px 0px 16px 16px',
+            background: "white",
+            borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+            boxShadow: "inset 0px 4px 4px rgba(0, 0, 0, 0.05)",
+            borderRadius: "0px 0px 16px 16px",
           }}
         >
           <div className="col-1">
@@ -1057,7 +1053,7 @@ export default function ProblemNoteDialog({
               >
                 <div>
                   <AttachFileIcon
-                    style={{ fontSize: 25, color: 'rgba(251, 50, 0, 0.6)' }}
+                    style={{ fontSize: 25, color: "rgba(251, 50, 0, 0.6)" }}
                   />
                 </div>
               </Fab>
@@ -1070,12 +1066,12 @@ export default function ProblemNoteDialog({
               size="medium"
             >
               <Tooltip title="הצג הסטוריה">
-                <HistoryIcon style={{ fontSize: 25, color: 'black' }} />
+                <HistoryIcon style={{ fontSize: 25, color: "black" }} />
               </Tooltip>
             </Fab>
           </div>
 
-          <div className="col-7" style={{ textAlign: 'left' }}>
+          <div className="col-7" style={{ textAlign: "left" }}>
             <Fab
               onClick={updateProblemTracking}
               sx={{ margin: 0, boxShadow: 0 }}
@@ -1085,34 +1081,34 @@ export default function ProblemNoteDialog({
                 <GpsFixedIcon
                   style={{
                     fontSize: 25,
-                    color: 'red',
-                    opacity: myProblem.trackingId > 0 ? '1' : '0.1',
+                    color: "red",
+                    opacity: myProblem.trackingId > 0 ? "1" : "0.1",
                   }}
                 />
               </Tooltip>
             </Fab>
           </div>
-          <div className="col-1" style={{ textAlign: 'left' }}>
+          <div className="col-1" style={{ textAlign: "left" }}>
             <Fab
               size="medium"
               sx={{ margin: 0, boxShadow: 0 }}
               onClick={() => {
-                onChange('callCustomerBack', !myProblem.callCustomerBack);
+                onChange("callCustomerBack", !myProblem.callCustomerBack);
               }}
             >
               <Tooltip title="חזור ללקוח">
                 <ContactPhoneIcon
                   style={{
                     fontSize: 25,
-                    color: 'blue',
-                    opacity: myProblem.callCustomerBack ? '1' : '0.1',
+                    color: "blue",
+                    opacity: myProblem.callCustomerBack ? "1" : "0.1",
                   }}
                 />
               </Tooltip>
             </Fab>
           </div>
 
-          <div className="col-1" style={{ textAlign: 'left' }}>
+          <div className="col-1" style={{ textAlign: "left" }}>
             {myProblem &&
               (!myProblem.isLocked ||
                 user?.userType === 1 ||
@@ -1129,7 +1125,7 @@ export default function ProblemNoteDialog({
                 >
                   <Tooltip title="עדכן אל תסגור תקלה">
                     <PendingActionsIcon
-                      style={{ fontSize: 25, color: 'rgba(251, 140, 0, 0.6)' }}
+                      style={{ fontSize: 25, color: "rgba(251, 140, 0, 0.6)" }}
                     />
                   </Tooltip>
                 </Fab>
@@ -1153,7 +1149,7 @@ export default function ProblemNoteDialog({
                 >
                   <Tooltip title="עדכן ותסגור את התקלה">
                     <LockIcon
-                      style={{ fontSize: 25, color: 'rgba(56, 142, 60, 0.7)' }}
+                      style={{ fontSize: 25, color: "rgba(56, 142, 60, 0.7)" }}
                     />
                   </Tooltip>
                 </Fab>
@@ -1179,7 +1175,7 @@ export default function ProblemNoteDialog({
 
       <Dialog
         dir="rtl"
-        sx={{ textAlign: 'right' }}
+        sx={{ textAlign: "right" }}
         fullWidth
         onClose={() => setShowLogs(false)}
         maxWidth="lg"
@@ -1199,7 +1195,7 @@ export default function ProblemNoteDialog({
                     <div
                       key={log.commitTime}
                       className="row"
-                      style={{ border: '1px black solid' }}
+                      style={{ border: "1px black solid" }}
                     >
                       <div className="col-2">{log.workerName}</div>
                       <div className="col-2">{log.fieldName}</div>
@@ -1210,7 +1206,7 @@ export default function ProblemNoteDialog({
                   );
                 })}
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: "center" }}>
               <Button variant="contained" onClick={() => setShowLogs(false)}>
                 סגור
               </Button>

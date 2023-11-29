@@ -1,11 +1,13 @@
 import { createContext, useState, useCallback } from "react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
-import { IProblem } from "../Model/IProblem";
-import { IWorker } from "../Model/IWorker";
-import { User } from "../Model/User";
-import { IProblemType } from "../Model/IProblemType";
-import { ProblemSummery } from "../Model/HeaderSummery";
+import {
+  IProblem,
+  IWorker,
+  User,
+  IProblemType,
+  ProblemSummery,
+} from "../Model";
 import { TOKEN_KEY } from "../Consts/Consts";
 import { api } from "../API/Api";
 

@@ -1,17 +1,14 @@
-import './WorkerExpensesShortReports.styles.css';
-import { useCallback, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { ExcelC } from '../../components/Excel/ExcelC';
-import WorkExpenseReportFilters from '../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters';
-import WorkExpenseReportView from '../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView';
-import {
-  IWorkExpensesType,
-  IWorkExpensesTypeSum,
-} from '../../Model/IWorkExpensesType';
-import WorkersExpensesSum from '../../components/WorkerExpensesShortReports/WorkersExpensesSum';
-import { useUser } from '../../Context/useUser';
+import "./WorkerExpensesShortReports.styles.css";
+import { useCallback, useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { ExcelC } from "../../components/Excel/ExcelC";
+import WorkExpenseReportFilters from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters";
+import WorkExpenseReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView";
+import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
+import WorkersExpensesSum from "../../components/WorkerExpensesShortReports/WorkersExpensesSum";
+import { useUser } from "../../Context/useUser";
 
 interface AutocompleteOption {
   label: string;
@@ -20,18 +17,18 @@ interface AutocompleteOption {
 
 export default function WorkerExpensesShortReports() {
   const months = [
-    'ינואר',
-    'פברואר',
-    'מרץ',
-    'אפריל',
-    'מאי',
-    'יוני',
-    'יולי',
-    'אוגוסט',
-    'ספטמבר',
-    'אוקטובר',
-    'נובמבר',
-    'דצמבר',
+    "ינואר",
+    "פברואר",
+    "מרץ",
+    "אפריל",
+    "מאי",
+    "יוני",
+    "יולי",
+    "אוגוסט",
+    "ספטמבר",
+    "אוקטובר",
+    "נובמבר",
+    "דצמבר",
   ];
 
   const { enqueueSnackbar } = useSnackbar();
@@ -42,8 +39,8 @@ export default function WorkerExpensesShortReports() {
   const [filterMonth, setFilterMonth] = useState<string>(
     months[new Date().getMonth()]
   );
-  const [filterWorkerId, setFilterWorkerId] = useState('0');
-  const [sortBy, setSortBy] = useState('startExpenseDate');
+  const [filterWorkerId, setFilterWorkerId] = useState("0");
+  const [sortBy, setSortBy] = useState("startExpenseDate");
 
   const { updateShowLoader, workers } = useUser();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,7 +57,7 @@ export default function WorkerExpensesShortReports() {
       rows.push({ label: workers[i].workerName, id: workers[i].Id });
     }
 
-    rows.push({ label: 'כולם', id: 0 });
+    rows.push({ label: "כולם", id: 0 });
 
     setFilterMonth(months[new Date().getMonth()]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,7 +65,7 @@ export default function WorkerExpensesShortReports() {
 
   const GetWorkersExpense = useCallback(() => {
     api
-      .post('/GetWorkersExpenses', {
+      .post("/GetWorkersExpenses", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         year: filterYear,
         months: filterMonth,
@@ -78,8 +75,8 @@ export default function WorkerExpensesShortReports() {
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -88,7 +85,7 @@ export default function WorkerExpensesShortReports() {
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -98,7 +95,7 @@ export default function WorkerExpensesShortReports() {
         setWorkersExpensesSum(data.d.workerExpensesSum);
         const list: IWorkExpensesType[] = data.d.workerExpenses;
         if (list.length > 0) {
-          if (sortBy === 'startExpenseDate') {
+          if (sortBy === "startExpenseDate") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return (
                 new Date(a.startExpenseDate).getTime() -
@@ -107,19 +104,19 @@ export default function WorkerExpensesShortReports() {
             });
           }
 
-          if (sortBy === 'workExpensName') {
+          if (sortBy === "workExpensName") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.workExpensName < b.workExpensName ? -1 : 1;
             });
           }
 
-          if (sortBy === 'workerName') {
+          if (sortBy === "workerName") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.workerName > b.workerName ? -1 : 1;
             });
           }
 
-          if (sortBy === 'expenseValue') {
+          if (sortBy === "expenseValue") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.expenseValue < b.expenseValue ? -1 : 1;
             });
@@ -150,7 +147,7 @@ export default function WorkerExpensesShortReports() {
 
   const updateWorkesExpensesApprove = useCallback(() => {
     api
-      .post('/UpdateWorkesExpensesApprove', {
+      .post("/UpdateWorkesExpensesApprove", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         workerExpenses,
       })
@@ -158,8 +155,8 @@ export default function WorkerExpensesShortReports() {
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -168,7 +165,7 @@ export default function WorkerExpensesShortReports() {
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -195,13 +192,13 @@ export default function WorkerExpensesShortReports() {
           updateSortBy={setSortBy}
         />
       </div>
-      <div className="col-2" style={{ paddingTop: '25px' }}>
+      <div className="col-2" style={{ paddingTop: "25px" }}>
         <WorkersExpensesSum
           worker_ExpensesSum={workersExpensesSum}
           workerSelected={updateWorkerChange}
         />
       </div>
-      <div className="col-10" style={{ maxHeight: '700px', overflow: 'auto' }}>
+      <div className="col-10" style={{ maxHeight: "700px", overflow: "auto" }}>
         {workerExpenses && (
           <WorkExpenseReportView
             headerName="הוצאות עבודה"

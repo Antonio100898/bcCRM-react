@@ -1,17 +1,14 @@
-import './WorkerExpensesReports.styles.css';
-import { useCallback, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import {
-  IWorkExpensesType,
-  IWorkExpensesTypeSum,
-} from '../../Model/IWorkExpensesType';
-import { ExcelC } from '../../components/Excel/ExcelC';
-import WorkExpenseReportView from '../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView';
-import WorkExpenseSumReportView from '../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseSumReportView';
-import WorkExpenseReportFilters from '../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters';
-import { useUser } from '../../Context/useUser';
+import "./WorkerExpensesReports.styles.css";
+import { useCallback, useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
+import { ExcelC } from "../../components/Excel/ExcelC";
+import WorkExpenseReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView";
+import WorkExpenseSumReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseSumReportView";
+import WorkExpenseReportFilters from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters";
+import { useUser } from "../../Context/useUser";
 
 interface AutocompleteOption {
   label: string;
@@ -21,18 +18,18 @@ interface AutocompleteOption {
 export default function WorkerExpensesReports() {
   const { enqueueSnackbar } = useSnackbar();
   const months = [
-    'ינואר',
-    'פברואר',
-    'מרץ',
-    'אפריל',
-    'מאי',
-    'יוני',
-    'יולי',
-    'אוגוסט',
-    'ספטמבר',
-    'אוקטובר',
-    'נובמבר',
-    'דצמבר',
+    "ינואר",
+    "פברואר",
+    "מרץ",
+    "אפריל",
+    "מאי",
+    "יוני",
+    "יולי",
+    "אוגוסט",
+    "ספטמבר",
+    "אוקטובר",
+    "נובמבר",
+    "דצמבר",
   ];
 
   const [filterYear, setFilterYear] = useState(
@@ -41,8 +38,8 @@ export default function WorkerExpensesReports() {
   const [filterMonth, setFilterMonth] = useState<string>(
     months[new Date().getMonth()]
   );
-  const [filterWorkerId, setFilterWorkerId] = useState('0');
-  const [sortBy, setSortBy] = useState('startExpenseDate');
+  const [filterWorkerId, setFilterWorkerId] = useState("0");
+  const [sortBy, setSortBy] = useState("startExpenseDate");
 
   const { updateShowLoader, workers } = useUser();
   const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
@@ -58,7 +55,7 @@ export default function WorkerExpensesReports() {
       rows.push({ label: workers[i].workerName, id: workers[i].Id });
     }
 
-    rows.push({ label: 'כולם', id: 0 });
+    rows.push({ label: "כולם", id: 0 });
 
     setFilterMonth(months[new Date().getMonth()]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +63,7 @@ export default function WorkerExpensesReports() {
 
   const getWorkersExpense = useCallback(() => {
     api
-      .post('/GetWorkersExpenses', {
+      .post("/GetWorkersExpenses", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         year: filterYear,
         months: filterMonth,
@@ -76,8 +73,8 @@ export default function WorkerExpensesReports() {
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -86,7 +83,7 @@ export default function WorkerExpensesReports() {
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -96,7 +93,7 @@ export default function WorkerExpensesReports() {
         setWorkersExpensesSum(data.d.workerExpensesSum);
         const list: IWorkExpensesType[] = data.d.workerExpenses;
         if (list.length > 0) {
-          if (sortBy === 'startExpenseDate') {
+          if (sortBy === "startExpenseDate") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return (
                 new Date(a.startExpenseDate).getTime() -
@@ -105,19 +102,19 @@ export default function WorkerExpensesReports() {
             });
           }
 
-          if (sortBy === 'workExpensName') {
+          if (sortBy === "workExpensName") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.workExpensName < b.workExpensName ? -1 : 1;
             });
           }
 
-          if (sortBy === 'workerName') {
+          if (sortBy === "workerName") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.workerName > b.workerName ? -1 : 1;
             });
           }
 
-          if (sortBy === 'expenseValue') {
+          if (sortBy === "expenseValue") {
             list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
               return a.expenseValue < b.expenseValue ? -1 : 1;
             });
@@ -148,7 +145,7 @@ export default function WorkerExpensesReports() {
 
   const updateWorkesExpensesApprove = useCallback(() => {
     api
-      .post('/UpdateWorkesExpensesApprove', {
+      .post("/UpdateWorkesExpensesApprove", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         workerExpenses,
       })
@@ -156,8 +153,8 @@ export default function WorkerExpensesReports() {
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -166,7 +163,7 @@ export default function WorkerExpensesReports() {
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }

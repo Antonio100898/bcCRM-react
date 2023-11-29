@@ -1,5 +1,5 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import {
   Box,
   Button,
@@ -16,21 +16,21 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-} from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-import SaveIcon from '@mui/icons-material/Save';
-import { useCallback, useEffect, useState } from 'react';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import DoDisturbIcon from '@mui/icons-material/DoDisturb';
-import SnoozeIcon from '@mui/icons-material/Snooze';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IWorkerFreeday } from '../../Model/IWorkerSickday';
-import { NivTextField } from '../../components/BaseCompnents/NivTextField/NivTextField';
-import { useUser } from '../../Context/useUser';
-import { useConfirm } from '../../Context/useConfirm';
+} from "@mui/material";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import SaveIcon from "@mui/icons-material/Save";
+import { useCallback, useEffect, useState } from "react";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { IWorkerFreeday } from "../../Model";
+import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
+import { useUser } from "../../Context/useUser";
+import { useConfirm } from "../../Context/useConfirm";
 
 export default function WorkersFreeday() {
   const { confirm } = useConfirm();
@@ -54,7 +54,7 @@ export default function WorkersFreeday() {
     updateShowLoader(true);
     const workerKey = localStorage.getItem(TOKEN_KEY);
     api
-      .post('/GetWorkersFreedays', {
+      .post("/GetWorkersFreedays", {
         workerKey,
         year: filterYear,
         month: filterMonth,
@@ -79,13 +79,13 @@ export default function WorkersFreeday() {
     setCurrentWorkerFreeday({
       id: 0,
       workerId: 0,
-      workerName: '',
+      workerName: "",
       startDate: new Date(),
       finishDate: new Date(),
       daysLen: 0,
       startDateEN: new Date().toDateString(),
       finishDateEN: new Date().toDateString(),
-      remark: '',
+      remark: "",
       statusId: 0,
       cancel: false,
     });
@@ -109,7 +109,7 @@ export default function WorkersFreeday() {
         finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
       };
       api
-        .post('/UpdateWorkerFreeday', {
+        .post("/UpdateWorkerFreeday", {
           workerKey,
           freeday: freeDay,
         })
@@ -123,7 +123,7 @@ export default function WorkersFreeday() {
 
   const cancelFreeDay = useCallback(
     async (w: IWorkerFreeday) => {
-      if (await confirm('האם ברצונך למחוק את הבקשה ליום חופש?')) {
+      if (await confirm("האם ברצונך למחוק את הבקשה ליום חופש?")) {
         updateFreeDayFn({ ...w, cancel: true });
       }
     },
@@ -145,7 +145,7 @@ export default function WorkersFreeday() {
     <div style={{ marginRight: 10, marginLeft: 10 }}>
       <h2>ימי חופש</h2>
 
-      <div className="row" style={{ marginTop: '15px' }}>
+      <div className="row" style={{ marginTop: "15px" }}>
         <div className="col-xs-12 col-sm-6 col-md-2 col-lg-2 right">
           <Select
             fullWidth
@@ -153,7 +153,7 @@ export default function WorkersFreeday() {
             value={filterMonth}
             className="cboDateMonth"
             onChange={(e) => setFilterMonth(e.target.value)}
-            style={{ height: '56px' }}
+            style={{ height: "56px" }}
           >
             <MenuItem value="1">01</MenuItem>
             <MenuItem value="2">02</MenuItem>
@@ -176,7 +176,7 @@ export default function WorkersFreeday() {
             value={filterYear}
             className="cboDateMonth"
             onChange={(e) => setFilterYear(e.target.value)}
-            style={{ height: '56px' }}
+            style={{ height: "56px" }}
           >
             <MenuItem value="2023">2023</MenuItem>
             <MenuItem value="2024">2024</MenuItem>
@@ -186,7 +186,7 @@ export default function WorkersFreeday() {
         </div>
         <div className="col-xs-12 col-sm-6 col-md-2 col-lg-2 right">
           {user?.userType === 1 && (
-            <Tooltip title={showAllWorkers ? 'הצג את כולם' : 'הצג פירוט'}>
+            <Tooltip title={showAllWorkers ? "הצג את כולם" : "הצג פירוט"}>
               <Switch onChange={() => setShowAllWorkers(!showAllWorkers)} />
             </Tooltip>
           )}
@@ -199,8 +199,8 @@ export default function WorkersFreeday() {
             stickyHeader
             aria-label="תקלות"
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >
@@ -213,21 +213,21 @@ export default function WorkersFreeday() {
                 <TableCell align="right">ימים</TableCell>
                 <TableCell align="center">אישור</TableCell>
                 <TableCell align="center">
-                  {' '}
+                  {" "}
                   <Tooltip title="הוסף יום מחלה">
                     <IconButton
                       onClick={showDialogNow}
                       style={{
-                        background: 'green',
-                        border: '1px solid rgba(0, 0, 0, 0.25)',
-                        boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-                        borderRadius: '12px',
+                        background: "green",
+                        border: "1px solid rgba(0, 0, 0, 0.25)",
+                        boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+                        borderRadius: "12px",
                       }}
                     >
                       <SaveIcon
                         style={{
                           fontSize: 35,
-                          color: 'rgba(255, 255, 255, 0.9)',
+                          color: "rgba(255, 255, 255, 0.9)",
                         }}
                       />
                     </IconButton>
@@ -242,10 +242,10 @@ export default function WorkersFreeday() {
                     <TableRow key={worker.id} hover>
                       <TableCell align="right">{worker.workerName}</TableCell>
                       <TableCell align="right">
-                        {dayjs(worker.startDateEN).format('DD/MM/YYYY')}
+                        {dayjs(worker.startDateEN).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell align="right">
-                        {dayjs(worker.finishDateEN).format('DD/MM/YYYY')}
+                        {dayjs(worker.finishDateEN).format("DD/MM/YYYY")}
                       </TableCell>
                       <TableCell align="right">{worker.remark}</TableCell>
                       <TableCell align="right">{worker.daysLen + 1}</TableCell>
@@ -253,9 +253,9 @@ export default function WorkersFreeday() {
                         {showAllWorkers ? (
                           <div
                             style={{
-                              display: 'flex',
-                              flex: 'row',
-                              justifyContent: 'space-evenly',
+                              display: "flex",
+                              flex: "row",
+                              justifyContent: "space-evenly",
                             }}
                           >
                             <Tooltip title="לאשר יום חופש">
@@ -266,9 +266,9 @@ export default function WorkersFreeday() {
                               >
                                 <TaskAltIcon
                                   style={{
-                                    color: 'green',
+                                    color: "green",
                                     fontSize:
-                                      worker.statusId === 2 ? '35px' : '1.5rem',
+                                      worker.statusId === 2 ? "35px" : "1.5rem",
                                   }}
                                 />
                               </IconButton>
@@ -281,9 +281,9 @@ export default function WorkersFreeday() {
                               >
                                 <SnoozeIcon
                                   style={{
-                                    color: 'blue',
+                                    color: "blue",
                                     fontSize:
-                                      worker.statusId === 0 ? '35px' : '1.5rem',
+                                      worker.statusId === 0 ? "35px" : "1.5rem",
                                   }}
                                 />
                               </IconButton>
@@ -297,9 +297,9 @@ export default function WorkersFreeday() {
                               >
                                 <DoDisturbIcon
                                   style={{
-                                    color: 'red',
+                                    color: "red",
                                     fontSize:
-                                      worker.statusId === 1 ? '35px' : '1.5rem',
+                                      worker.statusId === 1 ? "35px" : "1.5rem",
                                   }}
                                 />
                               </IconButton>
@@ -307,9 +307,9 @@ export default function WorkersFreeday() {
                           </div>
                         ) : (
                           <div>
-                            {worker.statusId === 0 ? 'מחכה לאישור' : ''}
-                            {worker.statusId === 1 ? 'סירוב' : ''}
-                            {worker.statusId === 2 ? 'מאושר' : ''}
+                            {worker.statusId === 0 ? "מחכה לאישור" : ""}
+                            {worker.statusId === 1 ? "סירוב" : ""}
+                            {worker.statusId === 2 ? "מאושר" : ""}
                           </div>
                         )}
                       </TableCell>
@@ -317,8 +317,8 @@ export default function WorkersFreeday() {
                         <Tooltip title="מחק בקשה ליום חופש">
                           <IconButton
                             style={{
-                              background: 'red',
-                              borderRadius: '12px',
+                              background: "red",
+                              borderRadius: "12px",
                             }}
                             onClick={() => {
                               cancelFreeDay(worker);
@@ -327,7 +327,7 @@ export default function WorkersFreeday() {
                             <DeleteForeverIcon
                               style={{
                                 fontSize: 40,
-                                color: 'rgba(255, 255, 255, 0.9)',
+                                color: "rgba(255, 255, 255, 0.9)",
                               }}
                             />
                           </IconButton>
@@ -343,7 +343,7 @@ export default function WorkersFreeday() {
 
       <div>
         <Dialog
-          sx={{ textAlign: 'right' }}
+          sx={{ textAlign: "right" }}
           fullWidth
           maxWidth="xs"
           open={showDialog}
@@ -354,16 +354,16 @@ export default function WorkersFreeday() {
               <Box
                 noValidate
                 component="form"
-                style={{ maxHeight: 600, overflowY: 'auto', padding: '5px' }}
+                style={{ maxHeight: 600, overflowY: "auto", padding: "5px" }}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  m: 'auto',
-                  width: 'fit-content',
+                  display: "flex",
+                  flexDirection: "column",
+                  m: "auto",
+                  width: "fit-content",
                 }}
               >
                 <div className="row">
-                  {' '}
+                  {" "}
                   <div className="col-xs-12">
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DesktopDatePicker
@@ -372,23 +372,23 @@ export default function WorkersFreeday() {
                         value={dayjs(currentWorkerFreeday?.startDateEN)}
                         onChange={(val) => {
                           onChange(
-                            'startDateEN',
-                            val?.format() || '01/01/2000'
+                            "startDateEN",
+                            val?.format() || "01/01/2000"
                           );
                         }}
                         slotProps={{
                           textField: {
                             sx: {
-                              '& .MuiInputLabel-root': {
+                              "& .MuiInputLabel-root": {
                                 right: 35,
-                                transformOrigin: 'top right',
+                                transformOrigin: "top right",
                               },
-                              '& .MuiInputLabel-shrink': {
-                                transform: 'translate(19px, -9px) scale(0.75)',
+                              "& .MuiInputLabel-shrink": {
+                                transform: "translate(19px, -9px) scale(0.75)",
                               },
-                              ' & .MuiOutlinedInput-root': {
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                  textAlign: 'right',
+                              " & .MuiOutlinedInput-root": {
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                  textAlign: "right",
                                 },
                               },
                             },
@@ -406,23 +406,23 @@ export default function WorkersFreeday() {
                         value={dayjs(currentWorkerFreeday?.finishDateEN)}
                         onChange={(val) => {
                           onChange(
-                            'finishDateEN',
-                            val?.format() || '01/01/2000'
+                            "finishDateEN",
+                            val?.format() || "01/01/2000"
                           );
                         }}
                         slotProps={{
                           textField: {
                             sx: {
-                              '& .MuiInputLabel-root': {
+                              "& .MuiInputLabel-root": {
                                 right: 35,
-                                transformOrigin: 'top right',
+                                transformOrigin: "top right",
                               },
-                              '& .MuiInputLabel-shrink': {
-                                transform: 'translate(19px, -9px) scale(0.75)',
+                              "& .MuiInputLabel-shrink": {
+                                transform: "translate(19px, -9px) scale(0.75)",
                               },
-                              ' & .MuiOutlinedInput-root': {
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                  textAlign: 'right',
+                              " & .MuiOutlinedInput-root": {
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                  textAlign: "right",
                                 },
                               },
                             },
@@ -440,7 +440,7 @@ export default function WorkersFreeday() {
                       dir="rtl"
                       label="הערה"
                       value={currentWorkerFreeday?.remark}
-                      onChange={(e) => onChange('remark', e.target.value)}
+                      onChange={(e) => onChange("remark", e.target.value)}
                     />
                   </div>
                 </div>
@@ -449,7 +449,7 @@ export default function WorkersFreeday() {
                 <Button
                   variant="outlined"
                   onClick={() => updateFreeDayFn(currentWorkerFreeday!)}
-                  style={{ marginTop: 40, fontSize: 20, width: '100%' }}
+                  style={{ marginTop: 40, fontSize: 20, width: "100%" }}
                 >
                   עדכן
                 </Button>

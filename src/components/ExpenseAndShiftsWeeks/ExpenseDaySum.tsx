@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { IExpenseAndShiftDay } from '../../Model/IExpenseAndShiftWeek';
+import { IExpenseAndShiftDay } from "../../Model";
 
 export type Props = {
   theDay: IExpenseAndShiftDay;
@@ -7,47 +6,46 @@ export type Props = {
 
 export function ExpenseDaySum({ theDay }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [day, setDay] = useState<IExpenseAndShiftDay>(theDay);
 
   function GetMoneyFormat(d: number) {
     return `₪${d
       .toFixed(1)
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-      .replace('.0', '')}`;
+      .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+      .replace(".0", "")}`;
   }
 
   return (
     <div
       className="row"
       style={{
-        background: 'aqua',
-        fontWeight: 'bold',
-        position: 'absolute',
+        background: "aqua",
+        fontWeight: "bold",
+        position: "absolute",
         bottom: 0,
-        width: '100%',
-        borderTop: '1px dashed black',
+        width: "100%",
+        borderTop: "1px dashed black",
       }}
     >
-      <div className="col-4">סהכ ({day.workers.length})</div>
+      <div className="col-4">סהכ ({theDay.workers.length})</div>
       <div
         className="col-4"
         style={{
-          textAlign: 'left',
+          textAlign: "left",
         }}
       >
-        {Math.floor(day.totalMinutes / 60)
+        {Math.floor(theDay.totalMinutes / 60)
           .toString()
-          .padStart(2, '0')}
-        :{(day.totalMinutes % 60).toString().padStart(2, '0')}
+          .padStart(2, "0")}
+        :{(theDay.totalMinutes % 60).toString().padStart(2, "0")}
       </div>
       <div
         className="col-4"
         style={{
-          textAlign: 'left',
-          paddingLeft: '3px',
+          textAlign: "left",
+          paddingLeft: "3px",
         }}
       >
-        {GetMoneyFormat(day.totalSum)}
+        {GetMoneyFormat(theDay.totalSum)}
       </div>
     </div>
   );

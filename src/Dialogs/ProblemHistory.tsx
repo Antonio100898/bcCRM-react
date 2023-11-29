@@ -10,10 +10,10 @@ import {
   Table,
   CircularProgress,
   Box,
-} from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { IProblem } from '../Model/IProblem';
-import { useUser } from '../Context/useUser';
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { IProblem } from "../Model";
+import { useUser } from "../Context/useUser";
 
 export type ProblemHistoryDialogProps = {
   open: boolean;
@@ -37,21 +37,21 @@ export function ProblemHistoryDialog({
   return (
     <Dialog
       dir="rtl"
-      sx={{ textAlign: 'right' }}
+      sx={{ textAlign: "right" }}
       fullWidth
       onClose={onClose}
       maxWidth="lg"
       open={open}
-      PaperProps={{ sx: { borderRadius: 6, maxWidth: '90%' } }}
+      PaperProps={{ sx: { borderRadius: 6, maxWidth: "90%" } }}
     >
       <DialogContent sx={{ p: 0, borderRadius: 0 }}>
         {loading ? (
           <Box
             sx={{
               p: 6,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <CircularProgress />
@@ -62,23 +62,23 @@ export function ProblemHistoryDialog({
               <Table
                 aria-label="תקלות"
                 sx={{
-                  '& .MuiTableCell-body': {
-                    fontFamily: 'Rubik',
+                  "& .MuiTableCell-body": {
+                    fontFamily: "Rubik",
                     fontWeight: 400,
-                    fontSize: '16px',
-                    textAlign: 'center',
-                    background: '#FEFEFE',
+                    fontSize: "16px",
+                    textAlign: "center",
+                    background: "#FEFEFE",
                   },
 
-                  '& .MuiTableCell-head': {
-                    background: '#E0E0E0',
-                    fontFamily: 'Rubik',
+                  "& .MuiTableCell-head": {
+                    background: "#E0E0E0",
+                    fontFamily: "Rubik",
                     fontWeight: 700,
-                    fontSize: '24px',
-                    textAlign: 'center',
+                    fontSize: "24px",
+                    textAlign: "center",
                   },
-                  '& .MuiTableRow-root:hover': {
-                    backgroundColor: '#E0E0E0',
+                  "& .MuiTableRow-root:hover": {
+                    backgroundColor: "#E0E0E0",
                   },
                 }}
               >
@@ -108,19 +108,19 @@ export function ProblemHistoryDialog({
                               {`${new Date(p!.startTimeEN)
                                 .getDate()
                                 .toString()
-                                .padStart(2, '0')}/${(
+                                .padStart(2, "0")}/${(
                                 new Date(p!.startTimeEN).getMonth() + 1
                               )
                                 .toString()
-                                .padStart(2, '0')}/${new Date(
+                                .padStart(2, "0")}/${new Date(
                                 p!.startTimeEN
                               ).getFullYear()} ${new Date(p!.startTimeEN)
                                 .getHours()
                                 .toString()
-                                .padStart(2, '0')}:${new Date(p!.startTimeEN)
+                                .padStart(2, "0")}:${new Date(p!.startTimeEN)
                                 .getMinutes()
                                 .toString()
-                                .padStart(2, '0')}`}
+                                .padStart(2, "0")}`}
                             </div>
                           </TableCell>
                           <TableCell>{p.workerCreateName}</TableCell>

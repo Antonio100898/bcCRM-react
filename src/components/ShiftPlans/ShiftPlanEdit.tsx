@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,17 +8,16 @@ import {
   TextField,
   Tooltip,
   Button,
-} from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
-import { useConfirm } from '../../Context/useConfirm';
+} from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { IshiftDetail } from "../../Model";
+import { useConfirm } from "../../Context/useConfirm";
 
 export type Props = {
   open: boolean;
@@ -46,7 +45,7 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
 
   const handleChange = (newValue: Dayjs | null) => {
     // console.log(newValue);
-    onChange('startDateEN', newValue?.format() || '01/01/2000');
+    onChange("startDateEN", newValue?.format() || "01/01/2000");
   };
 
   function GetDateTimeFormatEN(d: string) {
@@ -55,11 +54,11 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     ).getFullYear()}`;
   }
 
-  const updateShift = useCallback(() => {
+  const updateShift = useCallback(async () => {
     if (currentShift.startDateEN === undefined) {
       enqueueSnackbar({
-        message: 'אנא בחר שעת סיום',
-        variant: 'error',
+        message: "אנא בחר שעת סיום",
+        variant: "error",
       });
       return;
     }
@@ -68,52 +67,47 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     currentShift.finishTime = GetDateTimeFormatEN(currentShift.startDateEN);
     currentShift.finishTimeEN = GetDateTimeFormatEN(currentShift.startDateEN);
     currentShift.startDateEN = GetDateTimeFormatEN(currentShift.startDateEN);
+    try {
+      const data = await api.updateShiftPlan(currentShift);
 
-    api
-      .post('/UpdateShiftPlan', {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        shiftPlan: currentShift,
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
-          });
-          return;
-        }
+      if (!data.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
-        handleClose();
-      });
+    handleClose();
   }, [currentShift, enqueueSnackbar, handleClose]);
 
   const cancelShift = useCallback(async () => {
-    if (await confirm('האם את בטוחה שברצונך לבטל?')) {
-      api
-        .post('/CancelShiftPlan', {
-          workerKey: localStorage.getItem(TOKEN_KEY),
-          shiftPlanId: currentShift.id,
-        })
-        .then(({ data }) => {
-          // console.log(data.d);
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-              variant: 'error',
-            });
-            return;
-          }
+    if (currentShift.id && (await confirm("האם את בטוחה שברצונך לבטל?"))) {
+      try {
+        const data = await api.cancelShiftPlan(currentShift.id);
 
-          handleClose();
-        });
+        if (!data.d.success) {
+          enqueueSnackbar({
+            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+            variant: "error",
+          });
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      handleClose();
     }
   }, [confirm, currentShift.id, enqueueSnackbar, handleClose]);
 
   return (
     <Dialog
       dir="rtl"
-      sx={{ textAlign: 'right' }}
+      sx={{ textAlign: "right" }}
       fullWidth
       onClose={handleClose}
       maxWidth="xs"
@@ -126,9 +120,9 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
             variant="outlined"
             value={currentShift.shiftTypeId}
             onChange={(e) =>
-              onChange('shiftTypeId', parseInt(`${e.target.value}`, 10))
+              onChange("shiftTypeId", parseInt(`${e.target.value}`, 10))
             }
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           >
             <MenuItem value={1}>בוקר</MenuItem>
             <MenuItem value={2}>צהריים</MenuItem>
@@ -146,23 +140,23 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
           </LocalizationProvider>
           <TextField
             value={currentShift?.remark}
-            onChange={(e) => onChange('remark', e.target.value)}
+            onChange={(e) => onChange("remark", e.target.value)}
             placeholder="הערה"
             multiline
             rows={2}
             fullWidth
             style={{
-              background: '#FFFFFF',
+              background: "#FFFFFF",
               boxShadow:
-                '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-              borderRadius: '8px',
+                "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+              borderRadius: "8px",
             }}
           />
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginTop: '5px',
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "5px",
             }}
           >
             {currentShift &&
@@ -170,7 +164,7 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
               currentShift.id > 0 && (
                 <Tooltip title="מחק">
                   <IconButton onClick={cancelShift}>
-                    <DeleteIcon style={{ fontSize: 25, color: 'red' }} />
+                    <DeleteIcon style={{ fontSize: 25, color: "red" }} />
                   </IconButton>
                 </Tooltip>
               )}
@@ -178,13 +172,13 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
             <Button
               onClick={updateShift}
               style={{
-                width: '100%',
-                backgroundColor: '#FFAD4A',
-                fontFamily: 'Rubik',
-                fontSize: 'normal',
+                width: "100%",
+                backgroundColor: "#FFAD4A",
+                fontFamily: "Rubik",
+                fontSize: "normal",
               }}
             >
-              {currentShift ? 'עדכן' : 'הוסף חדש'}
+              {currentShift ? "עדכן" : "הוסף חדש"}
             </Button>
           </div>
         </div>

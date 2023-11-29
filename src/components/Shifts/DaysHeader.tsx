@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
-import { InputLabel, Tooltip, Typography } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { api } from '../../API/Api';
-import { IDayInfo } from '../../Model/IDayInfo';
-import { useConfirm } from '../../Context/useConfirm';
+import { useCallback, useEffect, useState } from "react";
+import { InputLabel, Tooltip, Typography } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { api } from "../../API/Api";
+import { useConfirm } from "../../Context/useConfirm";
+import { IDayInfo } from "../../Model";
 
 export type Props = {
   weekDaysAll: IDayInfo[];
@@ -32,12 +32,12 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
 
   const updateDayRemark = useCallback(
     async (day: IDayInfo) => {
-      const newRemark = await prompt('הזן הערה', day.remark || '');
-      if (newRemark === null || newRemark === '') {
+      const newRemark = await prompt("הזן הערה", day.remark || "");
+      if (newRemark === null || newRemark === "") {
         return;
       }
 
-      const updatedDay = {
+      const updatedDay: IDayInfo = {
         ...day,
         remark: newRemark.trim(),
         dayValue: GetDateTimeFormatEN(day.dayValueEN),
@@ -45,7 +45,7 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
 
       const workerKey = localStorage.getItem(TOKEN_KEY);
       api
-        .post('/UpdateShiftDayRemark', {
+        .post("/UpdateShiftDayRemark", {
           workerKey,
           day: updatedDay,
           shiftGroupID: shiftGroupId,
@@ -54,7 +54,7 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
           if (!data.d.success) {
             enqueueSnackbar({
               message: data.d.msg,
-              variant: 'error',
+              variant: "error",
             });
             return;
           }
@@ -74,7 +74,7 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
         .catch((error) => {
           enqueueSnackbar({
             message: error,
-            variant: 'error',
+            variant: "error",
           });
         });
     },
@@ -84,25 +84,25 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
   return (
     <div
       style={{
-        display: 'flex',
-        flex: 'row',
-        textAlign: 'center',
-        fontFamily: 'Rubik',
-        fontStyle: 'normal',
-        fontWeight: '700',
-        fontSize: '26px',
-        lineHeight: '35px',
-        marginRight: '40px',
-        background: '#F5F5F5',
-        minWidth: '1280px',
+        display: "flex",
+        flex: "row",
+        textAlign: "center",
+        fontFamily: "Rubik",
+        fontStyle: "normal",
+        fontWeight: "700",
+        fontSize: "26px",
+        lineHeight: "35px",
+        marginRight: "40px",
+        background: "#F5F5F5",
+        minWidth: "1280px",
       }}
     >
       <div
         style={{
-          display: 'flex',
-          alignItems: 'end',
-          minWidth: '180px',
-          paddingRight: '40px',
+          display: "flex",
+          alignItems: "end",
+          minWidth: "180px",
+          paddingRight: "40px",
         }}
       >
         סוג עובד
@@ -112,9 +112,9 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
           <div
             key={day.dayValue}
             style={{
-              width: '175px',
-              marginRight: '15px',
-              color: day.isToday ? 'blue' : 'black',
+              width: "175px",
+              marginRight: "15px",
+              color: day.isToday ? "blue" : "black",
             }}
           >
             <Typography variant="h5" fontWeight="bold" fontFamily="Rubik">
@@ -123,20 +123,20 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
             <Typography
               variant="h6"
               fontFamily="Rubik"
-              sx={{ color: day.holydayName ? 'inherit' : 'transparent' }}
+              sx={{ color: day.holydayName ? "inherit" : "transparent" }}
             >
-              {day.holydayName || '-'}
+              {day.holydayName || "-"}
             </Typography>
             <Typography variant="h6" fontWeight="bold" fontFamily="Rubik">
-              {day.dayValueEN.replaceAll('00:00', '')}
+              {day.dayValueEN.replaceAll("00:00", "")}
             </Typography>
-            <div style={{ display: 'flex', flex: 'row', marginBottom: '5px' }}>
+            <div style={{ display: "flex", flex: "row", marginBottom: "5px" }}>
               <Tooltip title={day.remark}>
                 <InputLabel
                   style={{
-                    border: '1px dashed ',
-                    width: '200px',
-                    minHeight: '20px',
+                    border: "1px dashed ",
+                    width: "200px",
+                    minHeight: "20px",
                   }}
                   onClick={() => {
                     updateDayRemark(day);

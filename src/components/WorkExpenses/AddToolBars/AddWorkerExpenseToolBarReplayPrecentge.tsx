@@ -1,28 +1,28 @@
-import '../WorkerExpenses.styles.css';
+import "../WorkerExpenses.styles.css";
 import {
   MenuItem,
   Select,
   TextField,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Dispatch,
   SetStateAction,
   useCallback,
   useEffect,
   useState,
-} from 'react';
-import SaveIcon from '@mui/icons-material/Save';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useSnackbar } from 'notistack';
-import { IWorkExpensesType } from '../../../Model/IWorkExpensesType';
-import { TOKEN_KEY } from '../../../Consts/Consts';
-import { api } from '../../../API/Api';
-import { useUser } from '../../../Context/useUser';
+} from "react";
+import SaveIcon from "@mui/icons-material/Save";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useSnackbar } from "notistack";
+import { IWorkExpensesType } from "../../../Model";
+import { TOKEN_KEY } from "../../../Consts/Consts";
+import { api } from "../../../API/Api";
+import { useUser } from "../../../Context/useUser";
 
 export type Props = {
   refreshlist: () => void;
@@ -36,9 +36,9 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
   setFilterYear,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
-  const [expensType, setExpensType] = useState('17');
-  const [sumExpens, setSumExpens] = useState('0');
-  const [remarkExpens, setRemarkExpens] = useState('');
+  const [expensType, setExpensType] = useState("17");
+  const [sumExpens, setSumExpens] = useState("0");
+  const [remarkExpens, setRemarkExpens] = useState("");
   const [expensDate, setExpensDate] = useState<Dayjs | null>(
     dayjs(new Date().toString())
   );
@@ -50,7 +50,7 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
 
   useEffect(() => {
     api
-      .post('/GetWorkExpensesTypesForWorker', {
+      .post("/GetWorkExpensesTypesForWorker", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         filterWorkerId: 0,
       })
@@ -58,8 +58,8 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -68,7 +68,7 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -93,8 +93,8 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
     const sum = Number.parseFloat(sumExpens);
     if (sum <= 0) {
       enqueueSnackbar({
-        message: 'אנא הזן אחוז מענה',
-        variant: 'error',
+        message: "אנא הזן אחוז מענה",
+        variant: "error",
       });
       return;
     }
@@ -106,7 +106,7 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
     updateShowLoader(true);
 
     api
-      .post('/AppendWorkerExpence', {
+      .post("/AppendWorkerExpence", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         startExpenceDate: expensDate?.toDate(),
         finishExpenceDate: expensDate?.toDate(),
@@ -120,8 +120,8 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
         if (!data.d) {
           updateShowLoader(false);
           enqueueSnackbar({
-            message: 'אין משתמש כזה',
-            variant: 'error',
+            message: "אין משתמש כזה",
+            variant: "error",
           });
           return;
         }
@@ -130,13 +130,13 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
           updateShowLoader(false);
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
 
-        setSumExpens('0');
-        setRemarkExpens('');
+        setSumExpens("0");
+        setRemarkExpens("");
         updateShowLoader(false);
         refreshlist();
       });
@@ -179,10 +179,10 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
       <div className="col-md-2 col-6">
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
-            views={['year', 'month']}
+            views={["year", "month"]}
             label="חודש"
-            minDate={dayjs('2022-01-01')}
-            maxDate={dayjs('2025-01-01')}
+            minDate={dayjs("2022-01-01")}
+            maxDate={dayjs("2025-01-01")}
             value={expensDate}
             onChange={(newValue: Dayjs | null) => {
               setExpensDate(newValue);
@@ -225,15 +225,15 @@ export default function AddWorkerExpenseToolBarReplayPrecentge({
         <IconButton
           onClick={saveWorkerExpence}
           style={{
-            background: '#F3BE80',
-            border: '1px solid rgba(0, 0, 0, 0.25)',
-            boxShadow: 'inset 0px 5px 10px rgba(0, 0, 0, 0.05)',
-            borderRadius: '12px',
+            background: "#F3BE80",
+            border: "1px solid rgba(0, 0, 0, 0.25)",
+            boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
+            borderRadius: "12px",
           }}
         >
           <Tooltip title="הוסף הוצאה חדשה">
             <SaveIcon
-              style={{ fontSize: 35, color: 'rgba(255, 255, 255, 0.9)' }}
+              style={{ fontSize: 35, color: "rgba(255, 255, 255, 0.9)" }}
             />
           </Tooltip>
         </IconButton>

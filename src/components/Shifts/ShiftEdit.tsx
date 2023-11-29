@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,19 +9,18 @@ import {
   Tooltip,
   Button,
   DialogTitle,
-} from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useSnackbar } from 'notistack';
-import { IWorker } from '../../Model/IWorker';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
-import { useConfirm } from '../../Context/useConfirm';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useSnackbar } from "notistack";
+import { IWorker, IshiftDetail } from "../../Model";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { useConfirm } from "../../Context/useConfirm";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   open: boolean;
@@ -47,8 +46,8 @@ export default function ShiftEdit({
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
   const [myWorkers, setMyWorkers] = useState<IWorker[]>([]);
-  const [startTime, setStartTime] = useState('00:00');
-  const [finishTime, setFinishTime] = useState('00:00');
+  const [startTime, setStartTime] = useState("00:00");
+  const [finishTime, setFinishTime] = useState("00:00");
 
   function GetTimeString(sTime: string | undefined) {
     const d = dayjs(sTime);
@@ -75,7 +74,7 @@ export default function ShiftEdit({
 
   function GetShiftPlans() {
     api
-      .post('/GetShiftPlansDetails', {
+      .post("/GetShiftPlansDetails", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         startTime: new Date(currentShift.startDateEN!).toDateString(),
         addDays: 1,
@@ -85,7 +84,7 @@ export default function ShiftEdit({
         if (!data.d.success) {
           enqueueSnackbar({
             message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -143,7 +142,7 @@ export default function ShiftEdit({
   );
 
   const handleChange = (newValue: Dayjs | null) => {
-    onChange('startDateEN', newValue?.format() || '01/01/2000');
+    onChange("startDateEN", newValue?.format() || "01/01/2000");
   };
 
   function GetDateTimeFormatEN(d: string, h: string) {
@@ -162,8 +161,8 @@ export default function ShiftEdit({
       currentShift.workerId === 0
     ) {
       enqueueSnackbar({
-        message: 'אנא בחר עובד',
-        variant: 'error',
+        message: "אנא בחר עובד",
+        variant: "error",
       });
       return;
     }
@@ -173,8 +172,8 @@ export default function ShiftEdit({
       currentShift.startDateEN === undefined
     ) {
       enqueueSnackbar({
-        message: 'אנא בחר שעת סיום',
-        variant: 'error',
+        message: "אנא בחר שעת סיום",
+        variant: "error",
       });
       return;
     }
@@ -193,7 +192,7 @@ export default function ShiftEdit({
     // console.log("shiftGroupId: " + shiftGroupId);
 
     api
-      .post('/UpdateShiftDetails', {
+      .post("/UpdateShiftDetails", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         shiftDetail: currentShift,
         shiftGroupId,
@@ -203,7 +202,7 @@ export default function ShiftEdit({
         if (!data.d.success) {
           enqueueSnackbar({
             message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
         }
 
@@ -220,9 +219,9 @@ export default function ShiftEdit({
 
   const cancelShift = useCallback(async () => {
     if (currentShift.workerId === user?.workerId || user?.userType === 1) {
-      if (await confirm('האם את בטוחה שברצונך לבטל?')) {
+      if (await confirm("האם את בטוחה שברצונך לבטל?")) {
         api
-          .post('/CancelShift', {
+          .post("/CancelShift", {
             workerKey: localStorage.getItem(TOKEN_KEY),
             shiftId: currentShift.id,
           })
@@ -230,7 +229,7 @@ export default function ShiftEdit({
             if (!data.d.success) {
               enqueueSnackbar({
                 message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-                variant: 'error',
+                variant: "error",
               });
               return;
             }
@@ -253,7 +252,7 @@ export default function ShiftEdit({
     <div>
       <Dialog
         dir="rtl"
-        sx={{ textAlign: 'right' }}
+        sx={{ textAlign: "right" }}
         fullWidth
         onClose={handleClose}
         maxWidth="xs"
@@ -268,9 +267,9 @@ export default function ShiftEdit({
               variant="outlined"
               value={currentShift.workerId}
               onChange={(e) =>
-                onChange('workerId', parseInt(`${e.target.value}`, 10))
+                onChange("workerId", parseInt(`${e.target.value}`, 10))
               }
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             >
               {myWorkers &&
                 myWorkers.map((worker: IWorker) => {
@@ -279,8 +278,8 @@ export default function ShiftEdit({
                       key={worker.Id}
                       value={worker.Id}
                       style={{
-                        color: worker.active ? 'blue' : 'black',
-                        fontWeight: worker.active ? 'bold' : 'normal',
+                        color: worker.active ? "blue" : "black",
+                        fontWeight: worker.active ? "bold" : "normal",
                       }}
                     >
                       {worker.workerName}
@@ -295,9 +294,9 @@ export default function ShiftEdit({
               variant="outlined"
               value={currentShift.jobTypeId}
               onChange={(e) =>
-                onChange('jobTypeId', parseInt(`${e.target.value}`, 10))
+                onChange("jobTypeId", parseInt(`${e.target.value}`, 10))
               }
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             >
               <MenuItem value={1}>ליווי והתקנה</MenuItem>
               <MenuItem value={2}>תומך</MenuItem>
@@ -311,9 +310,9 @@ export default function ShiftEdit({
               variant="outlined"
               value={currentShift.shiftTypeId}
               onChange={(e) =>
-                onChange('shiftTypeId', parseInt(`${e.target.value}`, 10))
+                onChange("shiftTypeId", parseInt(`${e.target.value}`, 10))
               }
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             >
               <MenuItem value={1}>בוקר</MenuItem>
               <MenuItem value={2}>צהריים</MenuItem>
@@ -330,14 +329,14 @@ export default function ShiftEdit({
                 onChange={handleChange}
               />
             </LocalizationProvider>
-            <div style={{ display: 'flex', flex: 'row' }}>
-              <div style={{ width: '50%' }}>
+            <div style={{ display: "flex", flex: "row" }}>
+              <div style={{ width: "50%" }}>
                 <Select
                   label="עד שעה"
                   variant="outlined"
                   value={finishTime}
                   onChange={(e) => setFinishTime(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                 >
                   {getHoursOptions().map((options: IOption) => (
                     <MenuItem key={options.label} value={options.value}>
@@ -346,13 +345,13 @@ export default function ShiftEdit({
                   ))}
                 </Select>
               </div>
-              <div style={{ width: '50%' }}>
+              <div style={{ width: "50%" }}>
                 <Select
                   label="משעה"
                   variant="outlined"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                 >
                   {getHoursOptions().map((options: IOption) => (
                     <MenuItem key={options.label} value={options.value}>
@@ -365,75 +364,75 @@ export default function ShiftEdit({
 
             <TextField
               value={currentShift?.remark}
-              onChange={(e) => onChange('remark', e.target.value)}
+              onChange={(e) => onChange("remark", e.target.value)}
               placeholder="הערה"
               multiline
               rows={2}
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
             <TextField
               value={currentShift?.placeName}
-              onChange={(e) => onChange('placeName', e.target.value)}
+              onChange={(e) => onChange("placeName", e.target.value)}
               label="עסק"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
 
             <TextField
               value={currentShift?.address}
-              onChange={(e) => onChange('address', e.target.value)}
+              onChange={(e) => onChange("address", e.target.value)}
               label="כתובת"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
 
             <TextField
               value={currentShift?.contactName}
-              onChange={(e) => onChange('contactName', e.target.value)}
+              onChange={(e) => onChange("contactName", e.target.value)}
               label="איש קשר"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
 
             <TextField
               value={currentShift?.phone}
-              onChange={(e) => onChange('phone', e.target.value)}
+              onChange={(e) => onChange("phone", e.target.value)}
               label="טלפון"
               placeholder="טלפון"
               fullWidth
               style={{
-                background: '#FFFFFF',
+                background: "#FFFFFF",
                 boxShadow:
-                  '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)',
-                borderRadius: '8px',
+                  "0px 2px 4px rgba(0, 0, 0, 0.25), inset 0px -4px 2px rgba(91, 91, 91, 0.1)",
+                borderRadius: "8px",
               }}
             />
             <div
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '5px',
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "5px",
               }}
             >
               {user?.userType === 1 &&
@@ -442,7 +441,7 @@ export default function ShiftEdit({
                 currentShift.id > 0 && (
                   <Tooltip title="מחק">
                     <IconButton onClick={cancelShift}>
-                      <DeleteIcon style={{ fontSize: 25, color: 'red' }} />
+                      <DeleteIcon style={{ fontSize: 25, color: "red" }} />
                     </IconButton>
                   </Tooltip>
                 )}
@@ -450,10 +449,10 @@ export default function ShiftEdit({
               <Button
                 onClick={updateShift}
                 style={{
-                  width: '100%',
-                  backgroundColor: '#FFAD4A',
-                  fontFamily: 'Rubik',
-                  fontSize: 'normal',
+                  width: "100%",
+                  backgroundColor: "#FFAD4A",
+                  fontFamily: "Rubik",
+                  fontSize: "normal",
                 }}
               >
                 שמור

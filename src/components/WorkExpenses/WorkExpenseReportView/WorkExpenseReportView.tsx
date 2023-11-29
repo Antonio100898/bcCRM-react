@@ -1,11 +1,11 @@
-import './WorkExpenseReportView.styles.css';
-import { useState, useEffect } from 'react';
-import DoneIcon from '@mui/icons-material/Done';
-import { Tooltip } from '@mui/material';
-import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
-import CancelWorkerExpenseBtn from './CancelWorkerExpenseBtn';
-import { IWorkExpensesType } from '../../../Model/IWorkExpensesType';
-import WorkExpenseEdit from '../WorkExpensesEdit/WorkExpenseEdit';
+import "./WorkExpenseReportView.styles.css";
+import { useState, useEffect } from "react";
+import DoneIcon from "@mui/icons-material/Done";
+import { Tooltip } from "@mui/material";
+import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
+import CancelWorkerExpenseBtn from "./CancelWorkerExpenseBtn";
+import { IWorkExpensesType } from "../../../Model";
+import WorkExpenseEdit from "../WorkExpensesEdit/WorkExpenseEdit";
 
 export type Props = {
   headerName: string;
@@ -45,30 +45,30 @@ export default function WorkExpenseReportView({
     <div
       className="row"
       style={{
-        marginTop: '25px',
-        boxSizing: 'border-box',
-        border: '1px solid #000000',
+        marginTop: "25px",
+        boxSizing: "border-box",
+        border: "1px solid #000000",
       }}
     >
       <div>
         <div
           className="row"
           style={{
-            boxSizing: 'border-box',
-            background: 'rgba(0, 0, 0, 0.025)',
-            border: '1px solid #000000',
-            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.1)',
+            boxSizing: "border-box",
+            background: "rgba(0, 0, 0, 0.025)",
+            border: "1px solid #000000",
+            boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
           }}
         >
           <p
             className="right col-9"
             style={{
-              fontFamily: 'Rubik',
-              fontStyle: 'normal',
-              fontWeight: '700',
-              fontSize: '28px',
-              lineHeight: '38px',
-              color: '#000000',
+              fontFamily: "Rubik",
+              fontStyle: "normal",
+              fontWeight: "700",
+              fontSize: "28px",
+              lineHeight: "38px",
+              color: "#000000",
             }}
           >
             {headerName}
@@ -76,8 +76,8 @@ export default function WorkExpenseReportView({
           <div
             className="col-1"
             style={{
-              background: '#FFFFFF',
-              borderRight: '1px solid rgba(0, 0, 0, 0.5)',
+              background: "#FFFFFF",
+              borderRight: "1px solid rgba(0, 0, 0, 0.5)",
             }}
           >
             <p className="sumLabel">סה&quot;כ</p>
@@ -86,13 +86,13 @@ export default function WorkExpenseReportView({
           <div
             className="col-2"
             style={{
-              background: '#FFFFFF',
+              background: "#FFFFFF",
             }}
           >
             <p className="sumValueText">
               {`₪${totalSum
                 .toFixed(1)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}`}
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")}`}
             </p>
           </div>
         </div>
@@ -106,31 +106,31 @@ export default function WorkExpenseReportView({
                       key={expense.id}
                       className="row"
                       style={{
-                        border: '1px dashed rgba(0, 0, 0, 0.25)',
-                        borderBottom: '1px solid rgba(0, 0, 0, 0.25)',
+                        border: "1px dashed rgba(0, 0, 0, 0.25)",
+                        borderBottom: "1px solid rgba(0, 0, 0, 0.25)",
                       }}
                     >
                       <div className="col-2 tableLblHeader right">
-                        {expense.startExpenseDate.toString().split(' ')[0]}
+                        {expense.startExpenseDate.toString().split(" ")[0]}
                       </div>
                       <div className="col-3 tableLblHeader right">
                         {expense.workerName}
                       </div>
                       <div
                         className="col-2 tableLblHeader right"
-                        style={{ display: 'flex', flex: 'row' }}
+                        style={{ display: "flex", flex: "row" }}
                       >
                         {expense.workExpensName}
                         {expense.freePass ? (
                           <Tooltip title="חופשי חודשי">
                             <AirlineSeatReclineExtraIcon
                               style={{
-                                transform: 'scaleX(-1)',
+                                transform: "scaleX(-1)",
                               }}
                             />
                           </Tooltip>
                         ) : (
-                          ''
+                          ""
                         )}
                       </div>
 
@@ -145,7 +145,7 @@ export default function WorkExpenseReportView({
                           <div className="col-2">
                             {expense.approved && (
                               <Tooltip title="הוצאה מאושרת">
-                                <DoneIcon style={{ color: 'green' }} />
+                                <DoneIcon style={{ color: "green" }} />
                               </Tooltip>
                             )}
                           </div>

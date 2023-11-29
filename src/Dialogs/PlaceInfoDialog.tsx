@@ -12,9 +12,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useCallback, useState } from "react";
 import { useSnackbar } from "notistack";
-import { IPlace } from "../Model/IPlace";
+import { IPlace, IProblemsResponse } from "../Model";
 import { useUser } from "../Context/useUser";
-import { IProblemsResponse } from "../Model/IProblem";
 import { api } from "../API/Api";
 
 export type PlaceInfoDialogProps = {

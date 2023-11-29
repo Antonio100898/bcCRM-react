@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import ArticleIcon from "@mui/icons-material/Article";
 import { useSnackbar } from "notistack";
 import { ShiftPlansWeek } from "../../components/ShiftPlans/ShiftPlansWeek";
-import { IshiftWeek } from "../../Model/IShifsForShiftType";
+import { IshiftWeek } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { api } from "../../API/Api";
 import { ExcelShiftPlans } from "../../components/Excel/ExcelShiftPlans";

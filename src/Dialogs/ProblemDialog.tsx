@@ -25,17 +25,20 @@ import {
 import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
 import { PlaceInfoDialog } from "./PlaceInfoDialog";
-import { IProblem } from "../Model/IProblem";
+import {
+  IProblem,
+  IPlace,
+  IDepartment,
+  IProblemSummeryResponse,
+  IChatLinesResponse,
+  IMsgLine,
+} from "../Model";
 import { useUser } from "../Context/useUser";
-import { IPlace } from "../Model/IPlace";
-import { IDepartment } from "../Model/IWorker";
 import { api } from "../API/Api";
 import { TOKEN_KEY } from "../Consts/Consts";
-import { IProblemSummeryResponse } from "../Model/HeaderSummery";
 import { ProblemAlert } from "../components/Problems/ProblemAlert";
 import ProblemInfo from "../components/ProblemInfo";
 import ProblemActions from "../components/ProblemActions";
-import { IChatLinesResponse, IMsgLine } from "../Model/IMsgLine";
 
 export type ProblemDialogProps = {
   open: boolean;

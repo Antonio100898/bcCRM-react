@@ -5,13 +5,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IWorker } from '../../Model/IWorker';
-import WorkersHeader from '../../components/Workers/WorkersHeader';
-import { useUser } from '../../Context/useUser';
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { IWorker } from "../../Model";
+import WorkersHeader from "../../components/Workers/WorkersHeader";
+import { useUser } from "../../Context/useUser";
 
 export default function WorkersCars() {
   const { updateShowLoader } = useUser();
@@ -23,7 +23,7 @@ export default function WorkersCars() {
     const workerKey = localStorage.getItem(TOKEN_KEY);
     // console.log("Start GetWorkersCars");
     api
-      .post('/GetWorkersCars', {
+      .post("/GetWorkersCars", {
         workerKey,
       })
       .then(({ data }) => {
@@ -49,8 +49,8 @@ export default function WorkersCars() {
             stickyHeader
             aria-label="תקלות"
             sx={{
-              '& .MuiTableRow-root:hover': {
-                backgroundColor: 'primary.light',
+              "& .MuiTableRow-root:hover": {
+                backgroundColor: "primary.light",
               },
             }}
           >

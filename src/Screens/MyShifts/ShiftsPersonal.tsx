@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { IshiftDetail } from '../../Model/IShifsForShiftType';
-import DateSelect from '../../components/Shifts/DateSelect';
-import WorkerShift from '../../components/ShiftsPersonal/WorkerShift';
-import { useUser } from '../../Context/useUser';
+import { useCallback, useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { IshiftDetail } from "../../Model";
+import DateSelect from "../../components/Shifts/DateSelect";
+import WorkerShift from "../../components/ShiftsPersonal/WorkerShift";
+import { useUser } from "../../Context/useUser";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -27,7 +27,7 @@ export default function ShiftsPersonal() {
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
     api
-      .post('/GetShiftsForWorker', {
+      .post("/GetShiftsForWorker", {
         workerKey,
         startTime: startDate,
       })
@@ -35,7 +35,7 @@ export default function ShiftsPersonal() {
         if (!data.d.success) {
           enqueueSnackbar({
             message: data.d.msg,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -48,7 +48,7 @@ export default function ShiftsPersonal() {
 
         enqueueSnackbar({
           message: error,
-          variant: 'error',
+          variant: "error",
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,7 +63,7 @@ export default function ShiftsPersonal() {
     <div>
       <h2>המשמרות שלי</h2>
       <DateSelect setDate={setStartDate} />
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ marginTop: "10px" }}>
         {shifts &&
           shifts.map((day: IshiftDetail) => (
             <WorkerShift key={day.id} shift={day} />
