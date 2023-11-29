@@ -1,11 +1,10 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import { IconButton, Tooltip } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import { useCallback } from 'react';
-import { api } from '../../../API/Api';
-import { TOKEN_KEY } from '../../../Consts/Consts';
-import { useConfirm } from '../../../Context/useConfirm';
-import { useUser } from '../../../Context/useUser';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton, Tooltip } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { api } from "../../../API/Api";
+import { TOKEN_KEY } from "../../../Consts/Consts";
+import { useConfirm } from "../../../Context/useConfirm";
+import { useUser } from "../../../Context/useUser";
 
 export type Props = {
   workerExpenceId: string;
@@ -22,45 +21,42 @@ export default function CancelWorkerExpenseBtn({
 
   // console.log(workerExpenceId);
 
-  const deleteExpense = useCallback(
-    async (expenseId: string) => {
-      // console.log("DeleteExpense Clicked " + expenseId);
-      // const proceed = prompt("אנא כתוב yes במידה וברצונך למחוק");
+  const deleteExpense = async (expenseId: string) => {
+    // console.log("DeleteExpense Clicked " + expenseId);
+    // const proceed = prompt("אנא כתוב yes במידה וברצונך למחוק");
 
-      // if (proceed === "yes") {
-      if (await confirm('האם אתה בטוח שברצונך למחוק?')) {
-        api
-          .post('/CancelWorkerExpenses', {
-            workerKey: localStorage.getItem(TOKEN_KEY),
-            expenseId,
-          })
-          .then(({ data }) => {
-            if (!data.d) {
-              updateShowLoader(false);
-              enqueueSnackbar({
-                message: 'אין משתמש כזה',
-                variant: 'error',
-              });
-
-              return;
-            }
-            if (!data.d.success) {
-              updateShowLoader(false);
-              enqueueSnackbar({
-                message: data.d.msg,
-                variant: 'error',
-              });
-
-              return;
-            }
-
+    // if (proceed === "yes") {
+    if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
+      api
+        .post("/CancelWorkerExpenses", {
+          workerKey: localStorage.getItem(TOKEN_KEY),
+          expenseId,
+        })
+        .then(({ data }) => {
+          if (!data.d) {
             updateShowLoader(false);
-            refreshlist();
-          });
-      }
-    },
-    [confirm, enqueueSnackbar, refreshlist, updateShowLoader]
-  );
+            enqueueSnackbar({
+              message: "אין משתמש כזה",
+              variant: "error",
+            });
+
+            return;
+          }
+          if (!data.d.success) {
+            updateShowLoader(false);
+            enqueueSnackbar({
+              message: data.d.msg,
+              variant: "error",
+            });
+
+            return;
+          }
+
+          updateShowLoader(false);
+          refreshlist();
+        });
+    }
+  };
 
   return (
     <IconButton
@@ -76,7 +72,7 @@ export default function CancelWorkerExpenseBtn({
       //   }}
     >
       <Tooltip title="מחק">
-        <DeleteIcon style={{ fontSize: 25, color: 'red' }} />
+        <DeleteIcon style={{ fontSize: 25, color: "red" }} />
       </Tooltip>
     </IconButton>
   );

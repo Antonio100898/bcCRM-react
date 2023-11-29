@@ -1,7 +1,7 @@
 // import { Chip, Popper } from "@material-ui/core";
 import { InfoOutlined } from "@mui/icons-material";
 import { Chip, Popper, Typography } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IWorker } from "../../Model";
 import "./WorkersList.styles.css";
 
@@ -18,7 +18,7 @@ export function ToWorkersList({
     (EventTarget & HTMLDivElement) | null
   >(null);
 
-  const onClose = useCallback(() => setAnchorEl(null), []);
+  const onClose = () => setAnchorEl(null);
 
   useEffect(() => {
     if (!selectedWorkers.length) {
@@ -27,11 +27,8 @@ export function ToWorkersList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWorkers]);
 
-  const onOpen = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-      selectedWorkers.length && setAnchorEl(e.currentTarget),
-    [selectedWorkers]
-  );
+  const onOpen = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+    selectedWorkers.length && setAnchorEl(e.currentTarget);
 
   return (
     <div onMouseEnter={onOpen}>

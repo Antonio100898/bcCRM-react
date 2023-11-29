@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { IconButton, Tooltip } from "@mui/material";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
@@ -40,7 +40,7 @@ export default function ShiftPlan({
     refreshList();
   };
 
-  const showEmptyShift = useCallback(async () => {
+  const showEmptyShift = async () => {
     if (currentShift === null || currentShift.id === 0) {
       const d: Partial<IshiftDetail> = {
         id: 0,
@@ -74,9 +74,9 @@ export default function ShiftPlan({
 
       setShowEditShift(true);
     }
-  }, [currentShift, defDate, enqueueSnackbar, shiftTypeId]);
+  };
 
-  const addNewShiftPlan = useCallback(async () => {
+  const addNewShiftPlan = async () => {
     const d: Partial<IshiftDetail> = {
       id: 0,
       workerId: user!.workerId,
@@ -100,7 +100,7 @@ export default function ShiftPlan({
     } catch (error) {
       console.error(error);
     }
-  }, [defDate, enqueueSnackbar, refreshList, shiftTypeId, user]);
+  };
 
   return (
     <div

@@ -22,7 +22,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { useCallback } from "react";
 import { useSnackbar } from "notistack";
 import { IPlace, IProblem, IProblemsResponse } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
@@ -45,7 +44,7 @@ export default function SpeedDialAddNumber() {
 
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
-  const getPlaces = useCallback(() => {
+  const getPlaces = () => {
     api
       .post<IProblemsResponse>("/GetPlacesForPhone", {
         phone,
@@ -55,7 +54,7 @@ export default function SpeedDialAddNumber() {
           setPlacesOptions(data.d.places);
         }
       });
-  }, [phone]);
+  };
 
   React.useEffect(() => {
     if (phone && phone.length > 6) {
@@ -71,63 +70,52 @@ export default function SpeedDialAddNumber() {
     setShowSelectPlace(true);
   };
 
-  const selectPlace = useCallback(
-    (place: IPlace) => {
-      const problem: Partial<IProblem> = {
-        workerKey,
-        workerCreateName: user?.workerName || "",
-        customerName: place.customerName,
-        phoneId: place.phoneId,
-        phone: place.phone,
-        departmentId: user?.department,
-        emergencyId: 0,
-        placeId: place.placeId,
-        placeName: place.placeName,
-        toWorkers: [],
-        newFiles: [],
-        startTime: `${new Date().toLocaleString()}`,
-        startTimeEN: new Date().toString(),
-        problemTypes: [],
-      };
-
-      api
-        .post<IProblemsResponse>("/UpdateProblem", {
-          problem,
-        })
-        .then(({ data }) => {
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-              variant: "error",
-            });
-            return;
-          }
-
-          problem.id = data.d.problemId!;
-          problem.toWorker = data.d.workerId;
-
-          updateCurrentProblem(problem);
-          updateShowProblemDialog(true);
-
-          if (!window.location.href.endsWith("/Problems")) {
-            history("/Problems");
-          }
-        });
-
-      setShowSelectPlace(false);
-    },
-    [
-      enqueueSnackbar,
-      history,
-      updateCurrentProblem,
-      updateShowProblemDialog,
-      user?.department,
-      user?.workerName,
+  const selectPlace = (place: IPlace) => {
+    const problem: Partial<IProblem> = {
       workerKey,
-    ]
-  );
+      workerCreateName: user?.workerName || "",
+      customerName: place.customerName,
+      phoneId: place.phoneId,
+      phone: place.phone,
+      departmentId: user?.department,
+      emergencyId: 0,
+      placeId: place.placeId,
+      placeName: place.placeName,
+      toWorkers: [],
+      newFiles: [],
+      startTime: `${new Date().toLocaleString()}`,
+      startTimeEN: new Date().toString(),
+      problemTypes: [],
+    };
 
-  const InputNewPlace = useCallback(() => {
+    api
+      .post<IProblemsResponse>("/UpdateProblem", {
+        problem,
+      })
+      .then(({ data }) => {
+        if (!data.d.success) {
+          enqueueSnackbar({
+            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
+            variant: "error",
+          });
+          return;
+        }
+
+        problem.id = data.d.problemId!;
+        problem.toWorker = data.d.workerId;
+
+        updateCurrentProblem(problem);
+        updateShowProblemDialog(true);
+
+        if (!window.location.href.endsWith("/Problems")) {
+          history("/Problems");
+        }
+      });
+
+    setShowSelectPlace(false);
+  };
+
+  const InputNewPlace = () => {
     if (newPlaceName && newPlaceName?.length === 0) {
       enqueueSnackbar({
         message: "אנא הזן שם מקום חדש",
@@ -211,18 +199,7 @@ export default function SpeedDialAddNumber() {
           getPlaces();
         }
       });
-  }, [
-    newPlaceName,
-    newCusName,
-    phone,
-    user?.key,
-    newPlaceId,
-    newRemark,
-    newVip,
-    enqueueSnackbar,
-    selectPlace,
-    getPlaces,
-  ]);
+  };
 
   function EditPlace(placeId: number) {
     const place: IPlace[] =

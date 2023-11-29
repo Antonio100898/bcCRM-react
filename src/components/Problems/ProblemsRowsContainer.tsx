@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { IProblem } from "../../Model";
 import { ProblemRow } from "./ProblemRow";
@@ -30,15 +30,12 @@ export function ProblemsRowsContainer({ someProblems }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [someProblems]);
 
-  const showProblemEdit = useCallback(
-    (problem: IProblem) => {
-      // problem.workerKey = localStorage.getItem(TOKEN_KEY);
+  const showProblemEdit = (problem: IProblem) => {
+    // problem.workerKey = localStorage.getItem(TOKEN_KEY);
 
-      updateCurrentProblem(problem);
-      updateShowProblemDialog(true);
-    },
-    [updateCurrentProblem, updateShowProblemDialog]
-  );
+    updateCurrentProblem(problem);
+    updateShowProblemDialog(true);
+  };
 
   return (
     <div className="App" style={{ marginRight: 10, borderLeft: "0px" }}>

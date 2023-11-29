@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
-import { IshiftDetail } from '../../Model';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Box, IconButton, Tooltip } from '@mui/material';
-import './Shift.styles.css';
-import InfoIcon from '@mui/icons-material/Info';
-import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
-import PersonIcon from '@mui/icons-material/Person';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { useSnackbar } from 'notistack';
-import { api } from '../../API/Api';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import ShiftEdit from './ShiftEdit';
+import { useEffect, useState } from "react";
+import { IshiftDetail } from "../../Model";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Box, IconButton, Tooltip } from "@mui/material";
+import "./Shift.styles.css";
+import InfoIcon from "@mui/icons-material/Info";
+import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
+import PersonIcon from "@mui/icons-material/Person";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useSnackbar } from "notistack";
+import { api } from "../../API/Api";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import ShiftEdit from "./ShiftEdit";
 
 const FONST_SIZE = 24;
 
@@ -47,22 +47,21 @@ export default function Shift({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
 
-  const handleCloseEdit = useCallback(() => {
+  const handleCloseEdit = () => {
     setShowEditShift(false);
     refreshList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shift]);
+  };
 
-  const showEmptyShift = useCallback(() => {
+  const showEmptyShift = () => {
     const d: Partial<IshiftDetail> = {
       id: 0,
       workerId: 199,
       jobTypeId,
       shiftTypeId,
-      placeName: '',
-      phone: '',
-      remark: '',
-      contactName: '',
+      placeName: "",
+      phone: "",
+      remark: "",
+      contactName: "",
       startDate: defDate.toString(),
       finishTime: defDate.toString(),
       startDateEN: defDate.toString(),
@@ -74,10 +73,10 @@ export default function Shift({
     // console.log([d, defDate]);
     setCurrentShift(d);
     setShowEditShift(true);
-  }, [defDate, jobTypeId, shiftTypeId]);
+  };
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
-    event.dataTransfer.setData('text', event.currentTarget.id);
+    event.dataTransfer.setData("text", event.currentTarget.id);
   };
   const enableDropping = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -85,7 +84,7 @@ export default function Shift({
 
   function UpdateShiftStartDate(id: number) {
     api
-      .post('/UpdateShiftStartDate', {
+      .post("/UpdateShiftStartDate", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         shiftId: id,
         newDate: defDate,
@@ -95,7 +94,7 @@ export default function Shift({
         if (!data.d.success) {
           enqueueSnackbar({
             message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: 'error',
+            variant: "error",
           });
           return;
         }
@@ -105,30 +104,30 @@ export default function Shift({
   }
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    const idName = event.dataTransfer.getData('text');
+    const idName = event.dataTransfer.getData("text");
 
-    const id = parseInt(idName.replace('shift', ''), 10);
+    const id = parseInt(idName.replace("shift", ""), 10);
     UpdateShiftStartDate(id);
   };
 
   function getDayName(dayNum: number) {
     switch (dayNum) {
       case 0:
-        return 'א';
+        return "א";
       case 1:
-        return 'ב';
+        return "ב";
       case 2:
-        return 'ג';
+        return "ג";
       case 3:
-        return 'ד';
+        return "ד";
       case 4:
-        return 'ה';
+        return "ה";
       case 5:
-        return 'ו';
+        return "ו";
       case 6:
-        return 'ש';
+        return "ש";
       default:
-        return 'X';
+        return "X";
     }
   }
 
@@ -140,27 +139,27 @@ export default function Shift({
           draggable="true"
           onDragStart={handleDragStart}
           onClick={() => setShowEditShift(true)}
-          style={{ overflow: 'hidden' }}
+          style={{ overflow: "hidden" }}
         >
           <div
             className="shiftDivTop text"
             style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              color: currentShift!.workerName === 'עובד כללי' ? 'red' : 'black',
-              position: 'relative',
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              color: currentShift!.workerName === "עובד כללי" ? "red" : "black",
+              position: "relative",
             }}
           >
             {currentShift!.workerName}
             <div
               style={{
-                position: 'absolute',
-                right: '0px',
-                fontSize: '16px',
-                opacity: '0.2',
-                margin: '3px',
-                color: 'black',
+                position: "absolute",
+                right: "0px",
+                fontSize: "16px",
+                opacity: "0.2",
+                margin: "3px",
+                color: "black",
               }}
             >
               {getDayName(defDate.getDay())}
@@ -170,15 +169,15 @@ export default function Shift({
           {currentShift!.placeName && (
             <div
               className="shiftDivMiddle textSmall"
-              style={{ position: 'relative' }}
+              style={{ position: "relative" }}
             >
               <div
                 style={{
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
                   width: `calc(100% - ${FONST_SIZE + 8}px)`,
-                  textAlign: 'right',
+                  textAlign: "right",
                 }}
               >
                 {currentShift!.placeName}
@@ -188,8 +187,8 @@ export default function Shift({
                   title={
                     <h3
                       style={{
-                        color: 'lightblue',
-                        textAlign: 'right',
+                        color: "lightblue",
+                        textAlign: "right",
                       }}
                     >
                       {currentShift!.remark}
@@ -198,9 +197,9 @@ export default function Shift({
                 >
                   <InfoIcon
                     style={{
-                      color: 'blue',
+                      color: "blue",
                       fontSize: `${FONST_SIZE}px`,
-                      position: 'absolute',
+                      position: "absolute",
                       top: 7,
                       left: 3,
                     }}
@@ -245,11 +244,11 @@ export default function Shift({
       {currentShift.id === 0 && (
         <div
           style={{
-            width: '100%',
-            justifyContent: 'center',
-            borderRadius: '10px',
-            border: '1px dotted black',
-            borderStyle: 'dotted',
+            width: "100%",
+            justifyContent: "center",
+            borderRadius: "10px",
+            border: "1px dotted black",
+            borderStyle: "dotted",
           }}
         >
           <IconButton onClick={showEmptyShift}>

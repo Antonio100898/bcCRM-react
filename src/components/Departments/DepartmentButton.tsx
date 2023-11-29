@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { api } from "../../API/Api";
@@ -23,7 +23,7 @@ function DepartmentButton({ count, text, department }: Props) {
   } = useUser();
   const history = useNavigate();
 
-  const getProblems = useCallback(() => {
+  const getProblems = () => {
     api.getProblems(department || "-1").then((data) => {
       if (data) {
         updateSelectedDepartmentId(parseInt(department, 10));
@@ -37,15 +37,7 @@ function DepartmentButton({ count, text, department }: Props) {
         history("/Problems");
       }
     });
-  }, [
-    department,
-    history,
-    updateAllProblems,
-    updateRefreshProblemCount,
-    updateRefreshProblems,
-    updateSelectedDepartmentId,
-    updateShowLoader,
-  ]);
+  };
 
   useEffect(() => {
     if (refreshProblems && selectedDepartmentId === parseInt(department, 10)) {

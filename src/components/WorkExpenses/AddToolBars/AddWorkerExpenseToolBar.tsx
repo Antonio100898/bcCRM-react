@@ -6,13 +6,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -91,7 +85,7 @@ export default function AddWorkerExpenseToolBar({
     setExpensDate(newValue);
   };
 
-  const saveWorkerExpence = useCallback(() => {
+  const saveWorkerExpence = () => {
     const sum = Number.parseFloat(sumExpens);
     if (sum <= 0) {
       enqueueSnackbar({
@@ -142,17 +136,7 @@ export default function AddWorkerExpenseToolBar({
         updateShowLoader(false);
         refreshlist();
       });
-  }, [
-    enqueueSnackbar,
-    expensDate,
-    expensType,
-    freePass,
-    refreshlist,
-    remarkExpens,
-    sumExpens,
-    updateShowLoader,
-    workerExpensesTypes,
-  ]);
+  };
 
   return (
     <div id="divAddControls" className="row" style={{ marginTop: 20 }}>

@@ -1,13 +1,7 @@
 import { useSnackbar } from "notistack";
 import { api } from "../../API/Api";
 import { CrmFile, IProblem } from "../../Model";
-import {
-  useCallback,
-  useState,
-  useRef,
-  SetStateAction,
-  ChangeEvent,
-} from "react";
+import { useState, useRef, SetStateAction, ChangeEvent } from "react";
 import { useUser } from "../../Context/useUser";
 import { IMAGES_PATH_PROBLEMS } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
@@ -38,9 +32,9 @@ export default function ProblemFiles({ myProblem, setSelfProblem }: Props) {
 
   const { updateRefreshProblems } = useUser();
 
-  const handleDrag = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
     setDragActive(event.type === "dragenter" || event.type === "dragover");
-  }, []);
+  };
 
   const toBase64 = (file: Blob): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -52,141 +46,122 @@ export default function ProblemFiles({ myProblem, setSelfProblem }: Props) {
       reader.onerror = (error) => reject(error);
     });
 
-  const deleteFile = useCallback(
-    async (f: string) => {
-      setFileInput("");
+  const deleteFile = async (f: string) => {
+    setFileInput("");
 
-      if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
-        try {
-          const data = await api.deleteFile(f, myProblem.id);
-          if (data.d.success) {
-            setSelfProblem((prevProblem) => ({
-              ...prevProblem,
-              files: prevProblem.files.filter((i) => i !== f),
-            }));
-            updateRefreshProblems(true);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    },
-    [confirm, myProblem.id, updateRefreshProblems, setSelfProblem]
-  );
-  const uploadFiles = useCallback(
-    async (inputFiles: FileList | null, isClipboard = false) => {
-      if (inputFiles) {
-        const promises: Promise<CrmFile>[] = [];
-        const filteredFiles: File[] = [];
-
-        for (let i = 0; i < inputFiles.length; i += 1) {
-          if (
-            isClipboard ||
-            !(myProblem.files || []).includes(
-              `${myProblem.id}_${inputFiles?.[i].name || "file.what"}`
-                .replaceAll("-", "_")
-                .replaceAll(" ", "_")
-            )
-          ) {
-            filteredFiles.push(inputFiles?.[i]);
-          } else {
-            enqueueSnackbar(`הקובץ הזה כבר עלה ${inputFiles?.[i].name}`);
-          }
-        }
-
-        for (let i = 0; i < filteredFiles.length; i += 1) {
-          promises.push(
-            toBase64(filteredFiles[i]).then((base64) => ({
-              filename: `${isClipboard ? `${Date.now()}_` : ""}${
-                myProblem.id
-              }_${filteredFiles?.[i].name || "file.what"}`
-                .replaceAll("-", "_")
-                .replaceAll(" ", "_"),
-              content: base64,
-            }))
-          );
-        }
-
-        if (promises.length === 0) {
-          setFileInput("");
-          return;
-        }
-
-        setFileLoading(true);
-        const files = await Promise.all(promises);
-
-        const updatedProblem = {
-          ...myProblem,
-          crmFiles: [...(myProblem.crmFiles || []), ...files],
-          files: [
-            ...(myProblem.files || []),
-            ...(files || []).map((f) => f.filename),
-          ],
-        };
-
-        try {
-          const data = await api.uploadProblemFiles(updatedProblem, {
-            signal: abortController.signal,
-            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-              const percentCompleted = Math.round(
-                (progressEvent.loaded * 100) / (progressEvent.total || 1)
-              );
-              setFileProgress(percentCompleted === 100 ? -1 : percentCompleted);
-            },
-          });
-          if (data?.d.success) {
-            setSelfProblem({
-              ...updatedProblem,
-              files: [...new Set(data.d.filesName as string[])],
-            });
-          }
-        } catch (error) {
-          enqueueSnackbar({
-            message: `נכשל לטעון קבצים.`,
-            variant: "error",
-          });
-        } finally {
-          setFileLoading(false);
+    if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
+      try {
+        const data = await api.deleteFile(f, myProblem.id);
+        if (data.d.success) {
+          setSelfProblem((prevProblem) => ({
+            ...prevProblem,
+            files: prevProblem.files.filter((i) => i !== f),
+          }));
           updateRefreshProblems(true);
         }
+      } catch (error) {
+        console.error(error);
       }
-    },
-    [
-      abortController.signal,
-      enqueueSnackbar,
-      myProblem,
-      setFileLoading,
-      updateRefreshProblems,
-      setSelfProblem,
-    ]
-  );
+    }
+  };
+  const uploadFiles = async (
+    inputFiles: FileList | null,
+    isClipboard = false
+  ) => {
+    if (inputFiles) {
+      const promises: Promise<CrmFile>[] = [];
+      const filteredFiles: File[] = [];
 
-  const handleDrop = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.stopPropagation();
-      event.preventDefault();
-      setDragActive(event.type === "dragover");
-
-      if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
-        uploadFiles(event.dataTransfer.files);
+      for (let i = 0; i < inputFiles.length; i += 1) {
+        if (
+          isClipboard ||
+          !(myProblem.files || []).includes(
+            `${myProblem.id}_${inputFiles?.[i].name || "file.what"}`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_")
+          )
+        ) {
+          filteredFiles.push(inputFiles?.[i]);
+        } else {
+          enqueueSnackbar(`הקובץ הזה כבר עלה ${inputFiles?.[i].name}`);
+        }
       }
-    },
-    [uploadFiles]
-  );
 
-  const handleUploadFile = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      setFileInput(e.target.value);
-      uploadFiles(e.target.files);
-    },
-    [uploadFiles]
-  );
+      for (let i = 0; i < filteredFiles.length; i += 1) {
+        promises.push(
+          toBase64(filteredFiles[i]).then((base64) => ({
+            filename: `${isClipboard ? `${Date.now()}_` : ""}${myProblem.id}_${
+              filteredFiles?.[i].name || "file.what"
+            }`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_"),
+            content: base64,
+          }))
+        );
+      }
 
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent<HTMLDivElement>) =>
-      uploadFiles(e.clipboardData.files, true),
-    [uploadFiles]
-  );
+      if (promises.length === 0) {
+        setFileInput("");
+        return;
+      }
+
+      setFileLoading(true);
+      const files = await Promise.all(promises);
+
+      const updatedProblem = {
+        ...myProblem,
+        crmFiles: [...(myProblem.crmFiles || []), ...files],
+        files: [
+          ...(myProblem.files || []),
+          ...(files || []).map((f) => f.filename),
+        ],
+      };
+
+      try {
+        const data = await api.uploadProblemFiles(updatedProblem, {
+          signal: abortController.signal,
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            setFileProgress(percentCompleted === 100 ? -1 : percentCompleted);
+          },
+        });
+        if (data?.d.success) {
+          setSelfProblem({
+            ...updatedProblem,
+            files: [...new Set(data.d.filesName as string[])],
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar({
+          message: `נכשל לטעון קבצים.`,
+          variant: "error",
+        });
+      } finally {
+        setFileLoading(false);
+        updateRefreshProblems(true);
+      }
+    }
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setDragActive(event.type === "dragover");
+
+    if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
+      uploadFiles(event.dataTransfer.files);
+    }
+  };
+
+  const handleUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    setFileInput(e.target.value);
+    uploadFiles(e.target.files);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) =>
+    uploadFiles(e.clipboardData.files, true);
 
   return (
     <Box

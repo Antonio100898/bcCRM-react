@@ -7,7 +7,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,7 +30,7 @@ function HardwareCenter() {
   const [showAddHardware, setShowAddHardware] = useState(false);
   const [showHardwareInfo, setShowHardwareInfo] = useState(false);
 
-  const getHardwaresCount = useCallback(async () => {
+  const getHardwaresCount = async () => {
     try {
       const data = await api.getHardwareCounts(barcode);
       if (data?.d.success) {
@@ -39,14 +39,14 @@ function HardwareCenter() {
     } catch (error) {
       console.error(error);
     }
-  }, [barcode]);
+  };
 
   useEffect(() => {
     getHardwaresCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getHardwares = useCallback(async () => {
+  const getHardwares = async () => {
     try {
       const data = await api.getHardwareCounts(barcode);
       if (data?.d.success) {
@@ -61,7 +61,7 @@ function HardwareCenter() {
     } catch (error) {
       console.error(error);
     }
-  }, [barcode]);
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
@@ -79,7 +79,7 @@ function HardwareCenter() {
     ).getFullYear()} ${new Date(d).getHours()}:${new Date(d).getMinutes()}`;
   }
 
-  const addNewHardware = useCallback(async () => {
+  const addNewHardware = async () => {
     const a: Partial<IHardware> = {
       id: 0,
       barcode,
@@ -98,15 +98,15 @@ function HardwareCenter() {
     } catch (error) {
       console.error(error);
     }
-  }, [getHardwares, barcode, hardwareTypeId, remark, tokef]);
+  };
 
-  const handleCloseDialogAdd = useCallback(() => {
+  const handleCloseDialogAdd = () => {
     setShowAddHardware(false);
-  }, []);
+  };
 
-  const handleCloseDialogShowInfo = useCallback(() => {
+  const handleCloseDialogShowInfo = () => {
     setShowHardwareInfo(false);
-  }, []);
+  };
 
   async function UpdateHardwareTracking(h: Partial<IHardware>) {
     try {
@@ -120,7 +120,7 @@ function HardwareCenter() {
     }
   }
 
-  const changeHardwareToWareHouse = useCallback(() => {
+  const changeHardwareToWareHouse = () => {
     const h: Partial<IHardware> = {
       id: currentHardware!.id,
       statusId: 0,
@@ -128,9 +128,9 @@ function HardwareCenter() {
       remark: "",
     };
     UpdateHardwareTracking(h);
-  }, [currentHardware]);
+  };
 
-  const changeHardwareToCustomer = useCallback(async () => {
+  const changeHardwareToCustomer = async () => {
     const cusName = await prompt("הזן שם לקוח");
     if (cusName === null || cusName === "") {
       return;
@@ -143,9 +143,9 @@ function HardwareCenter() {
       remark: currentHardware!.remark,
     };
     UpdateHardwareTracking(h);
-  }, [currentHardware, prompt]);
+  };
 
-  const changeHardwareToRepairs = useCallback(async () => {
+  const changeHardwareToRepairs = async () => {
     const desc = await prompt("הזן תיאור תקלה");
     if (desc === null || desc === "") {
       return;
@@ -158,7 +158,7 @@ function HardwareCenter() {
       remark: desc,
     };
     UpdateHardwareTracking(h);
-  }, [currentHardware, prompt]);
+  };
 
   return (
     <div>

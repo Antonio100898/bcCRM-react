@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import {
@@ -48,7 +48,7 @@ export default function SpeedDialAnswerPhone() {
 
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
-  const answerThePhone = useCallback(async () => {
+  const answerThePhone = async () => {
     const { data } = await api.post<IProblemsResponse>("/AnsweredCall", {
       workerKey: localStorage.getItem(TOKEN_KEY),
       department: user?.department,
@@ -84,64 +84,53 @@ export default function SpeedDialAnswerPhone() {
         }
       }
     }
-  }, [enqueueSnackbar, user?.department]);
+  };
 
-  const selectPlace = useCallback(
-    (place: IPlace) => {
-      const problem: Partial<IProblem> = {
-        workerKey,
-        workerCreateName: user?.workerName || "",
-        customerName: place.customerName,
-        phoneId: place.phoneId,
-        phone: place.phone,
-        placeId: place.placeId,
-        placeName: place.placeName,
-        departmentId: user?.department,
-        emergencyId: 0,
-        toWorkers: [],
-        newFiles: [],
-        startTime: `${new Date().toLocaleString()}`,
-        startTimeEN: new Date().toString(),
-      };
-
-      api
-        .post<IProblemsResponse>("/UpdateProblem", {
-          problem,
-        })
-        .then(({ data }) => {
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-              variant: "error",
-            });
-            return;
-          }
-
-          problem.id = data.d.problemId!;
-          problem.toWorker = data.d.workerId;
-
-          updateCurrentProblem(problem);
-          updateShowProblemDialog(true);
-
-          if (!window.location.href.endsWith("/Problems")) {
-            history("/Problems");
-          }
-        });
-
-      setShowSelectPlace(false);
-    },
-    [
-      enqueueSnackbar,
-      history,
-      updateCurrentProblem,
-      updateShowProblemDialog,
-      user?.department,
-      user?.workerName,
+  const selectPlace = (place: IPlace) => {
+    const problem: Partial<IProblem> = {
       workerKey,
-    ]
-  );
+      workerCreateName: user?.workerName || "",
+      customerName: place.customerName,
+      phoneId: place.phoneId,
+      phone: place.phone,
+      placeId: place.placeId,
+      placeName: place.placeName,
+      departmentId: user?.department,
+      emergencyId: 0,
+      toWorkers: [],
+      newFiles: [],
+      startTime: `${new Date().toLocaleString()}`,
+      startTimeEN: new Date().toString(),
+    };
 
-  const inputNewPlace = useCallback(async () => {
+    api
+      .post<IProblemsResponse>("/UpdateProblem", {
+        problem,
+      })
+      .then(({ data }) => {
+        if (!data.d.success) {
+          enqueueSnackbar({
+            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
+            variant: "error",
+          });
+          return;
+        }
+
+        problem.id = data.d.problemId!;
+        problem.toWorker = data.d.workerId;
+
+        updateCurrentProblem(problem);
+        updateShowProblemDialog(true);
+
+        if (!window.location.href.endsWith("/Problems")) {
+          history("/Problems");
+        }
+      });
+
+    setShowSelectPlace(false);
+  };
+
+  const inputNewPlace = async () => {
     const pName = await prompt("הזן את שם המקום");
     if (pName && pName?.length === 0) {
       enqueueSnackbar({
@@ -211,15 +200,7 @@ export default function SpeedDialAnswerPhone() {
       });
 
     selectPlace(p);
-  }, [
-    prompt,
-    phone,
-    user?.key,
-    newVip,
-    newRemark,
-    selectPlace,
-    enqueueSnackbar,
-  ]);
+  };
 
   function EditPlace(placeId: number) {
     const place: IPlace[] =

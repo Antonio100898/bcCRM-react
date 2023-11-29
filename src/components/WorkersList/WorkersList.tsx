@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { ListItemButton } from "@mui/material";
 import { IWorker } from "../../Model";
 import { Group, GroupsList } from "../GroupsList/GroupsList";
@@ -50,25 +50,17 @@ export function WorkersList({ setWorkersSelected, workersSelected }: Props) {
     [selectedWorkers]
   );
 
-  const onSelectWorker = useCallback(
-    (id: number, val: boolean) => {
-      if (!val) {
-        setWorkersSelected(
-          workersSelected.filter((workerId) => id !== workerId)
-        );
-        return;
-      }
-      setWorkersSelected([...workersSelected, id]);
-    },
-    [setWorkersSelected, workersSelected]
-  );
+  const onSelectWorker = (id: number, val: boolean) => {
+    if (!val) {
+      setWorkersSelected(workersSelected.filter((workerId) => id !== workerId));
+      return;
+    }
+    setWorkersSelected([...workersSelected, id]);
+  };
 
-  const handleWorkerDeselection = useCallback(
-    (id: number) => {
-      onSelectWorker(id, false);
-    },
-    [onSelectWorker]
-  );
+  const handleWorkerDeselection = (id: number) => {
+    onSelectWorker(id, false);
+  };
 
   return (
     <GroupsList

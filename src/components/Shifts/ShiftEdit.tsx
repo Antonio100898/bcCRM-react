@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -134,12 +134,12 @@ export default function ShiftEdit({
     return hours;
   };
 
-  const onChange = useCallback(
-    <K extends keyof IshiftDetail>(key: K, val: IshiftDetail[K]) => {
-      setCurrentShift({ ...currentShift, [key]: val });
-    },
-    [currentShift]
-  );
+  const onChange = <K extends keyof IshiftDetail>(
+    key: K,
+    val: IshiftDetail[K]
+  ) => {
+    setCurrentShift({ ...currentShift, [key]: val });
+  };
 
   const handleChange = (newValue: Dayjs | null) => {
     onChange("startDateEN", newValue?.format() || "01/01/2000");
@@ -154,7 +154,7 @@ export default function ShiftEdit({
     // new Date(d).getMinutes()
   }
 
-  const updateShift = useCallback(() => {
+  const updateShift = () => {
     if (
       currentShift.workerId === undefined ||
       currentShift.workerId === null ||
@@ -208,16 +208,9 @@ export default function ShiftEdit({
 
         handleClose();
       });
-  }, [
-    currentShift,
-    enqueueSnackbar,
-    finishTime,
-    handleClose,
-    shiftGroupId,
-    startTime,
-  ]);
+  };
 
-  const cancelShift = useCallback(async () => {
+  const cancelShift = async () => {
     if (currentShift.workerId === user?.workerId || user?.userType === 1) {
       if (await confirm("האם את בטוחה שברצונך לבטל?")) {
         api
@@ -238,15 +231,7 @@ export default function ShiftEdit({
           });
       }
     }
-  }, [
-    confirm,
-    currentShift.id,
-    currentShift.workerId,
-    enqueueSnackbar,
-    handleClose,
-    user?.userType,
-    user?.workerId,
-  ]);
+  };
 
   return (
     <div>

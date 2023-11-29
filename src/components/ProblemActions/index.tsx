@@ -1,5 +1,5 @@
 import { Box, Switch, useTheme } from "@mui/material";
-import { SetStateAction, useCallback, useState, useEffect } from "react";
+import { SetStateAction, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { IProblem, IProblemType, User } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
@@ -54,93 +54,78 @@ export default function ProblemActions({
     setPendingClose(false);
   };
 
-  const stopPending = useCallback(async () => {
+  const stopPending = async () => {
     return new Promise((res) => {
       setTimeout(() => {
         res(stop());
       }, 500);
     });
-  }, []);
+  };
 
-  const saveProblem = useCallback(
-    async (close: boolean, closeProblem: boolean) => {
-      if (closeProblem) {
-        setPendingClose(true);
-        if (!(await confirm("האם את\\ה בטוח שברצונך לסגור את התקלה הזאת?"))) {
-          await stopPending();
-          return;
-        }
-        selfProblem.statusId = 2;
-      } else {
-        setPendingUpdate(true);
-        selfProblem.statusId = 0;
-      }
-      selfProblem.workerKey = localStorage.getItem(TOKEN_KEY) || "";
-
-      selfProblem.workerCreateName = user?.workerName || "";
-
-      if (currentProblemTypesId) {
-        const newProblemTypes: IProblemType[] = [];
-
-        currentProblemTypesId.forEach((id) => {
-          const newPt = problemTypes.find((pt) => pt.id === id);
-          if (newPt) newProblemTypes.push(newPt);
-        });
-
-        selfProblem.problemTypesList = newProblemTypes;
-      }
-      try {
-        const data = await api.updateProblem(selfProblem);
-        if (!data?.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-            variant: "error",
-          });
-          await stopPending();
-          return;
-        }
-        setSelfProblemDialog({
-          ...selfProblem,
-          id: data.d.problemId || 0,
-          files: data.d.filesName,
-          newFiles: [],
-        });
-        setSelfProblem({
-          ...selfProblem,
-          id: data.d.problemId || 0,
-          files: data.d.filesName,
-          newFiles: [],
-        });
-
-        enqueueSnackbar({
-          message: "התקלה העודכנה בהצלחה!",
-          variant: "success",
-        });
-
-        if (close) {
-          updateProblem(selfProblem);
-          setTracking(null);
-          onDialogClose();
-        }
+  const saveProblem = async (close: boolean, closeProblem: boolean) => {
+    if (closeProblem) {
+      setPendingClose(true);
+      if (!(await confirm("האם את\\ה בטוח שברצונך לסגור את התקלה הזאת?"))) {
         await stopPending();
-      } catch (error) {
-        console.error(error);
+        return;
       }
-    },
-    [
-      stopPending,
-      setTracking,
-      setSelfProblemDialog,
-      selfProblem,
-      setSelfProblem,
-      currentProblemTypesId,
-      problemTypes,
-      updateProblem,
-      user?.workerName,
-      onDialogClose,
-      confirm,
-    ]
-  );
+      selfProblem.statusId = 2;
+    } else {
+      setPendingUpdate(true);
+      selfProblem.statusId = 0;
+    }
+    selfProblem.workerKey = localStorage.getItem(TOKEN_KEY) || "";
+
+    selfProblem.workerCreateName = user?.workerName || "";
+
+    if (currentProblemTypesId) {
+      const newProblemTypes: IProblemType[] = [];
+
+      currentProblemTypesId.forEach((id) => {
+        const newPt = problemTypes.find((pt) => pt.id === id);
+        if (newPt) newProblemTypes.push(newPt);
+      });
+
+      selfProblem.problemTypesList = newProblemTypes;
+    }
+    try {
+      const data = await api.updateProblem(selfProblem);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        await stopPending();
+        return;
+      }
+      setSelfProblemDialog({
+        ...selfProblem,
+        id: data.d.problemId || 0,
+        files: data.d.filesName,
+        newFiles: [],
+      });
+      setSelfProblem({
+        ...selfProblem,
+        id: data.d.problemId || 0,
+        files: data.d.filesName,
+        newFiles: [],
+      });
+
+      enqueueSnackbar({
+        message: "התקלה העודכנה בהצלחה!",
+        variant: "success",
+      });
+
+      if (close) {
+        updateProblem(selfProblem);
+        setTracking(null);
+        onDialogClose();
+      }
+      await stopPending();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Box

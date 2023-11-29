@@ -1,12 +1,6 @@
-import { TextField } from '@mui/material';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import './GroupsList.styles.css';
+import { TextField } from "@mui/material";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import "./GroupsList.styles.css";
 
 export type Group<T> = { title: string; options: T[] };
 
@@ -34,7 +28,7 @@ export function GroupsList<T>({
   optionIsSelected,
 }: Props<T>) {
   const [open, setOpen] = useState(false);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const filterdGroups = useMemo(
     () =>
       groups
@@ -57,8 +51,8 @@ export function GroupsList<T>({
     const lisnter = (event: any) => {
       const dismissBlur =
         !idsDismissBlur ||
-        !idsDismissBlur.filter(
-          (id) => document.getElementById(id)?.contains(event.target)
+        !idsDismissBlur.filter((id) =>
+          document.getElementById(id)?.contains(event.target)
         ).length;
       if (
         continerRef.current &&
@@ -68,16 +62,16 @@ export function GroupsList<T>({
       ) {
         setOpen(false);
         inputRef.current?.blur();
-        setTimeout(() => setFilter(''), 300);
+        setTimeout(() => setFilter(""), 300);
       }
     };
 
-    document.addEventListener('mousedown', lisnter);
+    document.addEventListener("mousedown", lisnter);
 
-    return () => document.removeEventListener('mousedown', lisnter);
+    return () => document.removeEventListener("mousedown", lisnter);
   }, [idsDismissBlur]);
 
-  const onOpen = useCallback(() => setOpen(true), []);
+  const onOpen = () => setOpen(true);
 
   return (
     <div className="root">
@@ -93,7 +87,7 @@ export function GroupsList<T>({
       />
 
       <div
-        className={`popContainer ${open ? 'popContainerOpen' : ''}`}
+        className={`popContainer ${open ? "popContainerOpen" : ""}`}
         dir="rtl"
         ref={continerRef}
       >
@@ -106,8 +100,8 @@ export function GroupsList<T>({
                 <div
                   className={`renderOption ${
                     optionIsSelected && optionIsSelected(option)
-                      ? 'selected'
-                      : ''
+                      ? "selected"
+                      : ""
                   }`}
                   key={renderKey(option)}
                 >

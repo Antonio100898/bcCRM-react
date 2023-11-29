@@ -3,7 +3,7 @@ import {
   FilterAltOutlined as FilterIcon,
   Search as SearchIcon,
 } from "@mui/icons-material";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSnackbar } from "notistack";
 import { ISearchProblem } from "../../Model";
 import { api } from "../../API/Api";
@@ -60,27 +60,24 @@ export default function Search() {
     }
   };
 
-  const handleFilterChange = useCallback(
-    (filter: Partial<ISearchProblem>) => {
-      const newFilter = { ...searchFilter, ...filter };
-      setSearchFilter(newFilter);
+  const handleFilterChange = (filter: Partial<ISearchProblem>) => {
+    const newFilter = { ...searchFilter, ...filter };
+    setSearchFilter(newFilter);
 
-      if (
-        typeof newFilter.searchValue === "string" &&
-        newFilter.searchValue.length
-      ) {
-        searchProblems();
-      }
-    },
-    [searchFilter, searchProblems]
-  );
+    if (
+      typeof newFilter.searchValue === "string" &&
+      newFilter.searchValue.length
+    ) {
+      searchProblems();
+    }
+  };
 
-  const onChange = useCallback(
-    <K extends keyof ISearchProblem>(key: K, val: ISearchProblem[K]) => {
-      setSearchFilter({ ...searchFilter, [key]: val });
-    },
-    [searchFilter]
-  );
+  const onChange = <K extends keyof ISearchProblem>(
+    key: K,
+    val: ISearchProblem[K]
+  ) => {
+    setSearchFilter({ ...searchFilter, [key]: val });
+  };
 
   const handleKeywordKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {

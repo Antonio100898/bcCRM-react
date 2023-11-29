@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { InputLabel, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { TOKEN_KEY } from "../../Consts/Consts";
@@ -30,56 +30,53 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekDaysAll, shiftGroupId]);
 
-  const updateDayRemark = useCallback(
-    async (day: IDayInfo) => {
-      const newRemark = await prompt("הזן הערה", day.remark || "");
-      if (newRemark === null || newRemark === "") {
-        return;
-      }
+  const updateDayRemark = async (day: IDayInfo) => {
+    const newRemark = await prompt("הזן הערה", day.remark || "");
+    if (newRemark === null || newRemark === "") {
+      return;
+    }
 
-      const updatedDay: IDayInfo = {
-        ...day,
-        remark: newRemark.trim(),
-        dayValue: GetDateTimeFormatEN(day.dayValueEN),
-      };
+    const updatedDay: IDayInfo = {
+      ...day,
+      remark: newRemark.trim(),
+      dayValue: GetDateTimeFormatEN(day.dayValueEN),
+    };
 
-      const workerKey = localStorage.getItem(TOKEN_KEY);
-      api
-        .post("/UpdateShiftDayRemark", {
-          workerKey,
-          day: updatedDay,
-          shiftGroupID: shiftGroupId,
-        })
-        .then(({ data }) => {
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: data.d.msg,
-              variant: "error",
-            });
-            return;
-          }
-
-          const newId = data.d.problemId;
-
-          if (weekDays) {
-            setweekDays((wds) =>
-              wds!.map((d) =>
-                d.dayValueEN === updatedDay.dayValueEN
-                  ? { ...d, remark: updatedDay.remark || d.remark, id: newId }
-                  : d
-              )
-            );
-          }
-        })
-        .catch((error) => {
+    const workerKey = localStorage.getItem(TOKEN_KEY);
+    api
+      .post("/UpdateShiftDayRemark", {
+        workerKey,
+        day: updatedDay,
+        shiftGroupID: shiftGroupId,
+      })
+      .then(({ data }) => {
+        if (!data.d.success) {
           enqueueSnackbar({
-            message: error,
+            message: data.d.msg,
             variant: "error",
           });
+          return;
+        }
+
+        const newId = data.d.problemId;
+
+        if (weekDays) {
+          setweekDays((wds) =>
+            wds!.map((d) =>
+              d.dayValueEN === updatedDay.dayValueEN
+                ? { ...d, remark: updatedDay.remark || d.remark, id: newId }
+                : d
+            )
+          );
+        }
+      })
+      .catch((error) => {
+        enqueueSnackbar({
+          message: error,
+          variant: "error",
         });
-    },
-    [enqueueSnackbar, prompt, shiftGroupId, weekDays]
-  );
+      });
+  };
 
   return (
     <div

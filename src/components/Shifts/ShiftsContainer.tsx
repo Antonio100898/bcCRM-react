@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
@@ -52,10 +52,10 @@ export function ShiftsContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shiftsList]);
 
-  const handleCloseAddNewShift = useCallback(() => {
+  const handleCloseAddNewShift = () => {
     setShowAddNew(false);
     refreshList();
-  }, [refreshList]);
+  };
 
   return (
     <div

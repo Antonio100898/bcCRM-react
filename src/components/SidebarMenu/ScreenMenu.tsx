@@ -1,28 +1,27 @@
-import { useNavigate } from 'react-router-dom';
-import Paper from '@mui/material/Paper';
+import { useNavigate } from "react-router-dom";
+import Paper from "@mui/material/Paper";
 
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import LogoutIcon from '@mui/icons-material/Logout';
-import InsightsIcon from '@mui/icons-material/Insights';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import WbCloudyIcon from '@mui/icons-material/WbCloudy';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import TwoWheelerIcon from '@mui/icons-material/TwoWheeler';
-import PersonIcon from '@mui/icons-material/Person';
-import SickIcon from '@mui/icons-material/Sick';
-import FreeBreakfastIcon from '@mui/icons-material/FreeBreakfast';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import PunchClockIcon from '@mui/icons-material/PunchClock';
-import { useCallback } from 'react';
-import { TOKEN_KEY } from '../../Consts/Consts';
-import { useUser } from '../../Context/useUser';
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import LogoutIcon from "@mui/icons-material/Logout";
+import InsightsIcon from "@mui/icons-material/Insights";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import WbCloudyIcon from "@mui/icons-material/WbCloudy";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
+import PersonIcon from "@mui/icons-material/Person";
+import SickIcon from "@mui/icons-material/Sick";
+import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PunchClockIcon from "@mui/icons-material/PunchClock";
+import { TOKEN_KEY } from "../../Consts/Consts";
+import { useUser } from "../../Context/useUser";
 
 function ScreenMenu() {
   const { user, updateShowLoader, updateUser, updateShowScreensMenu } =
@@ -31,12 +30,12 @@ function ScreenMenu() {
 
   // console.log("user.department: " + user!.department);
 
-  const exit = useCallback(() => {
+  const exit = () => {
     updateShowLoader(false);
     localStorage.removeItem(TOKEN_KEY);
     updateUser(null);
-    history('/login');
-  }, [history, updateShowLoader, updateUser]);
+    history("/login");
+  };
 
   function GoToPage(pageName: string) {
     updateShowScreensMenu(false);
@@ -44,20 +43,20 @@ function ScreenMenu() {
   }
 
   return (
-    <Paper style={{ marginBottom: '10px' }}>
+    <Paper style={{ marginBottom: "10px" }}>
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 229, 198)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 229, 198)",
         }}
       >
         <ListItemText>האזור האישי</ListItemText>
       </MenuItem>
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/WorkerInfo/');
+          GoToPage("/WorkerInfo/");
         }}
       >
         <ListItemIcon>
@@ -68,9 +67,9 @@ function ScreenMenu() {
 
       <div>
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/WorkersSickday/');
+            GoToPage("/WorkersSickday/");
           }}
         >
           <ListItemIcon>
@@ -81,9 +80,9 @@ function ScreenMenu() {
       </div>
 
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/WorkersFreeday/');
+          GoToPage("/WorkersFreeday/");
         }}
       >
         <ListItemIcon>
@@ -92,9 +91,9 @@ function ScreenMenu() {
         <ListItemText>ימי חופש</ListItemText>
       </MenuItem>
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/workerscars/');
+          GoToPage("/workerscars/");
         }}
       >
         <ListItemIcon>
@@ -105,17 +104,17 @@ function ScreenMenu() {
 
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 229, 198)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 229, 198)",
         }}
       >
         <ListItemText>הוצאות עבודה</ListItemText>
       </MenuItem>
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/WorkerExpenses/');
+          GoToPage("/WorkerExpenses/");
         }}
       >
         <ListItemIcon>
@@ -126,9 +125,9 @@ function ScreenMenu() {
       {user && user.userType === 1 && (
         <div>
           <MenuItem
-            style={{ textAlign: 'right', display: 'flex !important' }}
+            style={{ textAlign: "right", display: "flex !important" }}
             onClick={() => {
-              GoToPage('/WorkerExpensesReports/');
+              GoToPage("/WorkerExpensesReports/");
             }}
           >
             <ListItemIcon>
@@ -137,9 +136,9 @@ function ScreenMenu() {
             <ListItemText>דוחות</ListItemText>
           </MenuItem>
           <MenuItem
-            style={{ textAlign: 'right', display: 'flex !important' }}
+            style={{ textAlign: "right", display: "flex !important" }}
             onClick={() => {
-              GoToPage('/WorkerExpensesShortReports/');
+              GoToPage("/WorkerExpensesShortReports/");
             }}
           >
             <ListItemIcon>
@@ -148,9 +147,9 @@ function ScreenMenu() {
             <ListItemText>דוחות מקוצר</ListItemText>
           </MenuItem>
           <MenuItem
-            style={{ textAlign: 'right', display: 'flex !important' }}
+            style={{ textAlign: "right", display: "flex !important" }}
             onClick={() => {
-              GoToPage('/WorkerExpenseAndShiftCalendar/');
+              GoToPage("/WorkerExpenseAndShiftCalendar/");
             }}
           >
             <ListItemIcon>
@@ -163,18 +162,18 @@ function ScreenMenu() {
 
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 229, 198)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 229, 198)",
         }}
       >
         <ListItemText>סידור עבודה</ListItemText>
       </MenuItem>
 
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/Shifts/');
+          GoToPage("/Shifts/");
         }}
       >
         <ListItemIcon>
@@ -185,9 +184,9 @@ function ScreenMenu() {
 
       {user && (user.userType === 1 || user.department === 16) && (
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/ShiftPlans/');
+            GoToPage("/ShiftPlans/");
           }}
         >
           <ListItemIcon>
@@ -198,9 +197,9 @@ function ScreenMenu() {
       )}
 
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/ShiftsPersonal/');
+          GoToPage("/ShiftsPersonal/");
         }}
       >
         <ListItemIcon>
@@ -211,18 +210,18 @@ function ScreenMenu() {
 
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 229, 198)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 229, 198)",
         }}
       >
         <ListItemText>הגדרות</ListItemText>
       </MenuItem>
       {user && user.userType === 1 && (
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/Workers/');
+            GoToPage("/Workers/");
           }}
         >
           <ListItemIcon>
@@ -233,9 +232,9 @@ function ScreenMenu() {
       )}
       {user && user.userType === 1 && (
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/WorkExpenseTypeSettings/');
+            GoToPage("/WorkExpenseTypeSettings/");
           }}
         >
           <ListItemIcon>
@@ -247,18 +246,18 @@ function ScreenMenu() {
 
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 229, 198)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 229, 198)",
         }}
       >
         <ListItemText>אחר</ListItemText>
       </MenuItem>
       {user && user.userType === 1 && (
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/Stats/');
+            GoToPage("/Stats/");
           }}
         >
           <ListItemIcon>
@@ -269,9 +268,9 @@ function ScreenMenu() {
       )}
       {user && user.userType === 1 && (
         <MenuItem
-          style={{ textAlign: 'right', display: 'flex !important' }}
+          style={{ textAlign: "right", display: "flex !important" }}
           onClick={() => {
-            GoToPage('/V3Settings/');
+            GoToPage("/V3Settings/");
           }}
         >
           <ListItemIcon>
@@ -282,9 +281,9 @@ function ScreenMenu() {
       )}
 
       <MenuItem
-        style={{ textAlign: 'right', display: 'flex !important' }}
+        style={{ textAlign: "right", display: "flex !important" }}
         onClick={() => {
-          GoToPage('/PlacesBizNumber/');
+          GoToPage("/PlacesBizNumber/");
         }}
       >
         <ListItemIcon>
@@ -308,9 +307,9 @@ function ScreenMenu() {
       )} */}
       <MenuItem
         style={{
-          textAlign: 'right',
-          display: 'flex !important',
-          background: 'rgb(255, 219, 168)',
+          textAlign: "right",
+          display: "flex !important",
+          background: "rgb(255, 219, 168)",
         }}
         onClick={exit}
       >

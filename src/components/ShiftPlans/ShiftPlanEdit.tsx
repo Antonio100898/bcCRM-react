@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -36,12 +36,12 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     setCurrentShift(shift);
   }, [shift]);
 
-  const onChange = useCallback(
-    <K extends keyof IshiftDetail>(key: K, val: IshiftDetail[K]) => {
-      setCurrentShift({ ...currentShift, [key]: val });
-    },
-    [currentShift]
-  );
+  const onChange = <K extends keyof IshiftDetail>(
+    key: K,
+    val: IshiftDetail[K]
+  ) => {
+    setCurrentShift({ ...currentShift, [key]: val });
+  };
 
   const handleChange = (newValue: Dayjs | null) => {
     // console.log(newValue);
@@ -54,7 +54,7 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     ).getFullYear()}`;
   }
 
-  const updateShift = useCallback(async () => {
+  const updateShift = async () => {
     if (currentShift.startDateEN === undefined) {
       enqueueSnackbar({
         message: "אנא בחר שעת סיום",
@@ -82,9 +82,9 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     }
 
     handleClose();
-  }, [currentShift, enqueueSnackbar, handleClose]);
+  };
 
-  const cancelShift = useCallback(async () => {
+  const cancelShift = async () => {
     if (currentShift.id && (await confirm("האם את בטוחה שברצונך לבטל?"))) {
       try {
         const data = await api.cancelShiftPlan(currentShift.id);
@@ -102,7 +102,7 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
 
       handleClose();
     }
-  }, [confirm, currentShift.id, enqueueSnackbar, handleClose]);
+  };
 
   return (
     <Dialog

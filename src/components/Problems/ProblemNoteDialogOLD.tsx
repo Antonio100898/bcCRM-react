@@ -30,13 +30,7 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useState,
-} from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useSnackbar } from "notistack";
 import { IProblemLog } from "../../Model/IProblemLog";
 import { WorkersList } from "../WorkersList/WorkersList";
@@ -123,86 +117,71 @@ export default function ProblemNoteDialog({
       });
   }, [enqueueSnackbar, problem, updateProblem]);
 
-  const onChange = useCallback(
-    <K extends keyof IProblem>(key: K, val: IProblem[K]) => {
-      setMyProblem({ ...myProblem, [key]: val });
-    },
-    [myProblem]
-  );
+  const onChange = <K extends keyof IProblem>(key: K, val: IProblem[K]) => {
+    setMyProblem({ ...myProblem, [key]: val });
+  };
 
-  const saveProblem = useCallback(
-    (close: boolean, closeProblem: boolean) => {
-      if (closeProblem) {
-        myProblem.statusId = 2;
-      } else {
-        myProblem.statusId = 0;
-      }
+  const saveProblem = (close: boolean, closeProblem: boolean) => {
+    if (closeProblem) {
+      myProblem.statusId = 2;
+    } else {
+      myProblem.statusId = 0;
+    }
 
-      myProblem.workerKey = localStorage.getItem(TOKEN_KEY) || "";
+    myProblem.workerKey = localStorage.getItem(TOKEN_KEY) || "";
 
-      myProblem.workerCreateName = user?.workerName || "";
-      // console.log(myProblem);
-      // const options: string[] = [];
-      const pTypes = new Map<string, number>();
+    myProblem.workerCreateName = user?.workerName || "";
+    // console.log(myProblem);
+    // const options: string[] = [];
+    const pTypes = new Map<string, number>();
 
-      problemTypes.map((obj: IProblemType) => {
-        return pTypes.set(obj.problemTypeName, obj.id);
+    problemTypes.map((obj: IProblemType) => {
+      return pTypes.set(obj.problemTypeName, obj.id);
+    });
+
+    const newPType: IProblemType[] = [];
+    myProblemTypes.map((name: string) => {
+      const ptId = pTypes.get(name);
+
+      return newPType.push({
+        id: ptId as number,
+        problemTypeName: name,
+        color: "",
       });
+    });
 
-      const newPType: IProblemType[] = [];
-      myProblemTypes.map((name: string) => {
-        const ptId = pTypes.get(name);
+    myProblem.problemTypesList = newPType;
 
-        return newPType.push({
-          id: ptId as number,
-          problemTypeName: name,
-          color: "",
-        });
-      });
-
-      myProblem.problemTypesList = newPType;
-
-      api
-        .post<IProblemsResponse>("/UpdateProblem", {
-          problem: { ...myProblem, crmFiles: null, newFiles: null },
-        })
-        .then(({ data }) => {
-          if (!data.d.success) {
-            enqueueSnackbar({
-              message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-              variant: "error",
-            });
-            return;
-          }
-
-          setMyProblem({
-            ...myProblem,
-            id: data.d.problemId || 0,
-            files: data.d.filesName,
-            newFiles: [],
+    api
+      .post<IProblemsResponse>("/UpdateProblem", {
+        problem: { ...myProblem, crmFiles: null, newFiles: null },
+      })
+      .then(({ data }) => {
+        if (!data.d.success) {
+          enqueueSnackbar({
+            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+            variant: "error",
           });
+          return;
+        }
 
-          updateRefreshProblems(true);
-          updateRefreshProblemCount(true);
-
-          if (close) {
-            updateProblem(myProblem);
-          }
+        setMyProblem({
+          ...myProblem,
+          id: data.d.problemId || 0,
+          files: data.d.filesName,
+          newFiles: [],
         });
-    },
-    [
-      enqueueSnackbar,
-      myProblem,
-      myProblemTypes,
-      problemTypes,
-      updateProblem,
-      updateRefreshProblemCount,
-      updateRefreshProblems,
-      user?.workerName,
-    ]
-  );
 
-  const showProblemHistory = useCallback(async () => {
+        updateRefreshProblems(true);
+        updateRefreshProblemCount(true);
+
+        if (close) {
+          updateProblem(myProblem);
+        }
+      });
+  };
+
+  const showProblemHistory = async () => {
     setShowHistory(true);
     setShowHistoryLoading(true);
 
@@ -228,7 +207,7 @@ export default function ProblemNoteDialog({
     } finally {
       setShowHistoryLoading(false);
     }
-  }, [enqueueSnackbar, myProblem.placeName]);
+  };
 
   React.useEffect(() => {
     if (myProblem.newFiles.length) {
@@ -247,65 +226,59 @@ export default function ProblemNoteDialog({
       reader.onerror = (error) => reject(error);
     });
 
-  const deleteFile = useCallback(
-    async (f: string) => {
-      setFileInput("");
+  const deleteFile = async (f: string) => {
+    setFileInput("");
 
-      if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
-        api
-          .post("/DeleteFile", {
-            fileName: f,
-            problemId: myProblem.id,
-            workerKey: localStorage.getItem(TOKEN_KEY),
-          })
-          .then(({ data }) => {
-            if (data.d.success) {
-              setMyProblem((prevProblem) => ({
-                ...prevProblem,
-                files: prevProblem.files.filter((i) => i !== f),
-              }));
-              updateRefreshProblems(true);
-            }
-          });
-      }
-    },
-    [confirm, myProblem.id, updateRefreshProblems]
-  );
+    if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
+      api
+        .post("/DeleteFile", {
+          fileName: f,
+          problemId: myProblem.id,
+          workerKey: localStorage.getItem(TOKEN_KEY),
+        })
+        .then(({ data }) => {
+          if (data.d.success) {
+            setMyProblem((prevProblem) => ({
+              ...prevProblem,
+              files: prevProblem.files.filter((i) => i !== f),
+            }));
+            updateRefreshProblems(true);
+          }
+        });
+    }
+  };
 
-  const setEmergency = useCallback(() => {
+  const setEmergency = () => {
     if (myProblem.emergencyId === 0) {
       onChange("emergencyId", 1);
     } else {
       onChange("emergencyId", 0);
     }
-  }, [myProblem.emergencyId, onChange]);
+  };
 
-  const setTakeCare = useCallback(() => {
+  const setTakeCare = () => {
     onChange("takingCare", !myProblem.takingCare);
-  }, [myProblem.takingCare, onChange]);
+  };
 
-  const setIsLocked = useCallback(() => {
+  const setIsLocked = () => {
     onChange("isLocked", !myProblem.isLocked);
-  }, [myProblem.isLocked, onChange]);
+  };
 
-  const toWorkerChanged = useCallback(
-    (workerId: number) => {
-      if (myProblem.toWorker === workerId) {
-        return;
-      }
-      const worker = workers.find((w) => w.Id === workerId);
-      if (worker) {
-        // SendNewLineBase(
-        //   `${user?.workerName} העביר לעובד ${worker.workerName}`,
-        //   1
-        // );
-        onChange("toWorker", workerId);
-      }
-    },
-    [myProblem.toWorker, onChange, workers]
-  );
+  const toWorkerChanged = (workerId: number) => {
+    if (myProblem.toWorker === workerId) {
+      return;
+    }
+    const worker = workers.find((w) => w.Id === workerId);
+    if (worker) {
+      // SendNewLineBase(
+      //   `${user?.workerName} העביר לעובד ${worker.workerName}`,
+      //   1
+      // );
+      onChange("toWorker", workerId);
+    }
+  };
 
-  const changeDepartmentByToWorker = useCallback(() => {
+  const changeDepartmentByToWorker = () => {
     const worker = workers.find((w) => w.Id === myProblem.toWorker);
     if (worker) {
       // SendNewLineBase(
@@ -314,9 +287,9 @@ export default function ProblemNoteDialog({
       // );
       onChange("departmentId", worker.departmentId);
     }
-  }, [myProblem.toWorker, onChange, workers]);
+  };
 
-  const openRDP = useCallback(() => {
+  const openRDP = () => {
     if (myProblem && myProblem.ip) {
       try {
         fetch(`http://localhost:5150/api/rdp/192.168.${myProblem.ip}`);
@@ -324,9 +297,9 @@ export default function ProblemNoteDialog({
         /* empty */
       }
     }
-  }, [myProblem]);
+  };
 
-  const callToThisPhone = useCallback((phoneToCall: string) => {
+  const callToThisPhone = (phoneToCall: string) => {
     api
       .post<IProblemsResponse>("/CallThisNumber", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -338,7 +311,7 @@ export default function ProblemNoteDialog({
         //   return;
         // }
       });
-  }, []);
+  };
 
   function isChangeToWorkerEnable(): boolean {
     if (user?.userType === 1) return true;
@@ -375,7 +348,7 @@ export default function ProblemNoteDialog({
     return false;
   }
 
-  const onShowLogs = useCallback((problemId: number) => {
+  const onShowLogs = (problemId: number) => {
     api
       .post("/GetProblemLogs", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -385,9 +358,9 @@ export default function ProblemNoteDialog({
         setLogs(data.d.logs);
         setShowLogs(true);
       });
-  }, []);
+  };
 
-  const updateProblemTracking = useCallback(() => {
+  const updateProblemTracking = () => {
     api
       .post("/UpdateProblemTracking", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -398,9 +371,9 @@ export default function ProblemNoteDialog({
         // console.log(data.d.trackingId);
         onChange("trackingId", data.d.trackingId);
       });
-  }, [myProblem.id, myProblem.trackingId, onChange]);
+  };
 
-  const handleChange = useCallback((event: SelectChangeEvent<unknown>) => {
+  const handleChange = (event: SelectChangeEvent<unknown>) => {
     const {
       target: { value },
     } = event;
@@ -411,134 +384,117 @@ export default function ProblemNoteDialog({
       return b < c ? -1 : 1;
     });
     setMyProblemTypes(a);
-  }, []);
+  };
 
-  const handleDrag = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
     setDragActive(event.type === "dragenter" || event.type === "dragover");
-  }, []);
+  };
 
-  const uploadFiles = useCallback(
-    async (inputFiles: FileList | null, isClipboard = false) => {
-      if (inputFiles) {
-        const promises: Promise<CrmFile>[] = [];
-        const filteredFiles: File[] = [];
+  const uploadFiles = async (
+    inputFiles: FileList | null,
+    isClipboard = false
+  ) => {
+    if (inputFiles) {
+      const promises: Promise<CrmFile>[] = [];
+      const filteredFiles: File[] = [];
 
-        for (let i = 0; i < inputFiles.length; i += 1) {
-          if (
-            isClipboard ||
-            !(myProblem.files || []).includes(
-              `${myProblem.id}_${inputFiles?.[i].name || "file.what"}`
-                .replaceAll("-", "_")
-                .replaceAll(" ", "_")
-            )
-          ) {
-            filteredFiles.push(inputFiles?.[i]);
-          } else {
-            enqueueSnackbar(`הקובץ הזה כבר עלה ${inputFiles?.[i].name}`);
-          }
+      for (let i = 0; i < inputFiles.length; i += 1) {
+        if (
+          isClipboard ||
+          !(myProblem.files || []).includes(
+            `${myProblem.id}_${inputFiles?.[i].name || "file.what"}`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_")
+          )
+        ) {
+          filteredFiles.push(inputFiles?.[i]);
+        } else {
+          enqueueSnackbar(`הקובץ הזה כבר עלה ${inputFiles?.[i].name}`);
         }
+      }
 
-        for (let i = 0; i < filteredFiles.length; i += 1) {
-          promises.push(
-            toBase64(filteredFiles[i]).then((base64) => ({
-              filename: `${isClipboard ? `${Date.now()}_` : ""}${
-                myProblem.id
-              }_${filteredFiles?.[i].name || "file.what"}`
-                .replaceAll("-", "_")
-                .replaceAll(" ", "_"),
-              content: base64,
-            }))
-          );
-        }
+      for (let i = 0; i < filteredFiles.length; i += 1) {
+        promises.push(
+          toBase64(filteredFiles[i]).then((base64) => ({
+            filename: `${isClipboard ? `${Date.now()}_` : ""}${myProblem.id}_${
+              filteredFiles?.[i].name || "file.what"
+            }`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_"),
+            content: base64,
+          }))
+        );
+      }
 
-        if (promises.length === 0) {
-          setFileInput("");
-          return;
-        }
+      if (promises.length === 0) {
+        setFileInput("");
+        return;
+      }
 
-        setFileLoading(true);
-        const files = await Promise.all(promises);
+      setFileLoading(true);
+      const files = await Promise.all(promises);
 
-        const updatedProblem = {
-          ...myProblem,
-          crmFiles: [...(myProblem.crmFiles || []), ...files],
-          files: [
-            ...(myProblem.files || []),
-            ...(files || []).map((f) => f.filename),
-          ],
-        };
+      const updatedProblem = {
+        ...myProblem,
+        crmFiles: [...(myProblem.crmFiles || []), ...files],
+        files: [
+          ...(myProblem.files || []),
+          ...(files || []).map((f) => f.filename),
+        ],
+      };
 
-        try {
-          const { data } = await api.post(
-            "/UploadProblemFiles",
-            {
-              problem: updatedProblem,
+      try {
+        const { data } = await api.post(
+          "/UploadProblemFiles",
+          {
+            problem: updatedProblem,
+          },
+          {
+            signal: abortController.signal,
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / (progressEvent.total || 1)
+              );
+              setFileProgress(percentCompleted === 100 ? -1 : percentCompleted);
             },
-            {
-              signal: abortController.signal,
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.round(
-                  (progressEvent.loaded * 100) / (progressEvent.total || 1)
-                );
-                setFileProgress(
-                  percentCompleted === 100 ? -1 : percentCompleted
-                );
-              },
-            }
-          );
-
-          if (data.d.success) {
-            setMyProblem({
-              ...updatedProblem,
-              files: [...new Set(data.d.filesName as string[])],
-            });
           }
-        } catch (error) {
-          enqueueSnackbar({
-            message: `נכשל לטעון קבצים.`,
-            variant: "error",
+        );
+
+        if (data.d.success) {
+          setMyProblem({
+            ...updatedProblem,
+            files: [...new Set(data.d.filesName as string[])],
           });
-        } finally {
-          setFileLoading(false);
-          updateRefreshProblems(true);
         }
+      } catch (error) {
+        enqueueSnackbar({
+          message: `נכשל לטעון קבצים.`,
+          variant: "error",
+        });
+      } finally {
+        setFileLoading(false);
+        updateRefreshProblems(true);
       }
-    },
-    [
-      abortController.signal,
-      enqueueSnackbar,
-      myProblem,
-      setFileLoading,
-      updateRefreshProblems,
-    ]
-  );
+    }
+  };
 
-  const handleDrop = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.stopPropagation();
-      event.preventDefault();
-      setDragActive(event.type === "dragover");
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setDragActive(event.type === "dragover");
 
-      if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
-        uploadFiles(event.dataTransfer.files);
-      }
-    },
-    [uploadFiles]
-  );
+    if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
+      uploadFiles(event.dataTransfer.files);
+    }
+  };
 
-  const handleUploadFile = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      setFileInput(e.target.value);
-      uploadFiles(e.target.files);
-    },
-    [uploadFiles]
-  );
+  const handleUploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    setFileInput(e.target.value);
+    uploadFiles(e.target.files);
+  };
 
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent<HTMLDivElement>) =>
-      uploadFiles(e.clipboardData.files, true),
-    [uploadFiles]
-  );
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) =>
+    uploadFiles(e.clipboardData.files, true);
 
   return (
     <Box
