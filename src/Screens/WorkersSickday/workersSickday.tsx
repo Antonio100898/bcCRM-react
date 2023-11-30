@@ -20,13 +20,13 @@ import {
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import SaveIcon from "@mui/icons-material/Save";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { api } from "../../API/Api";
 import { sickdaysImagePath } from "../../Consts/Consts";
 import { IWorkerSickday } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 export default function WorkersSickday() {
   const { confirm } = useConfirm();
@@ -50,7 +50,7 @@ export default function WorkersSickday() {
   const getWorkersSickdays = async () => {
     updateShowLoader(true);
     try {
-      const data = await api.getWorkersSickdays(
+      const data = await workerService.getWorkersSickdays(
         filterYear,
         filterMonth,
         !showAllWorkers
@@ -75,11 +75,11 @@ export default function WorkersSickday() {
       reader.onerror = (error) => reject(error);
     });
 
-  const hideDialog = useCallback(() => {
+  const hideDialog = () => {
     setShowDialog(false);
-  }, []);
+  };
 
-  const showDialogNow = useCallback(() => {
+  const showDialogNow = () => {
     setCurrentWorkerSickday({
       id: 0,
       workerId: 0,
@@ -94,7 +94,7 @@ export default function WorkersSickday() {
       imgContent: "",
     });
     setShowDialog(true);
-  }, []);
+  };
 
   function GetDateTimeFormatEN(d: string) {
     return `${new Date(d).getMonth() + 1}/${new Date(d).getDate()}/${new Date(
@@ -111,8 +111,8 @@ export default function WorkersSickday() {
       finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
     };
     try {
-      const data = await api.updateWorkerSickday(sickDay);
-      if (data.d.success) getWorkersSickdays();
+      const data = await workerService.updateWorkerSickday(sickDay);
+      if (data?.d.success) getWorkersSickdays();
     } catch (error) {
       console.error(error);
     }
@@ -120,21 +120,18 @@ export default function WorkersSickday() {
     setShowDialog(false);
   };
 
-  const cancelSickDay = useCallback(
-    async (w: IWorkerSickday) => {
-      if (await confirm("האם ברצונך למחוק את היום מחלה הזה?")) {
-        updateSickDay({ ...w, cancel: true });
-      }
-    },
-    [updateSickDay, confirm]
-  );
+  const cancelSickDay = async (w: IWorkerSickday) => {
+    if (await confirm("האם ברצונך למחוק את היום מחלה הזה?")) {
+      updateSickDay({ ...w, cancel: true });
+    }
+  };
 
-  const onChange = useCallback(
-    <K extends keyof IWorkerSickday>(key: K, val: IWorkerSickday[K]) => {
-      setCurrentWorkerSickday({ ...currentWorkerSickday!, [key]: val });
-    },
-    [currentWorkerSickday]
-  );
+  const onChange = <K extends keyof IWorkerSickday>(
+    key: K,
+    val: IWorkerSickday[K]
+  ) => {
+    setCurrentWorkerSickday({ ...currentWorkerSickday!, [key]: val });
+  };
 
   return (
     <div style={{ marginRight: 10, marginLeft: 10 }}>

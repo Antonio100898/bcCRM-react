@@ -1,3 +1,5 @@
+import { IDepartment } from "./IDepartment";
+
 export interface IWorker {
   Id: number;
   firstName: string;
@@ -23,19 +25,15 @@ export interface IWorker {
   marselWorkerCode: number;
 }
 
-export interface IDepartment {
-  id: number;
-  canSee: boolean;
-  departmentName: string;
-}
-export interface IDepartmentResponse {
+export interface IWorkersResponse {
   d: {
-    workerDepartments: IDepartment[];
-
     success: boolean;
-    problemId?: number;
-    msg: string;
-    lastSuppoter: string;
-    trackingId: number;
+    workers: IWorker[];
+  };
+}
+export interface IWorkerResponse {
+  d: {
+    success: boolean;
+    worker: IWorker;
   };
 }

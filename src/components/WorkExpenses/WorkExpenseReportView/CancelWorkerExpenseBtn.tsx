@@ -1,7 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton, Tooltip } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { api } from "../../../API/Api";
+import { api } from "../../../API/axoisConfig";
 import { TOKEN_KEY } from "../../../Consts/Consts";
 import { useConfirm } from "../../../Context/useConfirm";
 import { useUser } from "../../../Context/useUser";

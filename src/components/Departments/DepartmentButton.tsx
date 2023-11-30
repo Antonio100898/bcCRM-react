@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
-import { api } from "../../API/Api";
 import "./DepartmentButton.styles.css";
 import { useUser } from "../../Context/useUser";
+import { problemService } from "../../API/services";
 
 export interface Props {
   count: number;
@@ -24,7 +24,7 @@ function DepartmentButton({ count, text, department }: Props) {
   const history = useNavigate();
 
   const getProblems = () => {
-    api.getProblems(department || "-1").then((data) => {
+    problemService.getProblems(department || "-1").then((data) => {
       if (data) {
         updateSelectedDepartmentId(parseInt(department, 10));
         updateAllProblems(data.d.problems);

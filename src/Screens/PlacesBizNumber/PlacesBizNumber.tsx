@@ -12,8 +12,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
-import { api } from "../../API/Api";
+import { useEffect, useState } from "react";
+import { api } from "../../API/axoisConfig";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { IPlace } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
@@ -28,7 +28,7 @@ export default function PlacesBizNumber() {
   const [filterBiznumber, setFilterBiznumber] = useState("");
   const [showPlaceDialog, updateShowPlaceDialog] = useState<boolean>(false);
 
-  const getPlaces = useCallback(() => {
+  const getPlaces = () => {
     updateShowLoader(true);
     // workerKey: localStorage.getItem(TOKEN_KEY),
     api
@@ -39,23 +39,23 @@ export default function PlacesBizNumber() {
         setPlaces(data.d.places);
         updateShowLoader(false);
       });
-  }, [updateShowLoader]);
+  };
 
   useEffect(() => {
     getPlaces();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterWorkerName]);
 
-  const addNewPlace = useCallback(() => {
+  const addNewPlace = () => {
     setCurrentPlace({ id: 0, placeName: "", bizNumber: "", warrantyType: 0 });
     updateShowPlaceDialog(true);
-  }, []);
+  };
 
-  const hideDialog = useCallback(() => {
+  const hideDialog = () => {
     updateShowPlaceDialog(false);
-  }, []);
+  };
 
-  const savePlace = useCallback(async () => {
+  const savePlace = async () => {
     const sameName: IPlace[] = places.filter((a: IPlace) =>
       a.placeName.includes(currentPlace?.placeName || "")
     );
@@ -88,22 +88,11 @@ export default function PlacesBizNumber() {
         getPlaces();
         updateShowPlaceDialog(false);
       });
-  }, [
-    confirm,
-    currentPlace?.bizNumber,
-    currentPlace?.id,
-    currentPlace?.placeName,
-    currentPlace?.warrantyType,
-    getPlaces,
-    places,
-  ]);
+  };
 
-  const onChange = useCallback(
-    <K extends keyof IPlace>(key: K, val: IPlace[K]) => {
-      setCurrentPlace({ ...currentPlace, [key]: val });
-    },
-    [currentPlace]
-  );
+  const onChange = <K extends keyof IPlace>(key: K, val: IPlace[K]) => {
+    setCurrentPlace({ ...currentPlace, [key]: val });
+  };
 
   function showWorkerInfo(place: IPlace) {
     setCurrentPlace(place);

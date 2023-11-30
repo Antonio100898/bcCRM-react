@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { InputLabel, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { useConfirm } from "../../Context/useConfirm";
 import { IDayInfo } from "../../Model";
 

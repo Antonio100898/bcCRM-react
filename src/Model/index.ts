@@ -5,7 +5,7 @@ export * from "./IHardware";
 export * from "./IMsgLine";
 export * from "./INotafication";
 export * from "./IPlace";
-export * from "./IProblem"
+export * from "./IProblem";
 export * from "./IProblemLog";
 export * from "./ISearchProblem";
 export * from "./IProblemType";
@@ -16,3 +16,4 @@ export * from "./IWorker";
 export * from "./IWorkerSickday";
 export * from "./Iv3Group";
 export * from "./User";
+export * from "./IDepartment";

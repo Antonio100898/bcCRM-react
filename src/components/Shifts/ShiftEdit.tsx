@@ -17,7 +17,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import { IWorker, IshiftDetail } from "../../Model";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { IshiftDetail } from "../../Model";
 import DateSelect from "../../components/Shifts/DateSelect";
@@ -22,7 +22,7 @@ export default function ShiftsPersonal() {
   const [shifts, setShfits] = useState<IshiftDetail[]>([]);
   const [startDate, setStartDate] = useState(getLastSunday(7));
 
-  const GetShifts = useCallback(() => {
+  const GetShifts = () => {
     updateShowLoader(true);
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
@@ -51,8 +51,7 @@ export default function ShiftsPersonal() {
           variant: "error",
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate]);
+  };
 
   useEffect(() => {
     GetShifts();

@@ -13,10 +13,10 @@ import {
 import { useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { IWorkExpensesType } from "../../Model";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 export default function WorkExpenseTypeSettings() {
   const { enqueueSnackbar } = useSnackbar();
@@ -28,9 +28,9 @@ export default function WorkExpenseTypeSettings() {
   const fetchWorkerExpensesType = async () => {
     updateShowLoader(true);
     try {
-      const data = await api.getWorkExpensesTypes();
+      const data = await workerService.getWorkExpensesTypes();
 
-      if (!data.d.success) {
+      if (!data?.d.success) {
         updateShowLoader(false);
         enqueueSnackbar({
           message: "אין משתמש כזה",
@@ -90,7 +90,9 @@ export default function WorkExpenseTypeSettings() {
 
   const updateExpensesType = async () => {
     try {
-      const data = await api.updateWorkExpensesTypes(workExpensesType);
+      const data = await workerService.updateWorkExpensesTypes(
+        workExpensesType
+      );
 
       if (!data?.d.success) {
         updateShowLoader(false);

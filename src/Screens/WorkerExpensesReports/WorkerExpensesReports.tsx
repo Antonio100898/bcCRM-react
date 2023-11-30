@@ -1,7 +1,7 @@
 import "./WorkerExpensesReports.styles.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
 import { ExcelC } from "../../components/Excel/ExcelC";
@@ -61,7 +61,7 @@ export default function WorkerExpensesReports() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getWorkersExpense = useCallback(() => {
+  const getWorkersExpense = () => {
     api
       .post("/GetWorkersExpenses", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -125,25 +125,18 @@ export default function WorkerExpensesReports() {
 
         updateShowLoader(false);
       });
-  }, [
-    enqueueSnackbar,
-    filterMonth,
-    filterWorkerId,
-    filterYear,
-    sortBy,
-    updateShowLoader,
-  ]);
+  };
 
   useEffect(() => {
     getWorkersExpense();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterMonth, filterYear, filterWorkerId, sortBy]);
 
-  const exportFile = useCallback(() => {
+  const exportFile = () => {
     return ExcelC.exportFile(workerExpenses, workersExpensesSum);
-  }, [workerExpenses, workersExpensesSum]);
+  };
 
-  const updateWorkesExpensesApprove = useCallback(() => {
+  const updateWorkesExpensesApprove = () => {
     api
       .post("/UpdateWorkesExpensesApprove", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -170,11 +163,11 @@ export default function WorkerExpensesReports() {
 
         getWorkersExpense();
       });
-  }, [getWorkersExpense, enqueueSnackbar, updateShowLoader, workerExpenses]);
+  };
 
-  const updateWorkerChange = useCallback((wId: string) => {
+  const updateWorkerChange = (wId: string) => {
     setFilterWorkerId(wId);
-  }, []);
+  };
 
   return (
     <div className="row" style={{ margin: 10 }}>

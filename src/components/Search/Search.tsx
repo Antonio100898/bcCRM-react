@@ -6,7 +6,7 @@ import {
 import { useState } from "react";
 import { useSnackbar } from "notistack";
 import { ISearchProblem } from "../../Model";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { useUser } from "../../Context/useUser";
 import { SearchFilterDialog } from "../../Dialogs/SearchFilterDialog";
 

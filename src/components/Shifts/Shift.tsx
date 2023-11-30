@@ -8,7 +8,7 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import ShiftEdit from "./ShiftEdit";
 

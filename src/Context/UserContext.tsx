@@ -9,7 +9,7 @@ import {
   ProblemSummery,
 } from "../Model";
 import { TOKEN_KEY } from "../Consts/Consts";
-import { api } from "../API/Api";
+import { api } from "../API/axoisConfig";
 
 export interface Props {
   children: React.ReactNode;

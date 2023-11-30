@@ -10,7 +10,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ISearchProblem } from "../Model";
 
 export type SearchFilterDialogProps = {
@@ -28,17 +28,17 @@ export function SearchFilterDialog({
 }: SearchFilterDialogProps) {
   const [selfFilter, setSelfFilter] = useState(filter);
 
-  const handleChange = useCallback(
-    <K extends keyof ISearchProblem>(key: K, value: ISearchProblem[K]) => {
-      setSelfFilter((f) => ({ ...f, [key]: value }));
-    },
-    []
-  );
+  const handleChange = <K extends keyof ISearchProblem>(
+    key: K,
+    value: ISearchProblem[K]
+  ) => {
+    setSelfFilter((f) => ({ ...f, [key]: value }));
+  };
 
-  const handleSave = useCallback(() => {
+  const handleSave = () => {
     onFilterChanged(selfFilter);
     onClose();
-  }, [onClose, onFilterChanged, selfFilter]);
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>

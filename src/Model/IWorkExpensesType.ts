@@ -30,3 +30,13 @@ export interface IWorkExpensesTypeSum {
   teudatZehut: string;
   marselWorkerCode: number;
 }
+
+export interface IWorkerExpensesTypeResponse {
+  d: {
+    success: boolean;
+    msg: string;
+    workExpensesTypes: IWorkExpensesType[];
+    workerExpenses: IWorkExpensesType[];
+    workerExpensesSum: IWorkExpensesTypeSum[];
+  };
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   Tooltip,
   IconButton,
@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
 import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/Api";
+import { api } from "../../../API/axoisConfig";
 
 export type Props = {
   workerExpenses: IWorkExpensesType;
@@ -36,12 +36,12 @@ export default function WorkExpenseEdit({
 
   useEffect(() => {}, [workerExpenses]);
 
-  const onChange = useCallback(
-    <K extends keyof IWorkExpensesType>(key: K, val: IWorkExpensesType[K]) => {
-      setCurrentExpence({ ...currentExpence, [key]: val });
-    },
-    [currentExpence]
-  );
+  const onChange = <K extends keyof IWorkExpensesType>(
+    key: K,
+    val: IWorkExpensesType[K]
+  ) => {
+    setCurrentExpence({ ...currentExpence, [key]: val });
+  };
 
   const handleDialogClose = () => {
     setOpenDialog(false); // Use the prop.
@@ -59,7 +59,7 @@ export default function WorkExpenseEdit({
     setOpenDialog(true);
   }
 
-  const updateWorkerExpence = useCallback(() => {
+  const updateWorkerExpence = () => {
     currentExpence.startExpenseDate = new Date(
       currentExpence.startExpenseDateEN
     );
@@ -89,7 +89,7 @@ export default function WorkExpenseEdit({
         setOpenDialog(false);
         refreshlist();
       });
-  }, [currentExpence, enqueueSnackbar, refreshlist]);
+  };
 
   return (
     <div>

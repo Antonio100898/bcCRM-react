@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -12,7 +12,7 @@ import { useSnackbar } from "notistack";
 import { ShiftPlansWeek } from "../../components/ShiftPlans/ShiftPlansWeek";
 import { IshiftWeek } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { ExcelShiftPlans } from "../../components/Excel/ExcelShiftPlans";
 import { useUser } from "../../Context/useUser";
 
@@ -69,8 +69,7 @@ export default function ShiftPlans() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
 
-  const GetShifts = useCallback(() => {
-    // console.log("Start GetShifts");
+  const GetShifts = () => {
     updateShowLoader(true);
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
@@ -100,8 +99,7 @@ export default function ShiftPlans() {
           variant: "error",
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, showAllPlans]);
+  };
 
   useEffect(() => {
     GetShifts();
@@ -113,7 +111,7 @@ export default function ShiftPlans() {
     setStartDate(d);
   };
 
-  const exportFile = useCallback(async () => {
+  const exportFile = async () => {
     const { data } = await api.post("/GetShiftPlansWeekReport", {
       workerKey: localStorage.getItem(TOKEN_KEY),
       startTime: startDate.toDateString(),
@@ -129,7 +127,7 @@ export default function ShiftPlans() {
     }
 
     return ExcelShiftPlans.exportWeekFile(data.d.shiftPlanReport);
-  }, [enqueueSnackbar, startDate]);
+  };
 
   return (
     <div style={{ marginRight: "5px" }}>

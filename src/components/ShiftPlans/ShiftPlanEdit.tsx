@@ -15,7 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { IshiftDetail } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
 

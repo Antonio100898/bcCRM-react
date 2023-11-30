@@ -20,17 +20,16 @@ import {
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import SaveIcon from "@mui/icons-material/Save";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import SnoozeIcon from "@mui/icons-material/Snooze";
-import { api } from "../../API/Api";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { IWorkerFreeday } from "../../Model";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
+import { workerService } from "../../API/services";
 
 export default function WorkersFreeday() {
   const { confirm } = useConfirm();
@@ -50,32 +49,33 @@ export default function WorkersFreeday() {
   const [showAllWorkers, setShowAllWorkers] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
-  const getWorkersFreedays = useCallback(() => {
+  const fetchWorkersFreedays = async () => {
     updateShowLoader(true);
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-    api
-      .post("/GetWorkersFreedays", {
-        workerKey,
-        year: filterYear,
-        month: filterMonth,
-        justMe: !showAllWorkers,
-      })
-      .then(({ data }) => {
+    try {
+      const data = await workerService.getWorkersFreedays(
+        filterYear,
+        filterMonth,
+        !showAllWorkers
+      );
+      if (data?.d.success) {
         setWorkerFreeday(data.d.workerFreeDay);
-        updateShowLoader(false);
-      });
-  }, [filterMonth, filterYear, showAllWorkers, updateShowLoader]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
-    getWorkersFreedays();
+    fetchWorkersFreedays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterYear, filterMonth, showAllWorkers]);
 
-  const hideDialog = useCallback(() => {
+  const hideDialog = () => {
     setShowDialog(false);
-  }, []);
+  };
 
-  const showDialogNow = useCallback(() => {
+  const showDialogNow = () => {
     setCurrentWorkerFreeday({
       id: 0,
       workerId: 0,
@@ -90,7 +90,7 @@ export default function WorkersFreeday() {
       cancel: false,
     });
     setShowDialog(true);
-  }, []);
+  };
 
   function GetDateTimeFormatEN(d: string) {
     return `${new Date(d).getMonth() + 1}/${new Date(d).getDate()}/${new Date(
@@ -98,48 +98,40 @@ export default function WorkersFreeday() {
     ).getFullYear()} ${new Date(d).getHours()}:${new Date(d).getMinutes()}`;
   }
 
-  const updateFreeDayFn = useCallback(
-    (w: IWorkerFreeday) => {
-      updateShowLoader(true);
-      const workerKey = localStorage.getItem(TOKEN_KEY);
+  const updateFreeDayFn = async (w: IWorkerFreeday) => {
+    updateShowLoader(true);
 
-      const freeDay = {
-        ...w,
-        startDate: new Date(GetDateTimeFormatEN(w.startDateEN)),
-        finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
-      };
-      api
-        .post("/UpdateWorkerFreeday", {
-          workerKey,
-          freeday: freeDay,
-        })
-        .then(() => {
-          getWorkersFreedays();
-          setShowDialog(false);
-        });
-    },
-    [getWorkersFreedays, updateShowLoader]
-  );
+    const freeDay: IWorkerFreeday = {
+      ...w,
+      startDate: new Date(GetDateTimeFormatEN(w.startDateEN)),
+      finishDate: new Date(GetDateTimeFormatEN(w.finishDateEN)),
+    };
+    try {
+      const data = await workerService.updateWorkerFreeday(freeDay);
+      if (data?.d.success) fetchWorkersFreedays();
+    } catch (error) {
+      console.error(error);
+    }
 
-  const cancelFreeDay = useCallback(
-    async (w: IWorkerFreeday) => {
-      if (await confirm("האם ברצונך למחוק את הבקשה ליום חופש?")) {
-        updateFreeDayFn({ ...w, cancel: true });
-      }
-    },
-    [updateFreeDayFn, confirm]
-  );
+    setShowDialog(false);
+  };
+
+  const cancelFreeDay = async (w: IWorkerFreeday) => {
+    if (await confirm("האם ברצונך למחוק את הבקשה ליום חופש?")) {
+      updateFreeDayFn({ ...w, cancel: true });
+    }
+  };
 
   function updateFreeDay(w: IWorkerFreeday, status: number) {
     updateFreeDayFn({ ...w, statusId: status });
   }
 
-  const onChange = useCallback(
-    <K extends keyof IWorkerFreeday>(key: K, val: IWorkerFreeday[K]) => {
-      setCurrentWorkerFreeday({ ...currentWorkerFreeday!, [key]: val });
-    },
-    [currentWorkerFreeday]
-  );
+  const onChange = <K extends keyof IWorkerFreeday>(
+    key: K,
+    val: IWorkerFreeday[K]
+  ) => {
+    setCurrentWorkerFreeday({ ...currentWorkerFreeday!, [key]: val });
+  };
 
   return (
     <div style={{ marginRight: 10, marginLeft: 10 }}>

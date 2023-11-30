@@ -5,7 +5,7 @@ import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HailIcon from "@mui/icons-material/Hail";
 import { useSnackbar } from "notistack";
 import ShiftPlanEdit from "./ShiftPlanEdit";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { IshiftDetail } from "../../Model";
 import { useUser } from "../../Context/useUser";
 

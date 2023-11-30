@@ -7,33 +7,29 @@ import {
   TableRow,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { api } from "../../API/Api";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { IWorker } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 export default function WorkersCars() {
   const { updateShowLoader } = useUser();
-  const [workers, setWorkers] = useState<IWorker[]>([]);
+  const [workerCars, setWorkersCars] = useState<IWorker[]>([]);
 
-  function GetWorkers() {
+  const fetchWorkersCars = async () => {
     updateShowLoader(true);
+    try {
+      const data = await workerService.getWorkersCars();
+      if (data?.d.success) setWorkersCars(data.d.workers);
+    } catch (error) {
+      console.error(error);
+    }
 
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-    // console.log("Start GetWorkersCars");
-    api
-      .post("/GetWorkersCars", {
-        workerKey,
-      })
-      .then(({ data }) => {
-        setWorkers(data.d.workers);
-        updateShowLoader(false);
-      });
-  }
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
-    GetWorkers();
+    fetchWorkersCars();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,16 +58,15 @@ export default function WorkersCars() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {workers &&
-                workers.map((worker: IWorker) => {
-                  return (
-                    <TableRow key={worker.Id} hover>
-                      <TableCell align="right">{worker.workerName}</TableCell>
-                      <TableCell align="right">{worker.carType}</TableCell>
-                      <TableCell align="right">{worker.carNumber}</TableCell>
-                    </TableRow>
-                  );
-                })}
+              {workerCars?.map((worker: IWorker) => {
+                return (
+                  <TableRow key={worker.Id} hover>
+                    <TableCell align="right">{worker.workerName}</TableCell>
+                    <TableCell align="right">{worker.carType}</TableCell>
+                    <TableCell align="right">{worker.carNumber}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

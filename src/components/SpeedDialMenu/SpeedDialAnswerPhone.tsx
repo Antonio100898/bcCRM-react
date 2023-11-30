@@ -26,7 +26,7 @@ import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { IPlace, IProblem, IProblemsResponse } from "../../Model";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";

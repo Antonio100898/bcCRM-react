@@ -14,7 +14,12 @@ export interface IWorkerSickday {
 
   cancel: boolean;
 }
-
+export interface IWorkerSickdayResponse {
+  d: {
+    success: boolean;
+    workerSickDay: IWorkerSickday[];
+  };
+}
 export interface IWorkerFreeday {
   id: number;
   workerId: number;
@@ -28,4 +33,10 @@ export interface IWorkerFreeday {
   daysLen: number;
   cancel: boolean;
   statusId: number;
+}
+export interface IWorkerFreedayResponse {
+  d: {
+    success: boolean;
+    workerFreeDay: IWorkerFreeday[];
+  };
 }

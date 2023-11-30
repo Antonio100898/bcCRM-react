@@ -18,11 +18,11 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditIcon from "@mui/icons-material/Edit";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { Iv3Branch, Iv3City, Iv3Group } from "../../Model";
@@ -43,7 +43,7 @@ export default function V3Settings() {
 
   const [showBranchEdit, setShowBranchEdit] = useState<boolean>(false);
 
-  const getGroups = useCallback(() => {
+  const getGroups = () => {
     updateShowLoader(true);
     api
       .post("/GetV3Groups", {
@@ -73,25 +73,22 @@ export default function V3Settings() {
 
         updateShowLoader(false);
       });
-  }, [updateShowLoader]);
+  };
 
   useEffect(() => {
     getGroups();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterWorkerName]);
 
-  const copyDBName = useCallback(() => {
+  const copyDBName = () => {
     if (currentGroup) navigator.clipboard.writeText(currentGroup.database);
-  }, [currentGroup]);
+  };
 
-  const onChange = useCallback(
-    <K extends keyof Iv3Branch>(key: K, val: Iv3Branch[K]) => {
-      setCurrentBranch({ ...currentBranch, [key]: val });
-    },
-    [currentBranch]
-  );
+  const onChange = <K extends keyof Iv3Branch>(key: K, val: Iv3Branch[K]) => {
+    setCurrentBranch({ ...currentBranch, [key]: val });
+  };
 
-  const savePlace = useCallback(() => {
+  const savePlace = () => {
     // api
     //   .post("/UpdatePlaceBizNumber", {
     //     workerKey: "123",
@@ -104,7 +101,7 @@ export default function V3Settings() {
     //     GetPlaces();
     //     updateShowPlaceDialog(false);
     //   });
-  }, []);
+  };
 
   return (
     <div style={{ marginRight: "10px" }}>

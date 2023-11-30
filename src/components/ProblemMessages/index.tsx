@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import CreateIcon from "@mui/icons-material/Create";
 import { IMsgLine } from "../../Model";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import PromptDialog from "../../Dialogs/PromptDialog";
 
 type Props = {

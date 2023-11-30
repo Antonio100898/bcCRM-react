@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useConfirm } from "../../Context/useConfirm";
@@ -8,7 +8,7 @@ import { TOKEN_KEY } from "../../Consts/Consts";
 import ProblemsContainer from "../../components/Problems/ProblemsContainer";
 import ProblemsRowsContainer from "../../components/Problems/ProblemsRowsContainer";
 import { ProblemDialog } from "../../Dialogs/ProblemDialog";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 
 export type Props = {
   someProblems: IProblem[] | null;
@@ -35,10 +35,10 @@ export default function Problems() {
     selectedDepartmentId,
   } = useUser();
 
-  const handleShowProblem = useCallback((clickedProblem: IProblem) => {
+  const handleShowProblem = (clickedProblem: IProblem) => {
     setProblem(clickedProblem);
     setProblemOpen(true);
-  }, []);
+  };
 
   useEffect(() => {
     updateRefreshProblemCount(true);
@@ -58,21 +58,18 @@ export default function Problems() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy]);
 
-  const updateDepartment = useCallback(
-    async (department: string) => {
-      updateShowLoader(true);
+  const updateDepartment = async (department: string) => {
+    updateShowLoader(true);
 
-      const { data } = await api.post<IProblemsResponse>("/GetProblems", {
-        filter: department,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      });
+    const { data } = await api.post<IProblemsResponse>("/GetProblems", {
+      filter: department,
+      workerKey: localStorage.getItem(TOKEN_KEY),
+    });
 
-      updateRefreshProblemCount(true);
-      updateAllProblems(data.d.problems);
-      updateShowLoader(false);
-    },
-    [updateAllProblems, updateRefreshProblemCount, updateShowLoader]
-  );
+    updateRefreshProblemCount(true);
+    updateAllProblems(data.d.problems);
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
     const department = searchParams.get("department");
@@ -83,25 +80,22 @@ export default function Problems() {
     updateDepartment(department || "-1");
   }, [searchParams, setSearchParams, updateDepartment]);
 
-  const updateProblem = useCallback(
-    (value: IProblem) => {
-      updateAllProblems(
-        allProblems
-          ?.sort((a: IProblem, b: IProblem) => {
-            return (a[orderBy] || "")
-              .toString()
-              .localeCompare((b[orderBy] || "").toString());
-          })
-          .map((p) => (p.id === value.id ? value : p)) || []
-      );
-      updateRefreshProblemCount(true);
-      updateRefreshProblems(true);
-      updateDepartment(selectedDepartmentId.toString());
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedDepartmentId]
-  );
+  const updateProblem = (value: IProblem) => {
+    updateAllProblems(
+      allProblems
+        ?.sort((a: IProblem, b: IProblem) => {
+          return (a[orderBy] || "")
+            .toString()
+            .localeCompare((b[orderBy] || "").toString());
+        })
+        .map((p) => (p.id === value.id ? value : p)) || []
+    );
+    updateRefreshProblemCount(true);
+    updateRefreshProblems(true);
+    updateDepartment(selectedDepartmentId.toString());
+  };
 
-  const handleClose = useCallback(async () => {
+  const handleClose = async () => {
     if (fileLoading) {
       if (await confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
         abortController.current.abort();
@@ -110,7 +104,7 @@ export default function Problems() {
     } else {
       setProblemOpen(false);
     }
-  }, [confirm, fileLoading]);
+  };
 
   return (
     <div>

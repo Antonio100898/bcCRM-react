@@ -1,7 +1,6 @@
 import "./WorkerExpensesShortReports.styles.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { ExcelC } from "../../components/Excel/ExcelC";
 import WorkExpenseReportFilters from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters";
@@ -9,6 +8,7 @@ import WorkExpenseReportView from "../../components/WorkExpenses/WorkExpenseRepo
 import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
 import WorkersExpensesSum from "../../components/WorkerExpensesShortReports/WorkersExpensesSum";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 interface AutocompleteOption {
   label: string;
@@ -63,89 +63,81 @@ export default function WorkerExpensesShortReports() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const GetWorkersExpense = useCallback(() => {
-    api
-      .post("/GetWorkersExpenses", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        year: filterYear,
-        months: filterMonth,
-        filterWorkerId,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        // let aaaa: IWorkExpensesTypeSum[] = data.d.workerExpensesSum;
-        // console.log(data.d.workerExpensesSum);
-        setWorkersExpensesSum(data.d.workerExpensesSum);
-        const list: IWorkExpensesType[] = data.d.workerExpenses;
-        if (list.length > 0) {
-          if (sortBy === "startExpenseDate") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return (
-                new Date(a.startExpenseDate).getTime() -
-                new Date(b.startExpenseDate).getTime()
-              );
-            });
-          }
-
-          if (sortBy === "workExpensName") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.workExpensName < b.workExpensName ? -1 : 1;
-            });
-          }
-
-          if (sortBy === "workerName") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.workerName > b.workerName ? -1 : 1;
-            });
-          }
-
-          if (sortBy === "expenseValue") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.expenseValue < b.expenseValue ? -1 : 1;
-            });
-          }
-        }
-        setWorkerExpenses(list);
-        // setWorkerExpenses(data.d.workerExpenses);
-
+  const fetchWorkersExpense = async () => {
+    try {
+      const data = await workerService.getWorkersExpenses(
+        filterYear,
+        filterMonth,
+        filterWorkerId
+      );
+      if (!data?.d) {
         updateShowLoader(false);
-      });
-  }, [
-    enqueueSnackbar,
-    filterMonth,
-    filterWorkerId,
-    filterYear,
-    sortBy,
-    updateShowLoader,
-  ]);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      setWorkersExpensesSum(data.d.workerExpensesSum);
+      const list: IWorkExpensesType[] = data.d.workerExpenses;
+      if (list.length > 0) {
+        if (sortBy === "startExpenseDate") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return (
+              new Date(a.startExpenseDate).getTime() -
+              new Date(b.startExpenseDate).getTime()
+            );
+          });
+        }
+
+        if (sortBy === "workExpensName") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.workExpensName < b.workExpensName ? -1 : 1;
+          });
+        }
+
+        if (sortBy === "workerName") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.workerName > b.workerName ? -1 : 1;
+          });
+        }
+
+        if (sortBy === "expenseValue") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.expenseValue < b.expenseValue ? -1 : 1;
+          });
+        }
+      }
+      setWorkerExpenses(list);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // setWorkerExpenses(data.d.workerExpenses);
+
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
-    GetWorkersExpense();
+    fetchWorkersExpense();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterMonth, filterYear, filterWorkerId, sortBy]);
 
-  const exportFile = useCallback(() => {
+  const exportFile = () => {
     return ExcelC.exportFile(workerExpenses, workersExpensesSum);
-  }, [workerExpenses, workersExpensesSum]);
+  };
 
-  const updateWorkesExpensesApprove = useCallback(() => {
+  const updateWorkesExpensesApprove = () => {
     api
       .post("/UpdateWorkesExpensesApprove", {
         workerKey: localStorage.getItem(TOKEN_KEY),
@@ -172,11 +164,11 @@ export default function WorkerExpensesShortReports() {
 
         GetWorkersExpense();
       });
-  }, [GetWorkersExpense, enqueueSnackbar, updateShowLoader, workerExpenses]);
+  };
 
-  const updateWorkerChange = useCallback((wId: string) => {
+  const updateWorkerChange = (wId: string) => {
     setFilterWorkerId(wId);
-  }, []);
+  };
 
   return (
     <div className="row" style={{ margin: 10 }}>

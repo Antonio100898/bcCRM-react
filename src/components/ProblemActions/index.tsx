@@ -3,7 +3,7 @@ import { SetStateAction, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { IProblem, IProblemType, User } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { useConfirm } from "../../Context/useConfirm";
 import { LoadingButton } from "@mui/lab";
 

@@ -1,30 +1,33 @@
 import "./WorkerInfo.styles.css";
 import { TextField, Tooltip, IconButton } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
-import { IMAGES_PATH_WORKERS, TOKEN_KEY } from "../../Consts/Consts";
+import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
 import { IWorker } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 export default function WorkerInfo() {
   const { enqueueSnackbar } = useSnackbar();
   const { updateShowLoader, user, updateUser } = useUser();
   const [currentWorker, setCurrentWorker] = useState<Partial<IWorker>>();
   const history = useNavigate();
+
+  const fetchWorker = async () => {
+    try {
+      const data = await workerService.getWorker();
+      if (data?.d.success) setCurrentWorker(data.d.worker);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    api
-      .post("/GetWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        // console.log(data.d.worker);
-        setCurrentWorker(data.d.worker);
-      });
+    fetchWorker();
   }, []);
 
   const toBase64 = (file: File): Promise<string> =>
@@ -35,7 +38,7 @@ export default function WorkerInfo() {
       reader.onerror = (error) => reject(error);
     });
 
-  const validaWorker = useCallback(() => {
+  const validaWorker = () => {
     if (currentWorker!.firstName === "") {
       enqueueSnackbar({
         message: "הזן שם פרטי",
@@ -53,73 +56,49 @@ export default function WorkerInfo() {
     }
 
     return true;
-  }, [currentWorker, enqueueSnackbar]);
+  };
 
-  const onChange = useCallback(
-    <K extends keyof IWorker>(key: K, val: IWorker[K]) => {
-      setCurrentWorker({ ...currentWorker, [key]: val });
-    },
-    [currentWorker]
-  );
+  const onChange = <K extends keyof IWorker>(key: K, val: IWorker[K]) => {
+    setCurrentWorker({ ...currentWorker, [key]: val });
+  };
 
-  const saveWorker = useCallback(async () => {
-    if (!validaWorker()) {
+  const saveWorker = async () => {
+    if (!currentWorker || !validaWorker()) {
       return;
     }
-
-    // console.log(currentWorker);
-
     updateShowLoader(true);
-    api
-      .post("/UpdateWorker", {
-        worker: { ...currentWorker },
-        departments: null,
-        workerExpensesValue: null,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (data.d.success) {
-          if (data.d.msg && data.d.msg.length > 0) {
-            setCurrentWorker({
-              ...currentWorker,
-              imgContentName: data.d.msg,
-            });
-
-            if (user) {
-              updateUser({
-                ...user,
-                imgPath: IMAGES_PATH_WORKERS + data.d.msg,
-              });
-            }
-            onChange("imgPath", data.d.msg);
-          }
-
-          // console.log("new Image Name: " + data.d);
-
-          updateShowLoader(false);
-
-          history("/WorkerPeronalSpace");
-        } else {
-          enqueueSnackbar({
-            message: "נכשל לעדכן את העובד",
-            variant: "error",
+    try {
+      const data = await workerService.updateWorker(currentWorker);
+      if (data?.d.success) {
+        if (data.d.msg && data.d.msg.length > 0) {
+          setCurrentWorker({
+            ...currentWorker,
+            imgContentName: data.d.msg,
           });
-          updateShowLoader(false);
-        }
-      });
 
-    // updateShowWorkerDialog(false);
-  }, [
-    validaWorker,
-    updateShowLoader,
-    currentWorker,
-    history,
-    user,
-    onChange,
-    updateUser,
-    enqueueSnackbar,
-  ]);
+          if (user) {
+            updateUser({
+              ...user,
+              imgPath: IMAGES_PATH_WORKERS + data.d.msg,
+            });
+          }
+          onChange("imgPath", data.d.msg);
+        }
+
+        updateShowLoader(false);
+
+        history("/WorkerPeronalSpace");
+      } else {
+        enqueueSnackbar({
+          message: "נכשל לעדכן את העובד",
+          variant: "error",
+        });
+        updateShowLoader(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div style={{ marginRight: 10, marginLeft: 10 }}>

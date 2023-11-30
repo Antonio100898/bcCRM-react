@@ -12,7 +12,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { IHardware } from "../../Model";
 import HardwareCountSummery from "./HardwareCountSummery";
 import { useConfirm } from "../../Context/useConfirm";

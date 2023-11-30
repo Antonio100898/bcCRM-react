@@ -25,20 +25,12 @@ import {
 import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
 import { PlaceInfoDialog } from "./PlaceInfoDialog";
-import {
-  IProblem,
-  IPlace,
-  IDepartment,
-  IProblemSummeryResponse,
-  IChatLinesResponse,
-  IMsgLine,
-} from "../Model";
+import { IProblem, IPlace, IDepartment, IMsgLine } from "../Model";
 import { useUser } from "../Context/useUser";
-import { api } from "../API/Api";
-import { TOKEN_KEY } from "../Consts/Consts";
 import { ProblemAlert } from "../components/Problems/ProblemAlert";
 import ProblemInfo from "../components/ProblemInfo";
 import ProblemActions from "../components/ProblemActions";
+import { problemService, workerService } from "../API/services";
 
 export type ProblemDialogProps = {
   open: boolean;
@@ -84,20 +76,17 @@ export function ProblemDialog({
     trackingId: number;
   } | null>(null);
 
-  const refreshMessages = useCallback(async () => {
+  const refreshMessages = async () => {
     if (selfProblem?.id) {
       try {
-        const { data } = await api.post<IChatLinesResponse>("/GetChatLines", {
-          workerKey: localStorage.getItem(TOKEN_KEY),
-          problemId: selfProblem.id,
-        });
+        const data = await problemService.getProblemMessages(selfProblem.id);
 
-        if (data.d.success) setMessages(data.d.msgLines);
+        if (data?.d.success) setMessages(data.d.msgLines);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
-  }, [selfProblem?.id, setMessages]);
+  };
 
   const handleProblemTypesChange = (event: SelectChangeEvent<number[]>) => {
     const {
@@ -108,32 +97,28 @@ export function ProblemDialog({
     }
   };
 
-  const onChange = useCallback(
-    <K extends keyof IProblem>(key: K, val: IProblem[K]) => {
-      if (!selfProblem) return;
-      if (
-        key === "toWorker" &&
-        val !== selfProblem.toWorker &&
-        workers.find((w) => w.Id === val)
-      ) {
-        setSelfProblem({ ...selfProblem, [key]: val });
-        return;
-      }
-
+  const onChange = <K extends keyof IProblem>(key: K, val: IProblem[K]) => {
+    if (!selfProblem) return;
+    if (
+      key === "toWorker" &&
+      val !== selfProblem.toWorker &&
+      workers.find((w) => w.Id === val)
+    ) {
       setSelfProblem({ ...selfProblem, [key]: val });
-    },
-    [selfProblem, workers]
-  );
+      return;
+    }
 
-  const updateProblemTracking = useCallback(() => {
-    if (selfProblem) {
-      api
-        .post("/UpdateProblemTracking", {
-          workerKey: localStorage.getItem(TOKEN_KEY),
-          problemId: selfProblem.id,
-          trackingId: tracking?.trackingId,
-        })
-        .then(({ data }) => {
+    setSelfProblem({ ...selfProblem, [key]: val });
+  };
+
+  const updateProblemTracking = async () => {
+    if (selfProblem && tracking) {
+      try {
+        const data = await problemService.updateProblemTracking(
+          selfProblem.id,
+          tracking.trackingId
+        );
+        if (data?.d.success) {
           onChange("trackingId", data.d.trackingId);
           if (tracking?.historySummery) {
             setTracking({
@@ -141,12 +126,14 @@ export function ProblemDialog({
               trackingId: data.d.trackingId,
             });
           }
-        })
-        .catch((err) => console.log(err));
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selfProblem?.id, selfProblem?.trackingId, onChange, tracking]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
-  const openEditPlace = useCallback(() => {
+  const openEditPlace = () => {
     if (!selfProblem) return;
 
     setPlaceDialog({
@@ -162,14 +149,14 @@ export function ProblemDialog({
       warrantyType: 0,
     });
     setPlaceDialogOpen(true);
-  }, [selfProblem]);
+  };
 
-  const onClosePlaceEdit = useCallback(() => {
+  const onClosePlaceEdit = () => {
     setPlaceDialogOpen(false);
     setPlaceDialog(null);
-  }, []);
+  };
 
-  const handlePlaceUpdate = useCallback((place: IPlace) => {
+  const handlePlaceUpdate = (place: IPlace) => {
     setSelfProblem((prev) => ({
       ...prev!,
       placeId: place.id,
@@ -179,9 +166,9 @@ export function ProblemDialog({
       placeName: place.placeName,
       vip: place.vip,
     }));
-  }, []);
+  };
 
-  const isChangeToWorkerEnable = useCallback((): boolean => {
+  const isChangeToWorkerEnable = (): boolean => {
     if (!selfProblem) return false;
 
     if (user?.userType === 1) return true;
@@ -196,12 +183,12 @@ export function ProblemDialog({
       return true;
 
     return false;
-  }, [selfProblem, user?.userType, user?.workerId]);
+  };
 
   const fetchProblemHistorySummary = useCallback(async () => {
     if (!selfProblem) return;
     try {
-      const data = await api.getProblemHistorySummery(
+      const data = await problemService.getProblemHistorySummery(
         selfProblem.placeId,
         selfProblem.id
       );
@@ -220,7 +207,7 @@ export function ProblemDialog({
   const fetchDepartments = useCallback(async () => {
     if (user)
       try {
-        const data = await api.getWorkerDepartments(user?.workerId);
+        const data = await workerService.getWorkerDepartments(user?.workerId);
 
         if (data?.d.success) {
           setWorkerDepartments(data.d.workerDepartments);
@@ -235,17 +222,19 @@ export function ProblemDialog({
     fetchDepartments();
   }, [fetchDepartments, fetchProblemHistorySummary]);
 
+  const fetchProblemSummary = async () => {
+    try {
+      const data = await problemService.getProblemSummary();
+      if (data?.d.success) {
+        updateDepartments(data.d.summery.departments);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    api
-      .post<IProblemSummeryResponse>("/GetProblemSummery", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        if (data.d.success) {
-          updateDepartments(data.d.summery.departments);
-        }
-      })
-      .catch((err) => console.log(err));
+    fetchProblemSummary();
   }, [selfProblem]);
 
   useEffect(() => {

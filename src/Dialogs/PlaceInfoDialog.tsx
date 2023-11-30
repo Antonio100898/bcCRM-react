@@ -10,11 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSnackbar } from "notistack";
-import { IPlace, IProblemsResponse } from "../Model";
+import { IPlace } from "../Model";
 import { useUser } from "../Context/useUser";
-import { api } from "../API/Api";
+import { placeService } from "../API/services/placeService";
 
 export type PlaceInfoDialogProps = {
   open: boolean;
@@ -33,60 +33,56 @@ export function PlaceInfoDialog({
   const [selfPlace, setSelfPlace] = useState(place);
   const { user } = useUser();
 
-  const handleChange = useCallback(
-    <T extends keyof IPlace>(key: T, value: IPlace[T]) => {
-      if (!selfPlace) return;
-      const update = { ...selfPlace, [key]: value };
-      setSelfPlace(update);
-    },
-    [selfPlace]
-  );
+  const handleChange = <T extends keyof IPlace>(key: T, value: IPlace[T]) => {
+    if (!selfPlace) return;
+    const update = { ...selfPlace, [key]: value };
+    setSelfPlace(update);
+  };
 
-  const validateInput = useCallback(
-    <T extends keyof IPlace>(key: T, errorMessage: string) => {
-      if (!selfPlace) return false;
-      if (
-        typeof selfPlace[key] === "string" &&
-        (selfPlace[key] as string).length
-      ) {
-        return true;
-      }
+  const validateInput = <T extends keyof IPlace>(
+    key: T,
+    errorMessage: string
+  ) => {
+    if (!selfPlace) return false;
+    if (
+      typeof selfPlace[key] === "string" &&
+      (selfPlace[key] as string).length
+    ) {
+      return true;
+    }
 
-      enqueueSnackbar({ message: errorMessage, variant: "error" });
-      return false;
-    },
-    [enqueueSnackbar, selfPlace]
-  );
+    enqueueSnackbar({ message: errorMessage, variant: "error" });
+    return false;
+  };
 
-  const handleSavePlace = useCallback(() => {
+  const handleSavePlace = async () => {
     if (!selfPlace) return;
 
     if (!validateInput("placeName", "אנא הזן שם מקום")) return;
     if (!validateInput("customerName", "אנא הזן שם לקוח")) return;
     if (!validateInput("phone", "אנא הזן טלפון")) return;
-
-    api
-      .post<IProblemsResponse>("/UpdatePhonePlace", {
-        workerKey: user?.key,
-        placeId: selfPlace.id,
+    try {
+      const data = await placeService.updatePlaceInfo({
+        id: selfPlace.id,
         phone: selfPlace.phone,
         phoneId: selfPlace.phoneId,
         placeName: selfPlace.placeName,
-        cusName: selfPlace.customerName,
-        remark: selfPlace.placeRemark,
+        customerName: selfPlace.customerName,
+        placeRemark: selfPlace.placeRemark,
         vip: selfPlace.vip,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן פרטי עסק. ${data.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
-        onPlaceUpdate(selfPlace);
       });
-  }, [enqueueSnackbar, onPlaceUpdate, selfPlace, user?.key, validateInput]);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן פרטי עסק. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+      onPlaceUpdate(selfPlace);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose}>

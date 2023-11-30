@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { api } from "../../API/Api";
 import { HeaderSummery } from "../../Model/HeaderSummery";
 import DepartmentButton from "./DepartmentButton";
 import { useUser } from "../../Context/useUser";
+import { problemService } from "../../API/services";
 
 function Departments() {
   const [summery, setSummery] = useState<HeaderSummery>(null!);
   const { refreshProblemCount, updateRefreshProblemCount, updateShowLoader } =
     useUser();
-
   useEffect(() => {
     if (refreshProblemCount) {
       updateShowLoader(true);
 
-      api.getProblemSummary().then((data) => {
+      problemService.getProblemSummary().then((data) => {
         if (data) setSummery(data.d.summery);
 
         updateRefreshProblemCount(false);
@@ -22,7 +21,6 @@ function Departments() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshProblemCount]);
-
   return (
     <div style={{ margin: "5px" }}>
       {summery &&

@@ -20,15 +20,15 @@ import {
   useMediaQuery,
   Avatar,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
-import { IMAGES_PATH_WORKERS, TOKEN_KEY } from "../../Consts/Consts";
+import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
 import { IDepartment, IWorker, IWorkExpensesType } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 export default function Workers() {
   const { enqueueSnackbar } = useSnackbar();
@@ -57,8 +57,8 @@ export default function Workers() {
     updateShowLoader(true);
 
     try {
-      const data = await api.getWorkers();
-      if (data.d.success) setWorkers(data.d.workers);
+      const data = await workerService.getWorkers();
+      if (data?.d.success) setWorkers(data.d.workers);
     } catch (error) {
       console.error(error);
     }
@@ -71,7 +71,7 @@ export default function Workers() {
     fetchWorkers();
   }, [filterWorkerName]);
 
-  const validaWorker = useCallback(() => {
+  const validaWorker = () => {
     if (currentWorker!.firstName === "") {
       enqueueSnackbar({
         message: "הזן שם פרטי",
@@ -89,18 +89,14 @@ export default function Workers() {
     }
 
     return true;
-  }, [currentWorker, enqueueSnackbar]);
+  };
 
   const saveWorker = async () => {
     if (!validaWorker() || !currentWorker) {
       return;
     }
     try {
-      const data = await api.updateWorker(
-        currentWorker,
-        currentDepartments,
-        workExpensesTypes
-      );
+      const data = await workerService.updateWorker(currentWorker);
       if (data?.d.success) fetchWorkers();
     } catch (error) {
       console.error(error);
@@ -109,36 +105,34 @@ export default function Workers() {
     updateShowWorkerDialog(false);
   };
 
-  function GetWorkerDepartments(worker: IWorker) {
-    api
-      .post("/GetWorkerDepartments", {
-        workerId: worker.Id,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
+  const fetchWorkerDepartments = async (worker: IWorker) => {
+    try {
+      const data = await workerService.getWorkerDepartments(worker.Id);
+      if (data?.d.success) {
         setCurrentWorker(worker);
         setCurrentDepartments(data.d.workerDepartments);
-      });
-  }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  function GetWorkerExpensesValue(workerId: number) {
-    api
-      .post("/GetWorkerExpensesValue", {
-        workerId,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        // console.log(data.d.workExpensesTypes);
+  const fetchWorkerExpensesValue = async (workerId: number) => {
+    try {
+      const data = await workerService.getWorkerExpensesValue(workerId);
+      if (data?.d.success) {
         setWorkExpensesTypes(data.d.workExpensesTypes);
         setWorkExpensesTypesPosibleForWorker(data.d.workerExpenses);
-
         updateShowWorkerDialog(true);
-      });
-  }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   function showWorkerInfo(worker: IWorker) {
-    GetWorkerDepartments(worker);
-    GetWorkerExpensesValue(worker.Id);
+    fetchWorkerDepartments(worker);
+    fetchWorkerExpensesValue(worker.Id);
   }
 
   function addNewWorker() {
@@ -146,16 +140,13 @@ export default function Workers() {
     updateShowWorkerDialog(true);
   }
 
-  const hideDialog = useCallback(() => {
+  const hideDialog = () => {
     updateShowWorkerDialog(false);
-  }, []);
+  };
 
-  const onChange = useCallback(
-    <K extends keyof IWorker>(key: K, val: IWorker[K]) => {
-      setCurrentWorker({ ...currentWorker, [key]: val });
-    },
-    [currentWorker]
-  );
+  const onChange = <K extends keyof IWorker>(key: K, val: IWorker[K]) => {
+    setCurrentWorker({ ...currentWorker, [key]: val });
+  };
 
   const onChangeDep = (id: number, val: boolean) => {
     setCurrentDepartments(
@@ -181,20 +172,23 @@ export default function Workers() {
     setWorkExpensesTypes(newState);
   };
 
-  const updateWorkerExpensesValueForWorker = useCallback(() => {
+  const updateWorkerExpensesValueForWorker = async () => {
     // AppendWorkerExpensesValue(string workerKey, int workerId, int workExpensesType, double sum)
-    api
-      .post("/AppendWorkerExpensesValue", {
-        workerId: currentWorker!.Id,
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        workExpensesType: addNewWorkerExpenseType,
-        sum: addNewWorkerExpenseSum,
-      })
-      .then(() => {
-        setAddNewWorkerExpenseSum("0");
-        GetWorkerExpensesValue(currentWorker!.Id || 0);
-      });
-  }, [addNewWorkerExpenseSum, addNewWorkerExpenseType, currentWorker]);
+    if (currentWorker?.Id)
+      try {
+        const data = await workerService.appendWorkerExpensesValue(
+          currentWorker!.Id,
+          addNewWorkerExpenseType,
+          addNewWorkerExpenseSum
+        );
+        if (data?.d.success) {
+          setAddNewWorkerExpenseSum("0");
+          fetchWorkerExpensesValue(currentWorker!.Id || 0);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+  };
 
   return (
     <div>

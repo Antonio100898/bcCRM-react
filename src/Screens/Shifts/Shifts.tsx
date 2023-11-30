@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MenuItem,
   Select,
@@ -9,7 +9,7 @@ import {
 import IconButton from "@mui/material/IconButton";
 import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { IshiftWeek, IDayInfo } from "../../Model";
 import { ShiftsContainer } from "../../components/Shifts/ShiftsContainer";
@@ -43,7 +43,7 @@ export default function Shifts() {
     user?.department === 4 ? 2 : 1
   );
 
-  const appendDefultWeekShifts = useCallback(() => {
+  const appendDefultWeekShifts = () => {
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
     // console.log("startDate: " + startDate);
@@ -70,9 +70,9 @@ export default function Shifts() {
           variant: "error",
         });
       });
-  }, [enqueueSnackbar, shiftGroupId, startDate]);
+  };
 
-  const askAddDefaults = useCallback(async (): Promise<boolean> => {
+  const askAddDefaults = async (): Promise<boolean> => {
     if (
       await confirm(
         "לא נמצאו משמרות לשבוע זה, האם ברצונך להוסיף משמרות ברירת מחדל?"
@@ -84,9 +84,9 @@ export default function Shifts() {
     }
 
     return false;
-  }, [appendDefultWeekShifts, confirm, updateShowLoader]);
+  };
 
-  const getShifts = useCallback(async () => {
+  const getShifts = async () => {
     updateShowLoader(true);
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
@@ -122,8 +122,7 @@ export default function Shifts() {
           variant: "error",
         });
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, shiftGroupId]);
+  };
 
   useEffect(() => {
     // console.log(shiftGroupId);
@@ -131,7 +130,7 @@ export default function Shifts() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, setShowShiftDetails, shiftGroupId]);
 
-  const showWorkersMissingShiftPlans = useCallback(() => {
+  const showWorkersMissingShiftPlans = () => {
     const workerKey = localStorage.getItem(TOKEN_KEY);
 
     // console.log("startDate: " + startDate);
@@ -171,7 +170,7 @@ export default function Shifts() {
           variant: "error",
         });
       });
-  }, [enqueueSnackbar, startDate, updateShowLoader]);
+  };
 
   return (
     <div

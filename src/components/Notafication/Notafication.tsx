@@ -4,7 +4,7 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MarkAsUnreadIcon from "@mui/icons-material/MarkAsUnread";
 import { IconButton, Tooltip } from "@mui/material";
 import { INotification } from "../../Model";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 
 export type Props = {
   nota: INotification;

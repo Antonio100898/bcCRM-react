@@ -1,0 +1,125 @@
+import {
+  IChatLinesResponse,
+  IProblem,
+  IProblemSummeryResponse,
+  IProblemsResponse,
+  ISearchProblem,
+} from "../../Model";
+import { instance } from "../axoisConfig";
+import { workerKey } from "../axoisConfig";
+
+export const problemService = {
+  async getProblems(
+    department: string
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetProblems", {
+        filter: department || "-1",
+        workerKey,
+      });
+
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getProblemSummary(): Promise<IProblemSummeryResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetProblemSummery", {
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async addProblemMessage(
+    problemId: number,
+    newLine: string
+  ): Promise<IChatLinesResponse | undefined> {
+    try {
+      const { data } = await instance.post("/AddNewChatLine", {
+        workerKey,
+        problemId,
+        newLine,
+        lineType: 1,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getProblemMessages(
+    problemId: number
+  ): Promise<IChatLinesResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetChatLines", {
+        workerKey,
+        problemId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getProblemHistorySummery(
+    placeId: number,
+    problemId: number
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetProblemHistorySummery", {
+        placeId,
+        problemId,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async searchProblems(
+    filter: Partial<ISearchProblem>
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/SearchProblems", {
+        ...filter,
+        key: workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateProblem(
+    problem: IProblem
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateProblem", { problem });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateProblemTracking(
+    problemId: number,
+    trackingId: number
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateProblemTracking", {
+        problemId,
+        trackingId,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+};

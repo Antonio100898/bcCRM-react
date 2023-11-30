@@ -8,11 +8,11 @@ import {
   ToggleButton,
 } from "@mui/material";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { IWorkExpensesType } from "../../Model/IWorkExpensesType";
@@ -89,47 +89,43 @@ export default function WorkerExpenses() {
     setSelectedCategoryId(newCategoryId);
   };
 
-  const deleteExpense = useCallback(
-    async (expenseId: string) => {
-      // const proceed = prompt("אנא כתוב yes במידה וברצונך למחוק");
+  const deleteExpense = async (expenseId: string) => {
+    // const proceed = prompt("אנא כתוב yes במידה וברצונך למחוק");
 
-      // if (proceed === "yes") {
-      if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
-        api
-          .post("/CancelWorkerExpenses", {
-            workerKey: localStorage.getItem(TOKEN_KEY),
-            expenseId,
-          })
-          .then(({ data }) => {
-            if (!data.d) {
-              updateShowLoader(false);
-              enqueueSnackbar({
-                message: "אין משתמש כזה",
-                variant: "error",
-              });
-              return;
-            }
-            if (!data.d.success) {
-              updateShowLoader(false);
-              enqueueSnackbar({
-                message: data.d.msg,
-                variant: "error",
-              });
-              return;
-            }
-
-            getWorkerExpenses();
+    // if (proceed === "yes") {
+    if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
+      api
+        .post("/CancelWorkerExpenses", {
+          workerKey: localStorage.getItem(TOKEN_KEY),
+          expenseId,
+        })
+        .then(({ data }) => {
+          if (!data.d) {
             updateShowLoader(false);
-          });
-      }
-    },
-    [confirm, enqueueSnackbar, getWorkerExpenses, updateShowLoader]
-  );
+            enqueueSnackbar({
+              message: "אין משתמש כזה",
+              variant: "error",
+            });
+            return;
+          }
+          if (!data.d.success) {
+            updateShowLoader(false);
+            enqueueSnackbar({
+              message: data.d.msg,
+              variant: "error",
+            });
+            return;
+          }
 
-  const refreshlist = useCallback(() => {
+          getWorkerExpenses();
+          updateShowLoader(false);
+        });
+    }
+  };
+
+  const refreshlist = () => {
     getWorkerExpenses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterMonth, filterYear]);
+  };
 
   // function updateFilterMonth(m: any) {
   //   setFilterMonth(m);

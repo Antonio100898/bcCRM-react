@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { api } from "../../../API/Api";
+import { api } from "../../../API/axoisConfig";
 import { TOKEN_KEY } from "../../../Consts/Consts";
 import { IStats } from "../../../Model";
 import ChartHours from "../../../components/Stats/ChartHours";

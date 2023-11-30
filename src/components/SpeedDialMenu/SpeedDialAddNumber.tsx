@@ -25,7 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useSnackbar } from "notistack";
 import { IPlace, IProblem, IProblemsResponse } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { useUser } from "../../Context/useUser";
 
 export default function SpeedDialAddNumber() {

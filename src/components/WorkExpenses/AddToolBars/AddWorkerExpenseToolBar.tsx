@@ -16,7 +16,7 @@ import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineE
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
 import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/Api";
+import { api } from "../../../API/axoisConfig";
 import { useUser } from "../../../Context/useUser";
 
 export type Props = {

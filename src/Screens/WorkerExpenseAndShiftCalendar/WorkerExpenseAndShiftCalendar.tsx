@@ -8,9 +8,9 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ArticleIcon from "@mui/icons-material/Article";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { ExpenseAndShiftsWeek } from "../../components/ExpenseAndShiftsWeeks/expenseAndShiftsWeek";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import {
@@ -75,7 +75,7 @@ export default function WorkerExpenseAndShiftCalendar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterYear, filterMonth, department, filterWorkerId]);
 
-  const exportFile = useCallback(() => {
+  const exportFile = () => {
     const a: IExpenseAndShift[] = expenseAndShiftsWeeks.reduce<
       IExpenseAndShift[]
     >((prev, week) => {
@@ -88,7 +88,7 @@ export default function WorkerExpenseAndShiftCalendar() {
       ];
     }, []);
     return ExcelShiftAndExpenses.exportFile(a);
-  }, [expenseAndShiftsWeeks]);
+  };
 
   function GetMoneyFormat(d: number) {
     return `₪${d
@@ -97,11 +97,10 @@ export default function WorkerExpenseAndShiftCalendar() {
       .replace(".0", "")}`;
   }
 
-  const dayClicked = useCallback((day: IExpenseAndShiftDay) => {
-    // console.log(day);
+  const dayClicked = (day: IExpenseAndShiftDay) => {
     setCurrentDay(day);
     setShowDetails(true);
-  }, []);
+  };
 
   return (
     <div style={{ marginRight: 10, marginLeft: 10 }}>

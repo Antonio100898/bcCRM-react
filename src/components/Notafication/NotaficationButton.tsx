@@ -1,7 +1,7 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Badge, Button, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
-import { api } from "../../API/Api";
+import { api } from "../../API/axoisConfig";
 import { INotification } from "../../Model";
 import Notafication from "./Notafication";
 

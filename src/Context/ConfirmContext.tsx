@@ -1,10 +1,4 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { createContext, PropsWithChildren, useRef, useState } from "react";
 import ConfirmDialog from "../Dialogs/ConfirmDialog";
 import PromptDialog from "../Dialogs/PromptDialog";
 
@@ -29,38 +23,38 @@ function ConfirmProvider({ children }: PropsWithChildren) {
     undefined!
   );
 
-  const onConfirm = useCallback((confirm: boolean) => {
+  const onConfirm = (confirm: boolean) => {
     if (response.current) response.current(confirm);
-  }, []);
+  };
 
-  const onPrompt = useCallback((confirm: string) => {
+  const onPrompt = (confirm: string) => {
     if (promptResponse.current) promptResponse.current(confirm);
-  }, []);
+  };
 
-  const onClose = useCallback(() => {
+  const onClose = () => {
     setOpenConfirm(false);
     setOpenPrompt(false);
-  }, []);
+  };
 
-  const confirm = useCallback((contentMessage: string): Promise<boolean> => {
+  const confirm = (contentMessage: string): Promise<boolean> => {
     setMessage(contentMessage);
     setOpenConfirm(true);
     return new Promise<boolean>((resolve) => {
       response.current = resolve;
     });
-  }, []);
+  };
 
-  const prompt = useCallback(
-    (contentMessage: string, defaultContentText?: string): Promise<string> => {
-      setMessage(contentMessage);
-      setDefaultText(defaultContentText || "");
-      setOpenPrompt(true);
-      return new Promise<string>((resolve) => {
-        promptResponse.current = resolve;
-      });
-    },
-    []
-  );
+  const prompt = (
+    contentMessage: string,
+    defaultContentText?: string
+  ): Promise<string> => {
+    setMessage(contentMessage);
+    setDefaultText(defaultContentText || "");
+    setOpenPrompt(true);
+    return new Promise<string>((resolve) => {
+      promptResponse.current = resolve;
+    });
+  };
 
   return (
     <ConfirmContext.Provider value={{ confirm, prompt }}>
