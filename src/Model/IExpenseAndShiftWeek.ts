@@ -34,3 +34,11 @@ export interface IEzShift {
   finishTimeEN: string;
   totalMinutes: number;
 }
+
+export interface IExpenseAndShiftWeekResponse {
+  d: {
+    msg: string;
+    success: boolean;
+    ExpenseAndShiftsWeeks: IExpenseAndShiftWeek[];
+  };
+}

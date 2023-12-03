@@ -10,16 +10,15 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import ArticleIcon from "@mui/icons-material/Article";
-import { api } from "../../API/axoisConfig";
 import { ExpenseAndShiftsWeek } from "../../components/ExpenseAndShiftsWeeks/expenseAndShiftsWeek";
-import { TOKEN_KEY } from "../../Consts/Consts";
+import { ExcelShiftAndExpenses } from "../../components/Excel/ExcelShiftAndExpenses";
+import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 import {
   IExpenseAndShift,
   IExpenseAndShiftDay,
   IExpenseAndShiftWeek,
 } from "../../Model";
-import { ExcelShiftAndExpenses } from "../../components/Excel/ExcelShiftAndExpenses";
-import { useUser } from "../../Context/useUser";
 
 interface AutocompleteOption {
   label: string;
@@ -44,24 +43,24 @@ export default function WorkerExpenseAndShiftCalendar() {
   const [showDetails, setShowDetails] = useState(false);
   const [currentDay, setCurrentDay] = useState<IExpenseAndShiftDay>();
 
-  useEffect(() => {});
-
-  function GetExpensesAndShiftForMonth() {
+  const fetchExpensesAndShiftForMonth = async () => {
     updateShowLoader(true);
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-    api
-      .post("/GetExpensesAndShiftForMonth", {
-        workerKey,
-        year: filterYear,
-        month: filterMonth,
-        departmentId: department,
-        workerId: filterWorkerId,
-      })
-      .then(({ data }) => {
+    try {
+      const data = await workerService.getExpensesAndShiftForMonth(
+        filterYear,
+        filterMonth,
+        department,
+        filterWorkerId
+      );
+      if (data?.d.success)
         setExpenseAndShiftsWeeks(data.d.ExpenseAndShiftsWeeks);
-        updateShowLoader(false);
-      });
-  }
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowLoader(false);
+  };
+
   useEffect(() => {
     const rows: AutocompleteOption[] = [];
     for (let i = 0; i < workers.length; i += 1) {
@@ -71,7 +70,7 @@ export default function WorkerExpenseAndShiftCalendar() {
 
     setWorkersOption(rows);
 
-    GetExpensesAndShiftForMonth();
+    fetchExpensesAndShiftForMonth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterYear, filterMonth, department, filterWorkerId]);
 

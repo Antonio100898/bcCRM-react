@@ -16,8 +16,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
-import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/axoisConfig";
+import { workerService } from "../../../API/services";
 
 export type Props = {
   workerExpenses: IWorkExpensesType;
@@ -59,36 +58,26 @@ export default function WorkExpenseEdit({
     setOpenDialog(true);
   }
 
-  const updateWorkerExpence = () => {
+  const updateWorkerExpence = async () => {
     currentExpence.startExpenseDate = new Date(
       currentExpence.startExpenseDateEN
     );
+    try {
+      const data = await workerService.updateWorkerExpence(currentExpence);
 
-    api
-      .post("/UpdateWorkerExpence", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        expense: currentExpence,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+        return;
+      }
 
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setOpenDialog(false);
-        refreshlist();
-      });
+      setOpenDialog(false);
+      refreshlist();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

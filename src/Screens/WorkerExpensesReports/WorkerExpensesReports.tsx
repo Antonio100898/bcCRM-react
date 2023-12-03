@@ -1,14 +1,13 @@
 import "./WorkerExpensesReports.styles.css";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { IWorkExpensesType, IWorkExpensesTypeSum } from "../../Model";
 import { ExcelC } from "../../components/Excel/ExcelC";
 import WorkExpenseReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView";
 import WorkExpenseSumReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseSumReportView";
 import WorkExpenseReportFilters from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters";
 import { useUser } from "../../Context/useUser";
+import { workerService } from "../../API/services";
 
 interface AutocompleteOption {
   label: string;
@@ -61,74 +60,72 @@ export default function WorkerExpensesReports() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getWorkersExpense = () => {
-    api
-      .post("/GetWorkersExpenses", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        year: filterYear,
-        months: filterMonth,
-        filterWorkerId,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
+  const fetchWorkerExpenses = async () => {
+    try {
+      const data = await workerService.getWorkersExpenses(
+        filterYear,
+        filterMonth,
+        filterWorkerId
+      );
 
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        // let aaaa: IWorkExpensesTypeSum[] = data.d.workerExpensesSum;
-        // console.log(data.d.workerExpensesSum);
-        setWorkersExpensesSum(data.d.workerExpensesSum);
-        const list: IWorkExpensesType[] = data.d.workerExpenses;
-        if (list.length > 0) {
-          if (sortBy === "startExpenseDate") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return (
-                new Date(a.startExpenseDate).getTime() -
-                new Date(b.startExpenseDate).getTime()
-              );
-            });
-          }
-
-          if (sortBy === "workExpensName") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.workExpensName < b.workExpensName ? -1 : 1;
-            });
-          }
-
-          if (sortBy === "workerName") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.workerName > b.workerName ? -1 : 1;
-            });
-          }
-
-          if (sortBy === "expenseValue") {
-            list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
-              return a.expenseValue < b.expenseValue ? -1 : 1;
-            });
-          }
-        }
-        setWorkerExpenses(list);
-        // setWorkerExpenses(data.d.workerExpenses);
-
+      if (!data?.d) {
         updateShowLoader(false);
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      setWorkersExpensesSum(data.d.workerExpensesSum);
+      const list: IWorkExpensesType[] = data.d.workerExpenses;
+      if (list.length > 0) {
+        if (sortBy === "startExpenseDate") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return (
+              new Date(a.startExpenseDate).getTime() -
+              new Date(b.startExpenseDate).getTime()
+            );
+          });
+        }
+
+        if (sortBy === "workExpensName") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.workExpensName < b.workExpensName ? -1 : 1;
+          });
+        }
+
+        if (sortBy === "workerName") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.workerName > b.workerName ? -1 : 1;
+          });
+        }
+
+        if (sortBy === "expenseValue") {
+          list.sort((a: IWorkExpensesType, b: IWorkExpensesType) => {
+            return a.expenseValue < b.expenseValue ? -1 : 1;
+          });
+        }
+      }
+      setWorkerExpenses(list);
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowLoader(false);
   };
 
   useEffect(() => {
-    getWorkersExpense();
+    fetchWorkerExpenses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterMonth, filterYear, filterWorkerId, sortBy]);
 
@@ -136,33 +133,34 @@ export default function WorkerExpensesReports() {
     return ExcelC.exportFile(workerExpenses, workersExpensesSum);
   };
 
-  const updateWorkesExpensesApprove = () => {
-    api
-      .post("/UpdateWorkesExpensesApprove", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        workerExpenses,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
+  const updateWorkesExpensesApprove = async () => {
+    try {
+      const data = await workerService.updateWorkesExpensesApprove(
+        workerExpenses
+      );
 
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
+      if (!data?.d) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
 
-        getWorkersExpense();
-      });
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      fetchWorkerExpenses();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateWorkerChange = (wId: string) => {
@@ -296,7 +294,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="הוצאות עבודה"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={1}
         />
       )}
@@ -304,7 +302,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="בונוסים"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={2}
         />
       )}
@@ -312,7 +310,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="הדרכות"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={3}
         />
       )}
@@ -320,7 +318,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="קילומטר"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={4}
         />
       )}
@@ -328,7 +326,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="אחוז מענה"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={5}
         />
       )}
@@ -336,7 +334,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="בונוסים (ענן)"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={6}
         />
       )}
@@ -344,7 +342,7 @@ export default function WorkerExpensesReports() {
         <WorkExpenseReportView
           headerName="בונוסים טכנאים"
           worker_Expenses={workerExpenses}
-          refreshlist={getWorkersExpense}
+          refreshlist={fetchWorkerExpenses}
           workExpensCategoryId={7}
         />
       )}

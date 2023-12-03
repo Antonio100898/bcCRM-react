@@ -14,9 +14,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
-import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/axoisConfig";
 import { useUser } from "../../../Context/useUser";
+import { workerService } from "../../../API/services";
 
 export type Props = {
   workExpensCategoryId: number;
@@ -48,38 +47,40 @@ export default function AddWorkerExpenseBonusesToolBar({
     setFilterMonth(`${startExpensDate!.toDate().getMonth() + 1}`);
   }, [setFilterMonth, startExpensDate]);
 
-  useEffect(() => {
-    // console.log(new Date().getMonth().toString());
-    // updateShowLoader(true);
-    api
-      .post("/GetWorkExpensesTypesForWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setWorkerExpensesTypes(data.d.workExpensesTypes);
-        setRemarkExpens("");
+  const fetchWorkExpensesTypesForWorker = async () => {
+    try {
+      const data = await workerService.getWorkExpensesTypesForWorker();
+      if (!data?.d) {
         updateShowLoader(false);
-        refreshlist();
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      setWorkerExpensesTypes(data.d.workExpensesTypes);
+    } catch (error) {
+      console.error(error);
+    }
+    setRemarkExpens("");
+    updateShowLoader(false);
+    refreshlist();
+  };
+
+  useEffect(() => {
+    fetchWorkExpensesTypesForWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -87,47 +88,48 @@ export default function AddWorkerExpenseBonusesToolBar({
     setStartExpensDate(newValue);
   };
 
-  const saveWorkerExpence = () => {
+  const saveWorkerExpence = async () => {
     const t: IWorkExpensesType[] = workerExpensesTypes.filter((e) => {
       return e.workExpensType === parseInt(expensType, 10);
     });
 
     updateShowLoader(true);
-
-    api
-      .post("/AppendWorkerExpence", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        startExpenceDate: startExpensDate?.toDate(),
-        finishExpenceDate: startExpensDate?.toDate(),
-        expenseType: expensType,
-        sum: t[0].defValue,
-        expenseTypeUnitValue: t[0].defValue,
-        freePass: false,
-        remark: remarkExpens,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setRemarkExpens("");
-        refreshlist();
+    try {
+      const data = await workerService.appendWorkerExpence(
+        startExpensDate?.toDate(),
+        startExpensDate?.toDate(),
+        expensType,
+        t[0].defValue,
+        t[0].defValue,
+        false,
+        remarkExpens
+      );
+      if (!data?.d) {
         updateShowLoader(false);
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    setRemarkExpens("");
+    refreshlist();
+    updateShowLoader(false);
   };
 
   return (

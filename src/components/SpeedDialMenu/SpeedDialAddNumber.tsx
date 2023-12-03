@@ -23,10 +23,11 @@ import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { useSnackbar } from "notistack";
-import { IPlace, IProblem, IProblemsResponse } from "../../Model";
+import { IPlace, IProblem } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/axoisConfig";
 import { useUser } from "../../Context/useUser";
+import { placeService } from "../../API/services/placeService";
+import { problemService } from "../../API/services";
 
 export default function SpeedDialAddNumber() {
   const { enqueueSnackbar } = useSnackbar();
@@ -44,16 +45,13 @@ export default function SpeedDialAddNumber() {
 
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
-  const getPlaces = () => {
-    api
-      .post<IProblemsResponse>("/GetPlacesForPhone", {
-        phone,
-      })
-      .then(({ data }) => {
-        if (data.d.success) {
-          setPlacesOptions(data.d.places);
-        }
-      });
+  const getPlaces = async () => {
+    try {
+      const data = await placeService.getPlacesForPhone(phone);
+      if (data?.d.success) setPlacesOptions(data.d.places);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   React.useEffect(() => {
@@ -70,7 +68,7 @@ export default function SpeedDialAddNumber() {
     setShowSelectPlace(true);
   };
 
-  const selectPlace = (place: IPlace) => {
+  const selectPlace = async (place: IPlace) => {
     const problem: Partial<IProblem> = {
       workerKey,
       workerCreateName: user?.workerName || "",
@@ -87,35 +85,33 @@ export default function SpeedDialAddNumber() {
       startTimeEN: new Date().toString(),
       problemTypes: [],
     };
+    try {
+      const data = await problemService.updateProblem(problem);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל להוסיף תקלה חדשה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
 
-    api
-      .post<IProblemsResponse>("/UpdateProblem", {
-        problem,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
+      problem.id = data.d.problemId!;
+      problem.toWorker = data.d.workerId;
 
-        problem.id = data.d.problemId!;
-        problem.toWorker = data.d.workerId;
+      updateCurrentProblem(problem);
+      updateShowProblemDialog(true);
 
-        updateCurrentProblem(problem);
-        updateShowProblemDialog(true);
-
-        if (!window.location.href.endsWith("/Problems")) {
-          history("/Problems");
-        }
-      });
+      if (!window.location.href.endsWith("/Problems")) {
+        history("/Problems");
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     setShowSelectPlace(false);
   };
 
-  const InputNewPlace = () => {
+  const InputNewPlace = async () => {
     if (newPlaceName && newPlaceName?.length === 0) {
       enqueueSnackbar({
         message: "אנא הזן שם מקום חדש",
@@ -169,42 +165,41 @@ export default function SpeedDialAddNumber() {
       warrantyType: 0,
     };
 
-    api
-      .post<IProblemsResponse>("/UpdatePhonePlace", {
-        workerKey: user?.key,
+    try {
+      const data = await placeService.updatePhonePlace({
         placeId: newPlaceId,
         phone,
         placeName: newPlaceName,
-        cusName: newCusName,
-        remark: newRemark,
+        customerName: newCusName,
+        placeRemark: newRemark,
         vip: newVip,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
-
-        setNewPlaceName("");
-        setNewCusName("");
-        setNewRemark("");
-        setShowAddNewPlace(false);
-
-        if (newPlaceId === 0) {
-          selectPlace(p);
-        } else {
-          getPlaces();
-        }
       });
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל להוסיף תקלה חדשה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+
+      setNewPlaceName("");
+      setNewCusName("");
+      setNewRemark("");
+      setShowAddNewPlace(false);
+
+      if (newPlaceId === 0) {
+        selectPlace(p);
+      } else {
+        getPlaces();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   function EditPlace(placeId: number) {
     const place: IPlace[] =
       placesOptions?.filter((p) => p.placeId === placeId) || [];
-    // console.log("placeId: " + placeId);
     if (place.length > 0) {
       setNewPlaceId(placeId);
       setPhone(place[0].phone);

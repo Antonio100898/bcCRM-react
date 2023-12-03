@@ -49,3 +49,19 @@ export interface IshiftWeekReportExcel {
   friday: number;
   saturday: number;
 }
+
+export interface IShiftPlanReportResponse {
+  d: {
+    msg: string;
+    success: boolean;
+    shiftPlanReport: IshiftWeekReportExcel[];
+  };
+}
+
+export interface IShiftDetailsResponse {
+  d: {
+    msg: string;
+    success: boolean;
+    workerShifts: IshiftDetail[];
+  };
+}

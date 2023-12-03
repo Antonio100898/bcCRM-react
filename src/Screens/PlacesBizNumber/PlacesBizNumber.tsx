@@ -13,7 +13,6 @@ import {
   TableRow,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { api } from "../../API/axoisConfig";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { IPlace } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
@@ -30,7 +29,7 @@ export default function PlacesBizNumber() {
 
   const getPlaces = () => {
     updateShowLoader(true);
-    // workerKey: localStorage.getItem(TOKEN_KEY),
+    
     api
       .post("/GetPlacesBizNumber", {
         workerKey: "123",

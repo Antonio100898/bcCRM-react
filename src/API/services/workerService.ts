@@ -9,6 +9,7 @@ import {
   IWorkerSickday,
   IWorkerSickdayResponse,
   IWorkersResponse,
+  IExpenseAndShiftWeekResponse,
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
@@ -212,6 +213,108 @@ export const workerService = {
         year,
         months,
         filterWorkerId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateWorkesExpensesApprove(
+    workerExpenses: IWorkExpensesType[]
+  ): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateWorkesExpensesApprove", {
+        workerKey,
+        workerExpenses,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async cancelWorkerExpenses(
+    expenseId: string
+  ): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/CancelWorkerExpenses", {
+        workerKey,
+        expenseId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getExpensesAndShiftForMonth(
+    year: string,
+    month: string,
+    departmentId: string,
+    workerId: number
+  ): Promise<IExpenseAndShiftWeekResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetExpensesAndShiftForMonth", {
+        workerKey,
+        year,
+        month,
+        departmentId,
+        workerId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateWorkerExpence(
+    expense: IWorkExpensesType
+  ): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateWorkerExpence", {
+        workerKey,
+        expense,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getWorkExpensesTypesForWorker(): Promise<
+    IWorkerExpensesTypeResponse | undefined
+  > {
+    try {
+      const { data } = await instance.post("/GetWorkExpensesTypesForWorker", {
+        workerKey,
+        filterWorkerId: 0,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async appendWorkerExpence(
+    startExpenceDate: Date | string | undefined,
+    finishExpenceDate: Date | string | undefined,
+    expenseType: string,
+    sum: number | string,
+    expenseTypeUnitValue: string,
+    freePass: boolean,
+    remark: string
+  ): Promise<IWorkerExpensesTypeResponse | undefined> {
+    try {
+      const { data } = await instance.post("/AppendWorkerExpence", {
+        workerKey,
+        startExpenceDate,
+        finishExpenceDate,
+        expenseType,
+        sum,
+        expenseTypeUnitValue,
+        freePass,
+        remark,
       });
       return data;
     } catch (error) {

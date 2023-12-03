@@ -38,5 +38,6 @@ export interface IWorkerExpensesTypeResponse {
     workExpensesTypes: IWorkExpensesType[];
     workerExpenses: IWorkExpensesType[];
     workerExpensesSum: IWorkExpensesTypeSum[];
+    workExpensesSum: number;
   };
 }

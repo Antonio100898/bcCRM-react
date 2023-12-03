@@ -15,9 +15,8 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
-import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/axoisConfig";
 import { useUser } from "../../../Context/useUser";
+import { workerService } from "../../../API/services";
 
 export type Props = {
   refreshlist: () => void;
@@ -43,36 +42,40 @@ export default function AddWorkerExpenseGuideToolBar({
     IWorkExpensesType[]
   >([]);
 
-  useEffect(() => {
-    api
-      .post("/GetWorkExpensesTypesForWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setWorkerExpensesTypes(data.d.workExpensesTypes);
-        setExpensType("18");
+  const fetchWorkExpensesTypesForWorker = async () => {
+    try {
+      const data = await workerService.getWorkExpensesTypesForWorker();
+      if (!data?.d) {
         updateShowLoader(false);
-        refreshlist();
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      setWorkerExpensesTypes(
+        (data.d.workExpensesTypes as IWorkExpensesType[]).filter(
+          (e) => e.workExpensType !== 27
+        )
+      );
+      updateShowLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkExpensesTypesForWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -95,7 +98,7 @@ export default function AddWorkerExpenseGuideToolBar({
     ).getFullYear()} ${new Date(d).getHours()}:${new Date(d).getMinutes()}`;
   }
 
-  const saveWorkerExpence = () => {
+  const saveWorkerExpence = async () => {
     if (remarkExpens.length === 0) {
       enqueueSnackbar({
         message: "נא להזין את שם המקום",
@@ -117,39 +120,39 @@ export default function AddWorkerExpenseGuideToolBar({
     });
 
     updateShowLoader(true);
-    api
-      .post("/AppendWorkerExpence", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        startExpenceDate: GetDateTimeFormatEN(startExpensDate!.toString()),
-        finishExpenceDate: GetDateTimeFormatEN(finishExpensDate!.toString()),
-        expenseType: expensType,
-        sum: t[0].defValue,
-        expenseTypeUnitValue: t[0].defValue,
-        freePass: false,
-        remark: remarkExpens,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-        setRemarkExpens("");
-        refreshlist();
+    try {
+      const data = await workerService.appendWorkerExpence(
+        GetDateTimeFormatEN(startExpensDate!.toString()),
+        GetDateTimeFormatEN(finishExpensDate!.toString()),
+        expensType,
+        t[0].defValue,
+        t[0].defValue,
+        false,
+        remarkExpens
+      );
+      if (!data?.d) {
         updateShowLoader(false);
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    setRemarkExpens("");
+    refreshlist();
+    updateShowLoader(false);
   };
 
   return (

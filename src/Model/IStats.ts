@@ -11,3 +11,11 @@ export interface IStats {
   movedProblems: number;
   openAndOnHim: number;
 }
+
+export interface IStatsResponse {
+  d: {
+    msg: string;
+    success: boolean;
+    stats: IStats[];
+  };
+}

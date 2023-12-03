@@ -7,31 +7,30 @@ import {
   TableRow,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { api } from "../../../API/axoisConfig";
-import { TOKEN_KEY } from "../../../Consts/Consts";
 import { IStats } from "../../../Model";
 import ChartHours from "../../../components/Stats/ChartHours";
 import ChartSum from "../../../components/Stats/ChartSum";
 import { useUser } from "../../../Context/useUser";
+import { statisticService } from "../../../API/services/statisticService";
 
 export default function Stats() {
   const { updateShowLoader } = useUser();
   const [stats, setStats] = useState<IStats[]>([]);
 
-  function GetStats() {
+  const fetchStats = async () => {
     updateShowLoader(true);
+    try {
+      const data = await statisticService.getStats();
+      if (data?.d.success) setStats(data.d.stats);
+    } catch (error) {
+      console.error(error);
+    }
 
-    api
-      .post("/GetStats", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        setStats(data.d.stats);
-        updateShowLoader(false);
-      });
-  }
+    updateShowLoader(false);
+  };
+
   useEffect(() => {
-    GetStats();
+    fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

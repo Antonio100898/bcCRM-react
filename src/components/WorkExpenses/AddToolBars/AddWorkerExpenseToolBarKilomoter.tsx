@@ -14,9 +14,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
-import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/axoisConfig";
 import { useUser } from "../../../Context/useUser";
+import { workerService } from "../../../API/services";
 
 export type Props = {
   refreshlist: () => void;
@@ -44,35 +43,39 @@ export default function AddWorkerExpenseToolBarKilomoter({
     setFilterMonth(`${expensDate!.toDate().getMonth() + 1}`);
   }, [expensDate, setFilterMonth]);
 
-  useEffect(() => {
-    api
-      .post("/GetWorkExpensesTypesForWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
+  const fetchWorkExpensesTypesForWorker = async () => {
+    try {
+      const data = await workerService.getWorkExpensesTypesForWorker();
 
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setWorkerExpensesTypes(data.d.workExpensesTypes);
+      if (!data?.d) {
         updateShowLoader(false);
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      setWorkerExpensesTypes(data.d.workExpensesTypes);
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
+  };
+
+  useEffect(() => {
+    fetchWorkExpensesTypesForWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -80,7 +83,7 @@ export default function AddWorkerExpenseToolBarKilomoter({
     setExpensDate(newValue);
   };
 
-  const saveWorkerExpence = () => {
+  const saveWorkerExpence = async () => {
     const sum = Number.parseFloat(sumExpens);
     if (sum <= 0) {
       enqueueSnackbar({
@@ -94,49 +97,47 @@ export default function AddWorkerExpenseToolBarKilomoter({
     const t: IWorkExpensesType[] = workerExpensesTypes.filter((e) => {
       return e.workExpensType === parseInt(expensType, 10);
     });
+    try {
+      const remark = `${sum} קמ ${remarkExpens}`;
+      const newSum = Number(t[0].defValue) * sum;
+      const data = await workerService.appendWorkerExpence(
+        expensDate?.toDate(),
+        expensDate?.toDate(),
+        expensType,
+        newSum,
+        t[0].defValue,
+        false,
+        remark
+      );
 
-    updateShowLoader(true);
-
-    const remark = `${sum} קמ ${remarkExpens}`;
-    const newSum = Number(t[0].defValue) * sum;
-
-    api
-      .post("/AppendWorkerExpence", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        startExpenceDate: expensDate?.toDate(),
-        finishExpenceDate: expensDate?.toDate(),
-        expenseType: expensType,
-        sum: newSum,
-        expenseTypeUnitValue: t[0].defValue,
-        freePass: false,
-        remark,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-
-          return;
-        }
-
-        setSumExpens("0");
-        setRemarkExpens("");
+      if (!data?.d) {
         updateShowLoader(false);
-        refreshlist();
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      if (!data?.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      setSumExpens("0");
+      setRemarkExpens("");
+      updateShowLoader(false);
+      refreshlist();
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(true);
   };
 
   return (

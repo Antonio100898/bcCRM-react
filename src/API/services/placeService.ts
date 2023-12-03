@@ -16,4 +16,31 @@ export const placeService = {
       console.error(error);
     }
   },
+
+  async getPlacesForPhone(
+    phone: string
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetPlacesForPhone", {
+        phone,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updatePhonePlace(
+    place: Partial<IPlace>
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdatePhonePlace", {
+        workerKey,
+        ...place,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };

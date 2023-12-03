@@ -12,8 +12,6 @@ import { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { IWorkExpensesType } from "../../Model/IWorkExpensesType";
 import AddWorkerExpenseToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBar";
@@ -23,6 +21,7 @@ import AddWorkerExpenseToolBarKilomoter from "../../components/WorkExpenses/AddT
 import AddWorkerExpenseToolBarReplayPrecentge from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBarReplayPrecentge";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
+import { workerService } from "../../API/services";
 
 export default function WorkerExpenses() {
   const { confirm } = useConfirm();
@@ -41,16 +40,59 @@ export default function WorkerExpenses() {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("1");
 
-  const getWorkerExpenses = useCallback(() => {
-    api
-      .post("/GetWorkerExpenses", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
-        year: filterYear,
-        month: filterMonth,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
+  const fetchWorkerExpenses = async () => {
+    try {
+      const data = await workerService.getWorkersExpenses(
+        filterYear,
+        filterMonth,
+        "0"
+      );
+      if (!data?.d) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      setWorkerExpenses(data.d.workerExpenses);
+      setTotalSum(data.d.workExpensesSum);
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowLoader(false);
+  };
+
+  useEffect(() => {
+    fetchWorkerExpenses();
+  }, [filterYear, filterMonth]);
+
+  const workerExpensTypeCategoryChanged = (
+    event: React.MouseEvent<HTMLElement>,
+    newCategoryId: string
+  ) => {
+    if (newCategoryId === null) {
+      return;
+    }
+
+    setSelectedCategoryId(newCategoryId);
+  };
+
+  const deleteExpense = async (expenseId: string) => {
+    if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
+      try {
+        const data = await workerService.cancelWorkerExpenses(expenseId);
+        if (!data?.d) {
           updateShowLoader(false);
           enqueueSnackbar({
             message: "אין משתמש כזה",
@@ -67,64 +109,17 @@ export default function WorkerExpenses() {
           return;
         }
 
-        setWorkerExpenses(data.d.workerExpenses);
-        setTotalSum(data.d.workExpensesSum);
+        fetchWorkerExpenses();
+      } catch (error) {
+        console.error(error);
+      }
 
-        updateShowLoader(false);
-      });
-  }, [enqueueSnackbar, filterMonth, filterYear, updateShowLoader]);
-
-  useEffect(() => {
-    getWorkerExpenses();
-  }, [filterYear, filterMonth, getWorkerExpenses]);
-
-  const workerExpensTypeCategoryChanged = (
-    event: React.MouseEvent<HTMLElement>,
-    newCategoryId: string
-  ) => {
-    if (newCategoryId === null) {
-      return;
-    }
-
-    setSelectedCategoryId(newCategoryId);
-  };
-
-  const deleteExpense = async (expenseId: string) => {
-    // const proceed = prompt("אנא כתוב yes במידה וברצונך למחוק");
-
-    // if (proceed === "yes") {
-    if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
-      api
-        .post("/CancelWorkerExpenses", {
-          workerKey: localStorage.getItem(TOKEN_KEY),
-          expenseId,
-        })
-        .then(({ data }) => {
-          if (!data.d) {
-            updateShowLoader(false);
-            enqueueSnackbar({
-              message: "אין משתמש כזה",
-              variant: "error",
-            });
-            return;
-          }
-          if (!data.d.success) {
-            updateShowLoader(false);
-            enqueueSnackbar({
-              message: data.d.msg,
-              variant: "error",
-            });
-            return;
-          }
-
-          getWorkerExpenses();
-          updateShowLoader(false);
-        });
+      updateShowLoader(false);
     }
   };
 
   const refreshlist = () => {
-    getWorkerExpenses();
+    fetchWorkerExpenses();
   };
 
   // function updateFilterMonth(m: any) {

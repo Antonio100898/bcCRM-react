@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { IshiftDetail } from "../../Model";
 import DateSelect from "../../components/Shifts/DateSelect";
 import WorkerShift from "../../components/ShiftsPersonal/WorkerShift";
 import { useUser } from "../../Context/useUser";
+import { shiftService } from "../../API/services";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -22,39 +21,30 @@ export default function ShiftsPersonal() {
   const [shifts, setShfits] = useState<IshiftDetail[]>([]);
   const [startDate, setStartDate] = useState(getLastSunday(7));
 
-  const GetShifts = () => {
+  const fetchShifts = async () => {
     updateShowLoader(true);
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-
-    api
-      .post("/GetShiftsForWorker", {
-        workerKey,
-        startTime: startDate,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setShfits(data.d.workerShifts);
-        updateShowLoader(false);
-      })
-      .catch((error) => {
-        // your error handling goes here
-
+    try {
+      const data = await shiftService.getShiftsForWorker(startDate);
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: error,
+          message: data?.d.msg,
           variant: "error",
         });
-      });
+        updateShowLoader(false);
+        return;
+      }
+      setShfits(data.d.workerShifts);
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+    }
   };
 
   useEffect(() => {
-    GetShifts();
+    fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate]);
 

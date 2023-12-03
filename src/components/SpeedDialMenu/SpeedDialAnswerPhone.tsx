@@ -25,11 +25,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { IPlace, IProblem, IProblemsResponse } from "../../Model";
-import { api } from "../../API/axoisConfig";
+import { IPlace, IProblem } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
+import { problemService } from "../../API/services";
+import { placeService } from "../../API/services/placeService";
 
 export default function SpeedDialAnswerPhone() {
   const { prompt } = useConfirm();
@@ -49,44 +50,41 @@ export default function SpeedDialAnswerPhone() {
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
   const answerThePhone = async () => {
-    const { data } = await api.post<IProblemsResponse>("/AnsweredCall", {
-      workerKey: localStorage.getItem(TOKEN_KEY),
-      department: user?.department,
-    });
-    if (!data.d.success) {
-      enqueueSnackbar({
-        message: data.d.msg,
-        variant: "error",
-      });
-      return;
-    }
+    if (!user?.department) return;
+    try {
+      const data = await problemService.answeredCall(user.department);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+        return;
+      }
 
-    setPhone(data.d.phone);
+      setPhone(data.d.phone);
 
-    if (data.d.phone.length > 6) {
-      const { data: data1 } = await api.post<IProblemsResponse>(
-        "/GetPlacesForPhone",
-        {
-          phone: data.d.phone,
-        }
-      );
+      if (data.d.phone.length > 6) {
+        const data1 = await problemService.getPlacesForPhone(data.d.phone);
 
-      if (data1.d.success) {
-        setPlacesOptions(data1.d.places);
-        setShowSelectPlace(data1.d.success);
+        if (data1?.d.success) {
+          setPlacesOptions(data1.d.places);
+          setShowSelectPlace(data1.d.success);
 
-        if (data1.d.places.length === 0) {
-          setNewPlaceId(0);
-          setNewPlaceName("");
-          setNewCusName("");
-          setNewRemark("");
-          setShowAddNewPlace(true);
+          if (data1.d.places.length === 0) {
+            setNewPlaceId(0);
+            setNewPlaceName("");
+            setNewCusName("");
+            setNewRemark("");
+            setShowAddNewPlace(true);
+          }
         }
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const selectPlace = (place: IPlace) => {
+  const selectPlace = async (place: IPlace) => {
     const problem: Partial<IProblem> = {
       workerKey,
       workerCreateName: user?.workerName || "",
@@ -102,31 +100,29 @@ export default function SpeedDialAnswerPhone() {
       startTime: `${new Date().toLocaleString()}`,
       startTimeEN: new Date().toString(),
     };
+    try {
+      const data = await problemService.updateProblem(problem);
 
-    api
-      .post<IProblemsResponse>("/UpdateProblem", {
-        problem,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל להוסיף תקלה חדשה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
 
-        problem.id = data.d.problemId!;
-        problem.toWorker = data.d.workerId;
+      problem.id = data.d.problemId!;
+      problem.toWorker = data.d.workerId;
 
-        updateCurrentProblem(problem);
-        updateShowProblemDialog(true);
+      updateCurrentProblem(problem);
+      updateShowProblemDialog(true);
 
-        if (!window.location.href.endsWith("/Problems")) {
-          history("/Problems");
-        }
-      });
-
+      if (!window.location.href.endsWith("/Problems")) {
+        history("/Problems");
+      }
+    } catch (error) {
+      console.error(error);
+    }
     setShowSelectPlace(false);
   };
 
@@ -147,8 +143,6 @@ export default function SpeedDialAnswerPhone() {
       });
       return;
     }
-
-    // console.log("Name: " + pName);
 
     const cusName = await prompt("הזן את שם הלקוח");
 
@@ -180,24 +174,24 @@ export default function SpeedDialAnswerPhone() {
       bizNumber: "",
       warrantyType: 0,
     };
-
-    api
-      .post<IProblemsResponse>("/UpdatePhonePlace", {
-        workerKey: user?.key,
+    try {
+      const data = await placeService.updatePlaceInfo({
         phone,
         placeName: pName,
-        cusName,
+        customerName: cusName!,
         vip: newVip,
-        remark: newRemark,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל להוסיף תקלה חדשה. ${data.d.msg}`,
-            variant: "error",
-          });
-        }
+        placeRemark: newRemark,
       });
+
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל להוסיף תקלה חדשה. ${data?.d.msg}`,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     selectPlace(p);
   };

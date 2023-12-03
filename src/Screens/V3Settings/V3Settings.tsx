@@ -22,11 +22,10 @@ import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditIcon from "@mui/icons-material/Edit";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { Iv3Branch, Iv3City, Iv3Group } from "../../Model";
 import { useUser } from "../../Context/useUser";
+import { v3Service } from "../../API/services/v3Service";
 
 export type Option = { label: string; id: number };
 
@@ -43,36 +42,36 @@ export default function V3Settings() {
 
   const [showBranchEdit, setShowBranchEdit] = useState<boolean>(false);
 
-  const getGroups = () => {
+  const getGroups = async () => {
     updateShowLoader(true);
-    api
-      .post("/GetV3Groups", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-      })
-      .then(({ data }) => {
-        const grp: Iv3Group[] = data.d.v3Groups;
-        const options: Option[] = [];
+    try {
+      const data = await v3Service.getV3Groups();
+      if (!data?.d.success) return;
+      const grp: Iv3Group[] = data.d.v3Groups;
+      const options: Option[] = [];
 
-        grp.forEach((obj) => {
-          options.push({ label: `${obj.name} (${obj.id})`, id: obj.id });
-        });
-
-        setGroupsList(options);
-
-        const grpCity: Iv3City[] = data.d.v3Cities;
-        const optionsCity: Option[] = [];
-
-        grpCity.forEach((obj) => {
-          optionsCity.push({
-            label: `${obj.cityName} (${obj.id})`,
-            id: obj.id,
-          });
-        });
-
-        setCities(optionsCity);
-
-        updateShowLoader(false);
+      grp.forEach((obj) => {
+        options.push({ label: `${obj.name} (${obj.id})`, id: obj.id });
       });
+
+      setGroupsList(options);
+
+      const grpCity: Iv3City[] = data.d.v3Cities;
+      const optionsCity: Option[] = [];
+
+      grpCity.forEach((obj) => {
+        optionsCity.push({
+          label: `${obj.cityName} (${obj.id})`,
+          id: obj.id,
+        });
+      });
+
+      setCities(optionsCity);
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowLoader(false);
   };
 
   useEffect(() => {

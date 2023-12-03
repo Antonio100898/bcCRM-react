@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
-import { IProblem, IProblemsResponse } from "../../Model";
+import { IProblem } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import ProblemsContainer from "../../components/Problems/ProblemsContainer";
 import ProblemsRowsContainer from "../../components/Problems/ProblemsRowsContainer";
 import { ProblemDialog } from "../../Dialogs/ProblemDialog";
-import { api } from "../../API/axoisConfig";
+import { problemService } from "../../API/services";
 
 export type Props = {
   someProblems: IProblem[] | null;
@@ -58,18 +58,22 @@ export default function Problems() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy]);
 
-  const updateDepartment = async (department: string) => {
-    updateShowLoader(true);
-
-    const { data } = await api.post<IProblemsResponse>("/GetProblems", {
-      filter: department,
-      workerKey: localStorage.getItem(TOKEN_KEY),
-    });
-
-    updateRefreshProblemCount(true);
-    updateAllProblems(data.d.problems);
-    updateShowLoader(false);
-  };
+  const updateDepartment = useCallback(
+    async (department: string) => {
+      updateShowLoader(true);
+      try {
+        const data = await problemService.getProblems(department);
+        if (data?.d.success) {
+          updateRefreshProblemCount(true);
+          updateAllProblems(data.d.problems);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      updateShowLoader(false);
+    },
+    [updateShowLoader, updateAllProblems, updateRefreshProblemCount]
+  );
 
   useEffect(() => {
     const department = searchParams.get("department");

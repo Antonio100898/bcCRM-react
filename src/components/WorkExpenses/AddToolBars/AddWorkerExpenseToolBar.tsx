@@ -15,9 +15,8 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../../Model";
-import { TOKEN_KEY } from "../../../Consts/Consts";
-import { api } from "../../../API/axoisConfig";
 import { useUser } from "../../../Context/useUser";
+import { workerService } from "../../../API/services";
 
 export type Props = {
   refreshlist: () => void;
@@ -45,47 +44,48 @@ export default function AddWorkerExpenseToolBar({
     setFilterMonth(`${expensDate!.toDate().getMonth() + 1}`);
   }, [expensDate, setFilterMonth]);
 
-  useEffect(() => {
-    api
-      .post("/GetWorkExpensesTypesForWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
-
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setWorkerExpensesTypes(
-          (data.d.workExpensesTypes as IWorkExpensesType[]).filter(
-            (e) => e.workExpensType !== 27
-          )
-        );
+  const fetchWorkExpensesTypesForWorker = async () => {
+    try {
+      const data = await workerService.getWorkExpensesTypesForWorker();
+      if (!data?.d) {
         updateShowLoader(false);
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
+
+      setWorkerExpensesTypes(
+        (data.d.workExpensesTypes as IWorkExpensesType[]).filter(
+          (e) => e.workExpensType !== 27
+        )
+      );
+      updateShowLoader(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkExpensesTypesForWorker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (newValue: Dayjs | null) => {
-    // console.log(newValue);
     setExpensDate(newValue);
   };
 
-  const saveWorkerExpence = () => {
+  const saveWorkerExpence = async () => {
     const sum = Number.parseFloat(sumExpens);
     if (sum <= 0) {
       enqueueSnackbar({
@@ -100,42 +100,45 @@ export default function AddWorkerExpenseToolBar({
     });
 
     updateShowLoader(true);
-    api
-      .post("/AppendWorkerExpence", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        startExpenceDate: expensDate?.toDate(),
-        finishExpenceDate: expensDate?.toDate(),
-        expenseType: expensType,
+    try {
+      const data = await workerService.appendWorkerExpence(
+        expensDate?.toDate(),
+        expensDate?.toDate(),
+        expensType,
         sum,
-        expenseTypeUnitValue: t[0].defValue,
+        t[0].defValue,
         freePass,
-        remark: remarkExpens,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
+        remarkExpens
+      );
 
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setSumExpens("0");
-        setRemarkExpens("");
-        setFreePass(false);
+      if (!data?.d) {
         updateShowLoader(false);
-        refreshlist();
-      });
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        updateShowLoader(false);
+        return;
+      }
+
+      setSumExpens("0");
+      setRemarkExpens("");
+      setFreePass(false);
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
+    refreshlist();
   };
 
   return (

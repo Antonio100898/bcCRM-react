@@ -11,10 +11,9 @@ import ArticleIcon from "@mui/icons-material/Article";
 import { useSnackbar } from "notistack";
 import { ShiftPlansWeek } from "../../components/ShiftPlans/ShiftPlansWeek";
 import { IshiftWeek } from "../../Model";
-import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/axoisConfig";
 import { ExcelShiftPlans } from "../../components/Excel/ExcelShiftPlans";
 import { useUser } from "../../Context/useUser";
+import { shiftService } from "../../API/services";
 
 export interface IdayO {
   date: string;
@@ -64,45 +63,39 @@ export default function ShiftPlans() {
       days.push({ date: d, isToday: d === t, dayName: daysName[index] });
     }
 
-    // console.log(days);
     return days;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
 
-  const GetShifts = () => {
+  const fetchShifts = async () => {
     updateShowLoader(true);
-    const workerKey = localStorage.getItem(TOKEN_KEY);
+    try {
+      const data = showAllPlans
+        ? await shiftService.getShiftPlans(startDate)
+        : await shiftService.getShiftPlansForWorker(startDate);
 
-    const url = showAllPlans ? "/GetShiftPlans" : "/GetShiftPlansForWorker";
-
-    // console.log(url);
-    api
-      .post(url, {
-        workerKey,
-        startTime: startDate,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setShiftPlans(data.d.shiftDetails);
-        updateShowLoader(false);
-      })
-      .catch((error) => {
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: error,
+          message: data?.d.msg,
           variant: "error",
         });
-      });
+        updateShowLoader(false);
+        return;
+      }
+
+      setShiftPlans(data.d.shiftDetails);
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+    }
+    updateShowLoader(false);
   };
 
   useEffect(() => {
-    GetShifts();
+    fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, showAllPlans]);
 
@@ -112,21 +105,22 @@ export default function ShiftPlans() {
   };
 
   const exportFile = async () => {
-    const { data } = await api.post("/GetShiftPlansWeekReport", {
-      workerKey: localStorage.getItem(TOKEN_KEY),
-      startTime: startDate.toDateString(),
-      addDays: 7,
-    });
+    try {
+      const data = await shiftService.getShiftPlansWeekReport(
+        startDate.toDateString()
+      );
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return null;
+      }
 
-    if (!data.d.success) {
-      enqueueSnackbar({
-        message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-        variant: "error",
-      });
-      return null;
+      return ExcelShiftPlans.exportWeekFile(data.d.shiftPlanReport);
+    } catch (error) {
+      console.error(error);
     }
-
-    return ExcelShiftPlans.exportWeekFile(data.d.shiftPlanReport);
   };
 
   return (
@@ -248,7 +242,7 @@ export default function ShiftPlans() {
         <div>
           {shiftPlans && (
             <ShiftPlansWeek
-              refreshList={GetShifts}
+              refreshList={fetchShifts}
               shiftsList={shiftPlans}
               startOfWeek={startDate}
               title="בוקר"
@@ -258,7 +252,7 @@ export default function ShiftPlans() {
 
           {shiftPlans && (
             <ShiftPlansWeek
-              refreshList={GetShifts}
+              refreshList={fetchShifts}
               shiftsList={shiftPlans}
               startOfWeek={startDate}
               title="צהריים"
@@ -268,7 +262,7 @@ export default function ShiftPlans() {
 
           {shiftPlans && (
             <ShiftPlansWeek
-              refreshList={GetShifts}
+              refreshList={fetchShifts}
               shiftsList={shiftPlans}
               startOfWeek={startDate}
               title="ערב"
@@ -278,7 +272,7 @@ export default function ShiftPlans() {
 
           {shiftPlans && (
             <ShiftPlansWeek
-              refreshList={GetShifts}
+              refreshList={fetchShifts}
               shiftsList={shiftPlans}
               startOfWeek={startDate}
               title="לילה"
@@ -288,7 +282,7 @@ export default function ShiftPlans() {
 
           {shiftPlans && (
             <ShiftPlansWeek
-              refreshList={GetShifts}
+              refreshList={fetchShifts}
               shiftsList={shiftPlans}
               startOfWeek={startDate}
               title="בלתמ"

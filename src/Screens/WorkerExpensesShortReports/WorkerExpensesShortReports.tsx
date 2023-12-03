@@ -1,7 +1,6 @@
 import "./WorkerExpensesShortReports.styles.css";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { ExcelC } from "../../components/Excel/ExcelC";
 import WorkExpenseReportFilters from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportFilters";
 import WorkExpenseReportView from "../../components/WorkExpenses/WorkExpenseReportView/WorkExpenseReportView";
@@ -137,33 +136,33 @@ export default function WorkerExpensesShortReports() {
     return ExcelC.exportFile(workerExpenses, workersExpensesSum);
   };
 
-  const updateWorkesExpensesApprove = () => {
-    api
-      .post("/UpdateWorkesExpensesApprove", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        workerExpenses,
-      })
-      .then(({ data }) => {
-        if (!data.d) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: "אין משתמש כזה",
-            variant: "error",
-          });
-          return;
-        }
+  const updateWorkesExpensesApprove = async () => {
+    try {
+      const data = await workerService.updateWorkesExpensesApprove(
+        workerExpenses
+      );
+      if (!data?.d) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        return;
+      }
 
-        if (!data.d.success) {
-          updateShowLoader(false);
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
+      if (!data.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        return;
+      }
 
-        GetWorkersExpense();
-      });
+      fetchWorkersExpense();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateWorkerChange = (wId: string) => {
@@ -195,7 +194,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="הוצאות עבודה"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={1}
           />
         )}
@@ -203,7 +202,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="בונוסים"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={2}
           />
         )}
@@ -211,7 +210,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="הדרכות"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={3}
           />
         )}
@@ -219,7 +218,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="קילומטר"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={4}
           />
         )}
@@ -227,7 +226,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="אחוז מענה"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={5}
           />
         )}
@@ -235,7 +234,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="בונוסים (ענן)"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={6}
           />
         )}
@@ -243,7 +242,7 @@ export default function WorkerExpensesShortReports() {
           <WorkExpenseReportView
             headerName="בונוסים טכנאים"
             worker_Expenses={workerExpenses}
-            refreshlist={GetWorkersExpense}
+            refreshlist={fetchWorkersExpense}
             workExpensCategoryId={7}
           />
         )}

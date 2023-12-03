@@ -97,7 +97,7 @@ export const problemService = {
   },
 
   async updateProblem(
-    problem: IProblem
+    problem: Partial<IProblem>
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateProblem", { problem });
@@ -116,6 +116,33 @@ export const problemService = {
         problemId,
         trackingId,
         workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async answeredCall(
+    department: string | number
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/AnsweredCall", {
+        department,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getPlacesForPhone(
+    phone: string
+  ): Promise<IProblemsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetPlacesForPhone", {
+        phone,
       });
       return data;
     } catch (error) {

@@ -20,3 +20,12 @@ export interface Iv3City {
   id: number;
   cityName: string;
 }
+
+export interface Iv3Response {
+  d: {
+    msg: string;
+    success: boolean;
+    v3Groups: Iv3Group[];
+    v3Cities: Iv3City[];
+  };
+}

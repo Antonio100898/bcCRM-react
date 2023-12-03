@@ -9,15 +9,14 @@ import {
 import IconButton from "@mui/material/IconButton";
 import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
-import { IshiftWeek, IDayInfo } from "../../Model";
 import { ShiftsContainer } from "../../components/Shifts/ShiftsContainer";
 import DaysHeader from "../../components/Shifts/DaysHeader";
 import "./Shifts.styles.css";
 import DateSelect from "../../components/Shifts/DateSelect";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
+import { shiftService } from "../../API/services";
+import { IDayInfo, IshiftWeek } from "../../Model";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -43,33 +42,31 @@ export default function Shifts() {
     user?.department === 4 ? 2 : 1
   );
 
-  const appendDefultWeekShifts = () => {
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-
-    // console.log("startDate: " + startDate);
-    api
-      .post("/AppendDefultWeekShifts", {
-        workerKey,
-        startTime: new Date(startDate).toDateString(),
-        shiftGroupId,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-        }
-        // setShfits(data.d.shiftDetails);
-        // updateShowLoader(false);
-      })
-      .catch((error) => {
-        // your error handling goes here
+  const appendDefultWeekShifts = async () => {
+    try {
+      const data = await shiftService.appendDefultWeekShifts(
+        new Date(startDate).toDateString(),
+        shiftGroupId
+      );
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: error,
+          message: data?.d.msg,
           variant: "error",
         });
-      });
+      } else {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+      console.error(error);
+    }
   };
 
   const askAddDefaults = async (): Promise<boolean> => {
@@ -86,90 +83,70 @@ export default function Shifts() {
     return false;
   };
 
-  const getShifts = async () => {
+  const fetchShifts = async () => {
     updateShowLoader(true);
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-
-    api
-      .post("/GetShiftDetails", {
-        workerKey,
-        startTime: startDate,
-        shiftGroupID: shiftGroupId,
-      })
-      .then(async ({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        setweekDays(data.d.shiftsDays);
-        setShfits(data.d.shiftDetails);
-        updateShowLoader(false);
-
-        if (data.d.shiftDetails.length === 0) {
-          if (await askAddDefaults()) {
-            getShifts();
-          }
-        }
-      })
-      .catch((error) => {
-        // your error handling goes here
+    try {
+      const data = await shiftService.getShiftDetails(startDate, shiftGroupId);
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: error,
+          message: data?.d.msg,
           variant: "error",
         });
-      });
+        updateShowLoader(false);
+        return;
+      }
+      setweekDays(data?.d.shiftsDays);
+      setShfits(data?.d.shiftDetails);
+      if (data.d.shiftDetails.length === 0) {
+        if (await askAddDefaults()) {
+          fetchShifts();
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+      console.error(error);
+    }
+
+    updateShowLoader(false);
   };
 
   useEffect(() => {
     // console.log(shiftGroupId);
-    getShifts();
+    fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, setShowShiftDetails, shiftGroupId]);
 
-  const showWorkersMissingShiftPlans = () => {
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-
-    // console.log("startDate: " + startDate);
-    api
-      .post("/GetWorkersMissingShiftsPlan", {
-        workerKey,
-        start: new Date(startDate).toDateString(),
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
+  const showWorkersMissingShiftPlans = async () => {
+    try {
+      const data = await shiftService.getWorkersMissingShiftsPlan(
+        new Date(startDate).toDateString()
+      );
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+        if (data?.d.msg === "נכשל לעדכן תקלה. חסר פרטי משתמש") {
           enqueueSnackbar({
-            message: data.d.msg,
+            message: "Log Out",
             variant: "error",
           });
-
-          if (data.d.msg === "נכשל לעדכן תקלה. חסר פרטי משתמש") {
-            enqueueSnackbar({
-              message: "Log Out",
-              variant: "error",
-            });
-          }
-          return;
         }
+        return;
+      }
+    } catch (error) {
+      if (error instanceof Error)
         enqueueSnackbar({
-          message: data.d.msg,
+          message: error.message,
           variant: "error",
         });
-        // console.log(data.d.msg);
-        // GetShifts();
-        // setShfits(data.d.shiftDetails);
-        updateShowLoader(false);
-      })
-      .catch((error) => {
-        // your error handling goes here
-        enqueueSnackbar({
-          message: error,
-          variant: "error",
-        });
-      });
+      console.error(error);
+    }
+    updateShowLoader(false);
   };
 
   return (
@@ -244,7 +221,7 @@ export default function Shifts() {
               {shifts && (
                 <div>
                   <ShiftsContainer
-                    refreshList={getShifts}
+                    refreshList={fetchShifts}
                     shiftsList={shifts}
                     startOfWeek={startDate}
                     title="בוקר"
@@ -254,7 +231,7 @@ export default function Shifts() {
                   />
 
                   <ShiftsContainer
-                    refreshList={getShifts}
+                    refreshList={fetchShifts}
                     shiftsList={shifts}
                     startOfWeek={startDate}
                     title="צהריים"
@@ -264,7 +241,7 @@ export default function Shifts() {
                   />
 
                   <ShiftsContainer
-                    refreshList={getShifts}
+                    refreshList={fetchShifts}
                     shiftsList={shifts}
                     startOfWeek={startDate}
                     title="ערב"
@@ -274,7 +251,7 @@ export default function Shifts() {
                   />
 
                   <ShiftsContainer
-                    refreshList={getShifts}
+                    refreshList={fetchShifts}
                     shiftsList={shifts}
                     startOfWeek={startDate}
                     title="לילה"
@@ -284,7 +261,7 @@ export default function Shifts() {
                   />
 
                   <ShiftsContainer
-                    refreshList={getShifts}
+                    refreshList={fetchShifts}
                     shiftsList={shifts}
                     startOfWeek={startDate}
                     title="בלתמ"
