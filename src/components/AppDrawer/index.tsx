@@ -36,7 +36,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PunchClockIcon from "@mui/icons-material/PunchClock";
 import { MenuCategory } from "../../AppLayout";
 import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
-import { ProblemSummery, User } from "../../Model";
+import { IUser, ProblemSummery } from "../../Model";
 
 const drawerWidth = 240;
 
@@ -158,7 +158,7 @@ type Props = {
   isMobile: boolean;
   handleDrawerClose: () => void;
   drawerOpen: boolean;
-  user: User | null;
+  user: IUser | null;
   anchorEl: null | HTMLElement;
   handleMenuClose: () => void;
   searchParams: URLSearchParams;

@@ -12,10 +12,6 @@ import { useUser } from '../../../Context/useUser';
 export function ProblemTypeMultiSelect(props: SelectProps) {
   const { problemTypes } = useUser();
 
-  // useEffect(() => {
-  //   console.log(problemTypes);
-  // }, [problemTypes]);
-
   return (
     <FormControl
       sx={{ m: 1, width: '100%', paddingLeft: '20px', margin: '10px' }}

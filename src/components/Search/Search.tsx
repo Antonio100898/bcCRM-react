@@ -6,9 +6,9 @@ import {
 import { useState } from "react";
 import { useSnackbar } from "notistack";
 import { ISearchProblem } from "../../Model";
-import { api } from "../../API/axoisConfig";
 import { useUser } from "../../Context/useUser";
 import { SearchFilterDialog } from "../../Dialogs/SearchFilterDialog";
+import { problemService } from "../../API/services";
 
 export default function Search() {
   const { enqueueSnackbar } = useSnackbar();
@@ -38,7 +38,7 @@ export default function Search() {
     try {
       updateShowLoader(true);
 
-      const data = await api.searchProblems(searchFilter);
+      const data = await problemService.searchProblems(searchFilter);
 
       if (data?.d.success) {
         updateAllProblems(data.d.problems);

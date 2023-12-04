@@ -5,9 +5,9 @@ import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HailIcon from "@mui/icons-material/Hail";
 import { useSnackbar } from "notistack";
 import ShiftPlanEdit from "./ShiftPlanEdit";
-import { api } from "../../API/axoisConfig";
 import { IshiftDetail } from "../../Model";
 import { useUser } from "../../Context/useUser";
+import { shiftService } from "../../API/services";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -53,10 +53,10 @@ export default function ShiftPlan({
         finishTimeEN: defDate.toString(),
       };
       try {
-        const data = await api.updateShiftPlan(d);
+        const data = await shiftService.updateShiftPlan(d);
         if (!data?.d.success) {
           enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
             variant: "error",
           });
           return;
@@ -88,10 +88,10 @@ export default function ShiftPlan({
       finishTimeEN: defDate.toDateString(),
     };
     try {
-      const data = await api.updateShiftPlan(d);
-      if (!data.d.success) {
+      const data = await shiftService.updateShiftPlan(d);
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
           variant: "error",
         });
         return;

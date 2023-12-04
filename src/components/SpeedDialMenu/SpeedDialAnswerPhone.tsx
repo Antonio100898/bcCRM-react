@@ -25,18 +25,19 @@ import EditIcon from "@mui/icons-material/Edit";
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { IPlace, IProblem } from "../../Model";
+import { IProblem } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
 import { problemService } from "../../API/services";
 import { placeService } from "../../API/services/placeService";
+import { IPhonePlace } from "../../Model/IPhonePlace";
 
 export default function SpeedDialAnswerPhone() {
   const { prompt } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
   const { user, updateShowProblemDialog, updateCurrentProblem } = useUser();
-  const [placesOptions, setPlacesOptions] = React.useState<IPlace[]>();
+  const [placesOptions, setPlacesOptions] = React.useState<IPhonePlace[]>();
   const [showSelectPlace, setShowSelectPlace] = React.useState(false);
   const [showAddNewPlace, setShowAddNewPlace] = React.useState(false);
   const [phone, setPhone] = React.useState("");
@@ -64,7 +65,7 @@ export default function SpeedDialAnswerPhone() {
       setPhone(data.d.phone);
 
       if (data.d.phone.length > 6) {
-        const data1 = await problemService.getPlacesForPhone(data.d.phone);
+        const data1 = await placeService.getPlacesForPhone(data.d.phone);
 
         if (data1?.d.success) {
           setPlacesOptions(data1.d.places);
@@ -84,7 +85,7 @@ export default function SpeedDialAnswerPhone() {
     }
   };
 
-  const selectPlace = async (place: IPlace) => {
+  const selectPlace = async (place: IPhonePlace) => {
     const problem: Partial<IProblem> = {
       workerKey,
       workerCreateName: user?.workerName || "",
@@ -162,7 +163,7 @@ export default function SpeedDialAnswerPhone() {
       return;
     }
 
-    const p: IPlace = {
+    const p: IPhonePlace = {
       id: 0,
       phoneId: 0,
       phone,
@@ -178,9 +179,9 @@ export default function SpeedDialAnswerPhone() {
       const data = await placeService.updatePlaceInfo({
         phone,
         placeName: pName,
-        customerName: cusName!,
+        cusName: cusName!,
         vip: newVip,
-        placeRemark: newRemark,
+        remark: newRemark,
       });
 
       if (!data?.d.success) {
@@ -197,7 +198,7 @@ export default function SpeedDialAnswerPhone() {
   };
 
   function EditPlace(placeId: number) {
-    const place: IPlace[] =
+    const place: IPhonePlace[] =
       placesOptions?.filter((p) => p.placeId === placeId) || [];
 
     if (place.length > 0) {
@@ -364,7 +365,7 @@ export default function SpeedDialAnswerPhone() {
                   placesOptions.map((place) => {
                     return (
                       <TableRow
-                        key={place.id}
+                        key={place.placeId}
                         onClick={() => {
                           return selectPlace(place);
                         }}

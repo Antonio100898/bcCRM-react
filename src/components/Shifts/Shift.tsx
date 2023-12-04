@@ -8,9 +8,8 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import ShiftEdit from "./ShiftEdit";
+import { shiftService } from "../../API/services";
 
 const FONST_SIZE = 24;
 
@@ -37,10 +36,6 @@ export default function Shift({
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
   const [showEditShift, setShowEditShift] = useState<boolean>(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     setCurrentShift(shift);
@@ -82,26 +77,22 @@ export default function Shift({
     event.preventDefault();
   };
 
-  function UpdateShiftStartDate(id: number) {
-    api
-      .post("/UpdateShiftStartDate", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        shiftId: id,
-        newDate: defDate,
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
+  const UpdateShiftStartDate = async (id: number) => {
+    try {
+      const data = await shiftService.updateShiftStartDate(id, defDate);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
 
-        refreshList();
-      });
-  }
+      refreshList();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     const idName = event.dataTransfer.getData("text");

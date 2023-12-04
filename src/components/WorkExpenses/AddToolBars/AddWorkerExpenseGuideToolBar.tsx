@@ -81,7 +81,7 @@ export default function AddWorkerExpenseGuideToolBar({
 
   useEffect(() => {
     setFilterMonth(`${startExpensDate!.toDate().getMonth() + 1}`);
-  }, [setFilterMonth, startExpensDate]);
+  }, [startExpensDate]);
 
   const handleChange = (newValue: Dayjs | null) => {
     // console.log(newValue);

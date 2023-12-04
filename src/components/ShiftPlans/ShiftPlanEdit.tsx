@@ -15,9 +15,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
 import { IshiftDetail } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
+import { shiftService } from "../../API/services";
 
 export type Props = {
   open: boolean;
@@ -32,7 +32,6 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     useState<Partial<IshiftDetail>>(shift);
 
   useEffect(() => {
-    // console.log(shift);
     setCurrentShift(shift);
   }, [shift]);
 
@@ -68,11 +67,11 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     currentShift.finishTimeEN = GetDateTimeFormatEN(currentShift.startDateEN);
     currentShift.startDateEN = GetDateTimeFormatEN(currentShift.startDateEN);
     try {
-      const data = await api.updateShiftPlan(currentShift);
+      const data = await shiftService.updateShiftPlan(currentShift);
 
-      if (!data.d.success) {
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
           variant: "error",
         });
         return;
@@ -87,11 +86,11 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
   const cancelShift = async () => {
     if (currentShift.id && (await confirm("האם את בטוחה שברצונך לבטל?"))) {
       try {
-        const data = await api.cancelShiftPlan(currentShift.id);
+        const data = await shiftService.cancelShiftPlan(currentShift.id);
 
-        if (!data.d.success) {
+        if (!data?.d.success) {
           enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
+            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
             variant: "error",
           });
           return;

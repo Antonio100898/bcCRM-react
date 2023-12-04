@@ -41,6 +41,7 @@ export default function ShiftsPersonal() {
           variant: "error",
         });
     }
+    updateShowLoader(false);
   };
 
   useEffect(() => {

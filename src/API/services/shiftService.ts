@@ -1,5 +1,6 @@
 import {
   IDayInfo,
+  IProblemsResponse,
   IShiftAndDaysInfoResponse,
   IShiftDetailsResponse,
   IShiftPlanReportResponse,
@@ -40,13 +41,13 @@ export const shiftService = {
 
   async updateShiftDayRemark(
     day: IDayInfo,
-    shiftGroupId: number
-  ): Promise<ICustomResponse | undefined> {
+    shiftGroupID: number
+  ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftDayRemark", {
         workerKey,
         day,
-        shiftGroupId,
+        shiftGroupID,
       });
       return data;
     } catch (error) {
@@ -56,13 +57,13 @@ export const shiftService = {
 
   async appendDefultWeekShifts(
     startTime: string,
-    shiftGroupId: number
+    shiftGroupID: number
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/AppendDefultWeekShifts", {
         workerKey,
         startTime,
-        shiftGroupId,
+        shiftGroupID,
       });
       return data;
     } catch (error) {
@@ -72,13 +73,13 @@ export const shiftService = {
 
   async getShiftDetails(
     startTime: Date,
-    shiftGroupId: number
+    shiftGroupID: number
   ): Promise<IShiftAndDaysInfoResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftDetails", {
         workerKey,
         startTime,
-        shiftGroupId,
+        shiftGroupID,
       });
       return data;
     } catch (error) {
@@ -153,6 +154,65 @@ export const shiftService = {
       const { data } = await instance.post("/GetShiftsForWorker", {
         workerKey,
         startTime,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getShiftPlansDetails(
+    startTime: Date | string
+  ): Promise<IShiftDetailsResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetShiftPlansDetails", {
+        workerKey,
+        startTime,
+        addDays: 1,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateShiftDetails(
+    shiftDetail: Partial<IshiftDetail>,
+    shiftGroupID: number
+  ): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateShiftDetails", {
+        workerKey,
+        shiftDetail,
+        shiftGroupID,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async cancelShift(shiftId: number): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/CancelShift", {
+        workerKey,
+        shiftId,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateShiftStartDate(
+    shiftId: number,
+    newDate: Date | string
+  ): Promise<ICustomResponse | undefined> {
+    try {
+      const { data } = await instance.post("/UpdateShiftStartDate", {
+        workerKey,
+        shiftId,
+        newDate,
       });
       return data;
     } catch (error) {

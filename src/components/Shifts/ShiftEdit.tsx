@@ -17,10 +17,9 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
 import { IWorker, IshiftDetail } from "../../Model";
-import { api } from "../../API/axoisConfig";
-import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
+import { shiftService } from "../../API/services";
 
 export type Props = {
   open: boolean;
@@ -72,38 +71,36 @@ export default function ShiftEdit({
     return s;
   }
 
-  function GetShiftPlans() {
-    api
-      .post("/GetShiftPlansDetails", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        startTime: new Date(currentShift.startDateEN!).toDateString(),
-        addDays: 1,
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: "error",
+  const fetchShiftPlans = async () => {
+    try {
+      const data = await shiftService.getShiftPlansDetails(
+        new Date(currentShift.startDateEN!).toDateString()
+      );
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+
+      const shi: IshiftDetail[] = data.d.shiftPlanDetails;
+      const wsData1: IWorker[] =
+        workers &&
+        workers
+          .filter((name: IWorker) => name.departmentId === user?.department)
+          .filter((worker: IWorker) => {
+            const isPlan =
+              shi.filter((a) => a.workerId === worker.Id).length > 0;
+
+            return { ...worker, active: isPlan };
           });
-          return;
-        }
 
-        const shi: IshiftDetail[] = data.d.shiftPlanDetails;
-        const wsData1: IWorker[] =
-          workers &&
-          workers
-            .filter((name: IWorker) => name.departmentId === user?.department)
-            .filter((worker: IWorker) => {
-              const isPlan =
-                shi.filter((a) => a.workerId === worker.Id).length > 0;
-
-              return { ...worker, active: isPlan };
-            });
-
-        if (wsData1) setMyWorkers(wsData1);
-      });
-  }
+      if (wsData1) setMyWorkers(wsData1);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     setCurrentShift(shift);
@@ -114,9 +111,8 @@ export default function ShiftEdit({
 
   useEffect(() => {
     if (open) {
-      GetShiftPlans();
+      fetchShiftPlans();
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -154,7 +150,7 @@ export default function ShiftEdit({
     // new Date(d).getMinutes()
   }
 
-  const updateShift = () => {
+  const updateShift = async () => {
     if (
       currentShift.workerId === undefined ||
       currentShift.workerId === null ||
@@ -178,8 +174,6 @@ export default function ShiftEdit({
       return;
     }
 
-    // console.log(currentShift);
-
     currentShift.startDate = GetDateTimeFormatEN(
       currentShift!.startDateEN,
       startTime
@@ -188,47 +182,48 @@ export default function ShiftEdit({
       currentShift!.finishTimeEN,
       finishTime
     );
+    try {
+      const data = await shiftService.updateShiftDetails(
+        currentShift,
+        shiftGroupId
+      );
 
-    // console.log("shiftGroupId: " + shiftGroupId);
-
-    api
-      .post("/UpdateShiftDetails", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        shiftDetail: currentShift,
-        shiftGroupId,
-      })
-      .then(({ data }) => {
-        // console.log(data.d);
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-            variant: "error",
-          });
-        }
-
-        handleClose();
-      });
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    handleClose();
   };
 
   const cancelShift = async () => {
     if (currentShift.workerId === user?.workerId || user?.userType === 1) {
-      if (await confirm("האם את בטוחה שברצונך לבטל?")) {
-        api
-          .post("/CancelShift", {
-            workerKey: localStorage.getItem(TOKEN_KEY),
-            shiftId: currentShift.id,
-          })
-          .then(({ data }) => {
-            if (!data.d.success) {
-              enqueueSnackbar({
-                message: `נכשל לעדכן תקלה. ${data.d.msg}`,
-                variant: "error",
-              });
-              return;
-            }
+      if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
+      if (!currentShift?.id) {
+        enqueueSnackbar({
+          message: `משמרת לא קיימת`,
+          variant: "error",
+        });
+        return;
+      }
+      try {
+        const data = await shiftService.cancelShift(currentShift.id);
 
-            handleClose();
+        if (!data?.d.success) {
+          enqueueSnackbar({
+            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+            variant: "error",
           });
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        handleClose();
       }
     }
   };

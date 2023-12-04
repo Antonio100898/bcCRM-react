@@ -12,10 +12,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { api } from "../../API/axoisConfig";
 import { IHardware } from "../../Model";
 import HardwareCountSummery from "./HardwareCountSummery";
 import { useConfirm } from "../../Context/useConfirm";
+import { hardwareService } from "../../API/services";
 
 function HardwareCenter() {
   const { prompt } = useConfirm();
@@ -32,7 +32,7 @@ function HardwareCenter() {
 
   const getHardwaresCount = async () => {
     try {
-      const data = await api.getHardwareCounts(barcode);
+      const data = await hardwareService.getHardwareCounts(barcode);
       if (data?.d.success) {
         setHardwaresCount(data.d.hardwaresCount);
       }
@@ -48,7 +48,7 @@ function HardwareCenter() {
 
   const getHardwares = async () => {
     try {
-      const data = await api.getHardwareCounts(barcode);
+      const data = await hardwareService.getHardwareCounts(barcode);
       if (data?.d.success) {
         if (data.d.hardwares.length === 0) {
           setShowAddHardware(true);
@@ -89,7 +89,7 @@ function HardwareCenter() {
       remark,
     };
     try {
-      const data = await api.updateHardware(a);
+      const data = await hardwareService.updateHardware(a);
       if (data?.d.success) {
         setRemark("");
         setShowAddHardware(false);
@@ -110,7 +110,7 @@ function HardwareCenter() {
 
   async function UpdateHardwareTracking(h: Partial<IHardware>) {
     try {
-      const data = await api.updateHardwareTracking(h);
+      const data = await hardwareService.updateHardwareTracking(h);
 
       if (data?.d.success) {
         setShowHardwareInfo(false);

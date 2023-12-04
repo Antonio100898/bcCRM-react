@@ -1,11 +1,12 @@
 import { Box, Switch, useTheme } from "@mui/material";
 import { SetStateAction, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
-import { IProblem, IProblemType, User } from "../../Model";
+import { IProblem, IProblemType, IUser } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/axoisConfig";
 import { useConfirm } from "../../Context/useConfirm";
 import { LoadingButton } from "@mui/lab";
+import { problemService } from "../../API/services";
+import { useUser } from "../../Context/useUser";
 
 type Props = {
   problem: IProblem;
@@ -14,16 +15,10 @@ type Props = {
   updateProblemTracking: () => void;
   currentProblemTypesId?: number[];
   problemTypes: IProblemType[];
-  user: User | null;
+  user: IUser | null;
   setSelfProblemDialog: (value: SetStateAction<IProblem | null>) => void;
   onDialogClose: () => void;
-  setTracking: React.Dispatch<
-    SetStateAction<{
-      historySummery: string;
-      lastSupporter: string;
-      trackingId: number;
-    } | null>
-  >;
+  refreshDepartments: () => Promise<void>;
 };
 
 export default function ProblemActions({
@@ -34,9 +29,9 @@ export default function ProblemActions({
   user,
   setSelfProblemDialog,
   onDialogClose,
-  setTracking,
   updateProblemTracking,
   trackingId,
+  refreshDepartments,
 }: Props) {
   const [selfProblem, setSelfProblem] = useState<IProblem>({ ...problem });
   const [pendingClose, setPendingClose] = useState(false);
@@ -88,8 +83,9 @@ export default function ProblemActions({
 
       selfProblem.problemTypesList = newProblemTypes;
     }
+
     try {
-      const data = await api.updateProblem(selfProblem);
+      const data = await problemService.updateProblem(selfProblem);
       if (!data?.d.success) {
         enqueueSnackbar({
           message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
@@ -118,12 +114,13 @@ export default function ProblemActions({
 
       if (close) {
         updateProblem(selfProblem);
-        setTracking(null);
         onDialogClose();
       }
       await stopPending();
     } catch (error) {
       console.error(error);
+    } finally {
+      refreshDepartments();
     }
   };
 

@@ -15,13 +15,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
-import {
-  SetStateAction,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { SetStateAction, forwardRef, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
 import { PlaceInfoDialog } from "./PlaceInfoDialog";
@@ -116,16 +110,12 @@ export function ProblemDialog({
       try {
         const data = await problemService.updateProblemTracking(
           selfProblem.id,
-          tracking.trackingId
+          selfProblem.trackingId || 0
         );
         if (data?.d.success) {
           onChange("trackingId", data.d.trackingId);
-          if (tracking?.historySummery) {
-            setTracking({
-              ...tracking,
-              trackingId: data.d.trackingId,
-            });
-          }
+          setTracking({ ...tracking, trackingId: data.d.trackingId });
+          refreshDepartments();
         }
       } catch (error) {
         console.error(error);
@@ -137,14 +127,13 @@ export function ProblemDialog({
     if (!selfProblem) return;
 
     setPlaceDialog({
-      id: selfProblem.placeId,
-      customerName: selfProblem.customerName,
+      cusName: selfProblem.customerName,
       bizNumber: "0",
       phone: selfProblem.phone,
       placeName: selfProblem.placeName,
       phoneId: selfProblem.phoneId,
       placeId: selfProblem.placeId,
-      placeRemark: "",
+      remark: "",
       vip: selfProblem.vip,
       warrantyType: 0,
     });
@@ -159,12 +148,13 @@ export function ProblemDialog({
   const handlePlaceUpdate = (place: IPlace) => {
     setSelfProblem((prev) => ({
       ...prev!,
-      placeId: place.id,
-      customerName: place.customerName,
+      placeId: place.placeId,
+      customerName: place.cusName,
       phone: place.phone,
       phoneId: place.phoneId,
       placeName: place.placeName,
       vip: place.vip,
+      remark: place.remark,
     }));
   };
 
@@ -185,7 +175,7 @@ export function ProblemDialog({
     return false;
   };
 
-  const fetchProblemHistorySummary = useCallback(async () => {
+  const fetchProblemHistorySummary = async () => {
     if (!selfProblem) return;
     try {
       const data = await problemService.getProblemHistorySummery(
@@ -202,9 +192,9 @@ export function ProblemDialog({
     } catch (error) {
       console.error(error);
     }
-  }, [selfProblem]);
+  };
 
-  const fetchDepartments = useCallback(async () => {
+  const fetchDepartments = async () => {
     if (user)
       try {
         const data = await workerService.getWorkerDepartments(user?.workerId);
@@ -215,14 +205,14 @@ export function ProblemDialog({
       } catch (error) {
         console.error(error);
       }
-  }, [user]);
+  };
 
   useEffect(() => {
     fetchProblemHistorySummary();
     fetchDepartments();
-  }, [fetchDepartments, fetchProblemHistorySummary]);
+  }, []);
 
-  const fetchProblemSummary = async () => {
+  const refreshDepartments = async () => {
     try {
       const data = await problemService.getProblemSummary();
       if (data?.d.success) {
@@ -232,10 +222,6 @@ export function ProblemDialog({
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    fetchProblemSummary();
-  }, [selfProblem]);
 
   useEffect(() => {
     setCurrentProblemTypesId(selfProblem?.problemTypesList.map((pt) => pt.id));
@@ -315,9 +301,13 @@ export function ProblemDialog({
       </AppBar>
       <DialogContent sx={{ p: 2 }}>
         <TransitionGroup sx={{ position: "relative" }}>
-          {tracking !== null && (
+          {selfProblem?.historySummery && selfProblem.lastSuppoter && (
             <Collapse>
-              <ProblemAlert key={tracking.lastSupporter} {...tracking} />
+              <ProblemAlert
+                key={selfProblem?.lastSuppoter}
+                historySummery={selfProblem?.historySummery}
+                lastSupporter={selfProblem?.lastSuppoter}
+              />
             </Collapse>
           )}
           {selfProblem && (
@@ -337,7 +327,8 @@ export function ProblemDialog({
                 setSelfProblem={setSelfProblem}
               />
               <ProblemActions
-                setTracking={setTracking}
+                refreshDepartments={refreshDepartments}
+                trackingId={tracking?.trackingId}
                 onDialogClose={onClose}
                 user={user}
                 currentProblemTypesId={currentProblemTypesId}
@@ -346,14 +337,13 @@ export function ProblemDialog({
                 setSelfProblemDialog={setSelfProblem}
                 updateProblem={updateProblem}
                 updateProblemTracking={updateProblemTracking}
-                trackingId={tracking?.trackingId}
               />
             </>
           )}
         </TransitionGroup>
       </DialogContent>
       <PlaceInfoDialog
-        key={placeDialog?.phoneId}
+        key={placeDialog?.placeId}
         onClose={onClosePlaceEdit}
         open={placeDialogOpen}
         place={placeDialog}

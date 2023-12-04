@@ -41,7 +41,7 @@ export default function AddWorkerExpenseToolBarKilomoter({
 
   useEffect(() => {
     setFilterMonth(`${expensDate!.toDate().getMonth() + 1}`);
-  }, [expensDate, setFilterMonth]);
+  }, [expensDate]);
 
   const fetchWorkExpensesTypesForWorker = async () => {
     try {

@@ -151,7 +151,6 @@ export default function ProblemNoteDialog({
     });
 
     myProblem.problemTypesList = newPType;
-
     api
       .post<IProblemsResponse>("/UpdateProblem", {
         problem: { ...myProblem, crmFiles: null, newFiles: null },

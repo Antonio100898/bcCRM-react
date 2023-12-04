@@ -15,5 +15,7 @@ export * from "./IWorkExpensesType";
 export * from "./IWorker";
 export * from "./IWorkerSickday";
 export * from "./Iv3Group";
-export * from "./User";
+export * from "./IUser";
 export * from "./IDepartment";
+export * from "./ILogin";
+export * from "./IPhonePlace";

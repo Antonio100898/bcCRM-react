@@ -1,7 +1,7 @@
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { TOKEN_KEY } from '../Consts/Consts';
-import { useUser } from '../Context/useUser';
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { TOKEN_KEY } from "../Consts/Consts";
+import { useUser } from "../Context/useUser";
 
 export function ProtectedRoute() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export function ProtectedRoute() {
         updateShowLoader(false);
       });
     } else {
-      navigate('/login');
+      navigate("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

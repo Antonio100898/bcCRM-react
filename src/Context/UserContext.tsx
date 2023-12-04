@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import {
   IProblem,
   IWorker,
-  User,
+  IUser,
   IProblemType,
   ProblemSummery,
 } from "../Model";
 import { TOKEN_KEY } from "../Consts/Consts";
-import { api } from "../API/axoisConfig";
+import { authService } from "../API/services/authService";
 
 export interface Props {
   children: React.ReactNode;
@@ -27,8 +27,8 @@ export type LoginToken = {
 export type LoginCredetials = LoginUsernamePassword | LoginToken;
 
 export interface IUserContext {
-  user: User | null;
-  updateUser: (u: User | null) => void;
+  user: IUser | null;
+  updateUser: (u: IUser | null) => void;
   departments: ProblemSummery[];
   updateDepartments: (summery: ProblemSummery[]) => void;
   showProblemDialog: boolean;
@@ -51,7 +51,7 @@ export interface IUserContext {
   updateShowScreensMenu: (u: boolean) => void;
   problemTypes: IProblemType[];
   updateProblemTypes: (u: IProblemType[]) => void;
-  login: (credentials: LoginCredetials) => Promise<User | null>;
+  login: (credentials: LoginCredetials) => Promise<IUser | null>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -91,9 +91,9 @@ export function UserContextProvider(props: Props) {
     setDepartments(summery);
   };
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
-  const updateUser = (u: User | null) => {
+  const updateUser = (u: IUser | null) => {
     setUser(u);
   };
 
@@ -160,42 +160,51 @@ export function UserContextProvider(props: Props) {
     setProblemTypes(u);
   };
 
-  const login = async (credentials: LoginCredetials): Promise<User | null> => {
-    const { data } = await api.post(
-      "workerKey" in credentials ? "/loginAgain" : "/login",
-      credentials
-    );
+  const login = async (credentials: LoginCredetials): Promise<IUser | null> => {
+    try {
+      const data =
+        "workerKey" in credentials
+          ? await authService.loginAgain(credentials)
+          : await authService.login(credentials);
+      if (!data?.d) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: "אין משתמש כזה",
+          variant: "error",
+        });
+        localStorage.removeItem(TOKEN_KEY);
+        navigate("/login");
+        return null;
+      }
 
-    if (!data.d) {
-      updateShowLoader(false);
-      enqueueSnackbar({
-        message: "אין משתמש כזה",
-        variant: "error",
-      });
-      localStorage.removeItem(TOKEN_KEY);
-      navigate("/login");
+      if (!data?.d.success) {
+        updateShowLoader(false);
+        enqueueSnackbar({
+          message: data.d.msg,
+          variant: "error",
+        });
+        localStorage.removeItem(TOKEN_KEY);
+        navigate("/login");
+        return null;
+      }
+
+      updateUser(data.d);
+      localStorage.setItem(TOKEN_KEY, data.d.key);
+      updateWorkers(data.d.workers);
+      updateProblemTypes(data.d.problemTypes);
+      updateShowScreensMenu(false);
+      updateSelectedDepartmentId(-1);
+      updateDepartments(data.d.summery?.departments);
+      return data.d;
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+      console.error(error);
       return null;
     }
-
-    if (!data.d.success) {
-      updateShowLoader(false);
-      enqueueSnackbar({
-        message: data.d.msg,
-        variant: "error",
-      });
-      localStorage.removeItem(TOKEN_KEY);
-      navigate("/login");
-      return null;
-    }
-
-    updateUser(data.d);
-    localStorage.setItem(TOKEN_KEY, data.d.key);
-    updateWorkers(data.d.workers);
-    updateProblemTypes(data.d.problemTypes);
-    updateShowScreensMenu(false);
-    updateSelectedDepartmentId(-1);
-    updateDepartments(data.d.summery?.departments);
-    return data.d;
   };
 
   return (

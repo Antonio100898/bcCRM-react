@@ -42,7 +42,7 @@ export default function AddWorkerExpenseToolBar({
 
   useEffect(() => {
     setFilterMonth(`${expensDate!.toDate().getMonth() + 1}`);
-  }, [expensDate, setFilterMonth]);
+  }, [expensDate]);
 
   const fetchWorkExpensesTypesForWorker = async () => {
     try {

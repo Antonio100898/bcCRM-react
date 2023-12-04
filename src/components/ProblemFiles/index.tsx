@@ -1,5 +1,4 @@
 import { useSnackbar } from "notistack";
-import { api } from "../../API/axoisConfig";
 import { CrmFile, IProblem } from "../../Model";
 import { useState, useRef, SetStateAction, ChangeEvent } from "react";
 import { useUser } from "../../Context/useUser";
@@ -14,6 +13,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AxiosProgressEvent } from "axios";
+import { fileService } from "../../API/services";
 
 type Props = {
   myProblem: IProblem;
@@ -51,11 +51,11 @@ export default function ProblemFiles({ myProblem, setSelfProblem }: Props) {
 
     if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
       try {
-        const data = await api.deleteFile(f, myProblem.id);
-        if (data.d.success) {
-          setSelfProblem((prevProblem) => ({
-            ...prevProblem,
-            files: prevProblem.files.filter((i) => i !== f),
+        const data = await fileService.deleteFile(f, myProblem.id);
+        if (data?.d.success) {
+          setSelfProblem(() => ({
+            ...myProblem,
+            files: myProblem.files.filter((i) => i !== f),
           }));
           updateRefreshProblems(true);
         }
@@ -118,7 +118,8 @@ export default function ProblemFiles({ myProblem, setSelfProblem }: Props) {
       };
 
       try {
-        const data = await api.uploadProblemFiles(updatedProblem, {
+        const data = await fileService.uploadFiles(updatedProblem, {
+          //@ts-ignore
           signal: abortController.signal,
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
             const percentCompleted = Math.round(

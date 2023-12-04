@@ -10,11 +10,10 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { IPlace } from "../Model";
 import { useUser } from "../Context/useUser";
-import { placeService } from "../API/services/placeService";
 
 export type PlaceInfoDialogProps = {
   open: boolean;
@@ -32,6 +31,10 @@ export function PlaceInfoDialog({
   const { enqueueSnackbar } = useSnackbar();
   const [selfPlace, setSelfPlace] = useState(place);
   const { user } = useUser();
+
+  useEffect(() => {
+    console.log(selfPlace);
+  }, [selfPlace]);
 
   const handleChange = <T extends keyof IPlace>(key: T, value: IPlace[T]) => {
     if (!selfPlace) return;
@@ -59,36 +62,36 @@ export function PlaceInfoDialog({
     if (!selfPlace) return;
 
     if (!validateInput("placeName", "אנא הזן שם מקום")) return;
-    if (!validateInput("customerName", "אנא הזן שם לקוח")) return;
+    if (!validateInput("cusName", "אנא הזן שם לקוח")) return;
     if (!validateInput("phone", "אנא הזן טלפון")) return;
-    try {
-      const data = await placeService.updatePlaceInfo({
-        id: selfPlace.id,
-        phone: selfPlace.phone,
-        phoneId: selfPlace.phoneId,
-        placeName: selfPlace.placeName,
-        customerName: selfPlace.customerName,
-        placeRemark: selfPlace.placeRemark,
-        vip: selfPlace.vip,
-      });
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: `נכשל לעדכן פרטי עסק. ${data?.d.msg}`,
-          variant: "error",
-        });
-        return;
-      }
-      onPlaceUpdate(selfPlace);
-    } catch (error) {
-      console.error(error);
-    }
+    //try {
+    // const data = await placeService.updatePlaceInfo({
+    // placeId: selfPlace.placeId,
+    //phone: selfPlace.phone,
+    //phoneId: selfPlace.phoneId,
+    //placeName: selfPlace.placeName,
+    //cusName: selfPlace.cusName,
+    //remark: selfPlace.remark,
+    // vip: selfPlace.vip,
+    //});
+    //if (!data?.d.success) {
+    //  enqueueSnackbar({
+    //  message: `נכשל לעדכן פרטי עסק. ${data?.d.msg}`,
+    // variant: "error",
+    // });
+    //return;
+    //}
+    onPlaceUpdate(selfPlace);
+    //  } catch (error) {
+    //  console.error(error);
+    //}
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
         <Typography variant="h6" flex={1}>
-          {selfPlace?.id === 0 ? "הוספת עסק חדש" : "עריכת עסק"}
+          {selfPlace?.placeId === 0 ? "הוספת עסק חדש" : "עריכת עסק"}
         </Typography>
         <IconButton onClick={onClose}>
           <CloseIcon />
@@ -105,8 +108,8 @@ export function PlaceInfoDialog({
           fullWidth
         />
         <TextField
-          value={selfPlace?.customerName}
-          onChange={(e) => handleChange("customerName", e.target.value)}
+          value={selfPlace?.cusName}
+          onChange={(e) => handleChange("cusName", e.target.value)}
           label="שם לקוח"
           fullWidth
         />
@@ -119,8 +122,8 @@ export function PlaceInfoDialog({
         {user && user.userType === 1 && (
           <>
             <TextField
-              value={selfPlace?.placeRemark}
-              onChange={(e) => handleChange("placeRemark", e.target.value)}
+              value={selfPlace?.remark}
+              onChange={(e) => handleChange("remark", e.target.value)}
               label="הערה"
               fullWidth
             />
@@ -138,7 +141,7 @@ export function PlaceInfoDialog({
         )}
 
         <Button variant="contained" fullWidth onClick={handleSavePlace}>
-          {(selfPlace?.id || 0) > 0 ? "עדכן" : "הוסף חדש"}
+          {(selfPlace?.placeId || 0) > 0 ? "עדכן" : "הוסף חדש"}
         </Button>
       </DialogContent>
     </Dialog>

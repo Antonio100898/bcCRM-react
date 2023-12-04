@@ -63,5 +63,6 @@ export interface IShiftDetailsResponse {
     msg: string;
     success: boolean;
     workerShifts: IshiftDetail[];
+    shiftPlanDetails: IshiftDetail[];
   };
 }

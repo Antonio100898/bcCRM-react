@@ -1,7 +1,7 @@
-import { IHardware } from './IHardware';
-import { IMsgLine } from './IMsgLine';
-import { IPlace } from './IPlace';
-import { IProblemType } from './IProblemType';
+import { IHardware } from "./IHardware";
+import { IMsgLine } from "./IMsgLine";
+import { IPhonePlace } from "./IPhonePlace";
+import { IProblemType } from "./IProblemType";
 
 export type CrmFile = {
   filename: string;
@@ -68,7 +68,7 @@ export interface IProblemContainer extends IProblemContainerBasic {
 export interface IProblemsResponse {
   d: {
     problems: IProblem[];
-    places: IPlace[];
+    places: IPhonePlace[];
     hardwares: IHardware[];
     hardwaresCount: IHardware[];
 

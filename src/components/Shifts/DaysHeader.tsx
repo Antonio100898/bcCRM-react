@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { InputLabel, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { TOKEN_KEY } from "../../Consts/Consts";
-import { api } from "../../API/axoisConfig";
 import { useConfirm } from "../../Context/useConfirm";
 import { IDayInfo } from "../../Model";
+import { shiftService } from "../../API/services";
 
 export type Props = {
   weekDaysAll: IDayInfo[];
@@ -25,7 +24,6 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
   }
 
   useEffect(() => {
-    // console.log(shiftGroupId);
     setweekDays(weekDaysAll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekDaysAll, shiftGroupId]);
@@ -42,40 +40,38 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
       dayValue: GetDateTimeFormatEN(day.dayValueEN),
     };
 
-    const workerKey = localStorage.getItem(TOKEN_KEY);
-    api
-      .post("/UpdateShiftDayRemark", {
-        workerKey,
-        day: updatedDay,
-        shiftGroupID: shiftGroupId,
-      })
-      .then(({ data }) => {
-        if (!data.d.success) {
-          enqueueSnackbar({
-            message: data.d.msg,
-            variant: "error",
-          });
-          return;
-        }
-
-        const newId = data.d.problemId;
-
-        if (weekDays) {
-          setweekDays((wds) =>
-            wds!.map((d) =>
-              d.dayValueEN === updatedDay.dayValueEN
-                ? { ...d, remark: updatedDay.remark || d.remark, id: newId }
-                : d
-            )
-          );
-        }
-      })
-      .catch((error) => {
+    try {
+      const data = await shiftService.updateShiftDayRemark(
+        updatedDay,
+        shiftGroupId
+      );
+      if (!data?.d.success) {
         enqueueSnackbar({
-          message: error,
+          message: data?.d.msg,
           variant: "error",
         });
-      });
+        return;
+      }
+
+      const newId = data.d.problemId!;
+
+      if (weekDays) {
+        setweekDays((wds) =>
+          wds!.map((d) =>
+            d.dayValueEN === updatedDay.dayValueEN
+              ? { ...d, remark: updatedDay.remark || d.remark, id: newId }
+              : d
+          )
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+      console.error(error);
+    }
   };
 
   return (

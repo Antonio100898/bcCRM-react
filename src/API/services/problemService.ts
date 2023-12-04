@@ -5,6 +5,7 @@ import {
   IProblemsResponse,
   ISearchProblem,
 } from "../../Model";
+import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
 import { workerKey } from "../axoisConfig";
 
@@ -110,7 +111,7 @@ export const problemService = {
   async updateProblemTracking(
     problemId: number,
     trackingId: number
-  ): Promise<IProblemsResponse | undefined> {
+  ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateProblemTracking", {
         problemId,
@@ -130,19 +131,6 @@ export const problemService = {
       const { data } = await instance.post("/AnsweredCall", {
         department,
         workerKey,
-      });
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  },
-
-  async getPlacesForPhone(
-    phone: string
-  ): Promise<IProblemsResponse | undefined> {
-    try {
-      const { data } = await instance.post("/GetPlacesForPhone", {
-        phone,
       });
       return data;
     } catch (error) {

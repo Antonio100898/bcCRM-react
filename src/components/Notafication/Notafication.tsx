@@ -4,7 +4,7 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MarkAsUnreadIcon from "@mui/icons-material/MarkAsUnread";
 import { IconButton, Tooltip } from "@mui/material";
 import { INotification } from "../../Model";
-import { api } from "../../API/axoisConfig";
+import { notificationService } from "../../API/services";
 
 export type Props = {
   nota: INotification;
@@ -15,7 +15,7 @@ function Notafication({ nota }: Props) {
 
   const deleteNotification = async () => {
     try {
-      await api.deleteNotification(notafication.id);
+      await notificationService.deleteNotification(notafication.id);
     } catch (error) {
       console.error(error);
     }
@@ -23,7 +23,7 @@ function Notafication({ nota }: Props) {
 
   const changeHasRead = async () => {
     try {
-      await api.updateNotificationHadSeen(
+      await notificationService.updateNotificationHadSeen(
         notafication.id,
         !notafication.hadSeen
       );

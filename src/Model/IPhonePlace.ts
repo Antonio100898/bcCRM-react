@@ -1,10 +1,11 @@
-export interface IPlace {
+export interface IPhonePlace {
+  id: number;
   phone: string;
   phoneId: number;
   placeId: number;
   placeName: string;
-  cusName: string;
-  remark: string;
+  customerName: string;
+  placeRemark: string;
   vip: boolean;
 
   bizNumber: string;

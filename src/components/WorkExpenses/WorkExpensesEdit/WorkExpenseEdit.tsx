@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Tooltip,
   IconButton,
@@ -32,8 +32,6 @@ export default function WorkExpenseEdit({
   const [currentExpence, setCurrentExpence] = useState<IWorkExpensesType>(
     workerExpenses!
   );
-
-  useEffect(() => {}, [workerExpenses]);
 
   const onChange = <K extends keyof IWorkExpensesType>(
     key: K,

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useConfirm } from "../../Context/useConfirm";
@@ -58,22 +58,19 @@ export default function Problems() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy]);
 
-  const updateDepartment = useCallback(
-    async (department: string) => {
-      updateShowLoader(true);
-      try {
-        const data = await problemService.getProblems(department);
-        if (data?.d.success) {
-          updateRefreshProblemCount(true);
-          updateAllProblems(data.d.problems);
-        }
-      } catch (error) {
-        console.error(error);
+  const updateDepartment = async (department: string) => {
+    updateShowLoader(true);
+    try {
+      const data = await problemService.getProblems(department);
+      if (data?.d.success) {
+        updateRefreshProblemCount(true);
+        updateAllProblems(data.d.problems);
       }
-      updateShowLoader(false);
-    },
-    [updateShowLoader, updateAllProblems, updateRefreshProblemCount]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
+  };
 
   useEffect(() => {
     const department = searchParams.get("department");
@@ -82,9 +79,9 @@ export default function Problems() {
       return;
     }
     updateDepartment(department || "-1");
-  }, [searchParams, setSearchParams, updateDepartment]);
+  }, [searchParams]);
 
-  const updateProblem = (value: IProblem) => {
+  const updateProblem = async (value: IProblem) => {
     updateAllProblems(
       allProblems
         ?.sort((a: IProblem, b: IProblem) => {

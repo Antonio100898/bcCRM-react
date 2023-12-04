@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import CreateIcon from "@mui/icons-material/Create";
 import { IMsgLine } from "../../Model";
-import { api } from "../../API/axoisConfig";
 import PromptDialog from "../../Dialogs/PromptDialog";
+import { problemService } from "../../API/services";
 
 type Props = {
   problemId: number;
@@ -26,7 +26,7 @@ export default function ProblemMessages({
   const addNewMsg = async (value: string) => {
     if (problemId && value.length > 0) {
       try {
-        const data = await api.addChatLines(problemId, value);
+        const data = await problemService.addProblemMessage(problemId, value);
         if (data?.d.success) {
           enqueueSnackbar({
             message: "הצלחה",
@@ -51,7 +51,7 @@ export default function ProblemMessages({
 
   useEffect(() => {
     refreshMessages();
-  }, [problemId, refreshMessages]);
+  }, [problemId]);
 
   return (
     <Box sx={{ width: "100%", marginBottom: 6 }}>

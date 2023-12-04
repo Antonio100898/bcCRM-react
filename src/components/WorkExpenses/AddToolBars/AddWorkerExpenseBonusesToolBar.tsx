@@ -45,7 +45,7 @@ export default function AddWorkerExpenseBonusesToolBar({
 
   useEffect(() => {
     setFilterMonth(`${startExpensDate!.toDate().getMonth() + 1}`);
-  }, [setFilterMonth, startExpensDate]);
+  }, [startExpensDate]);
 
   const fetchWorkExpensesTypesForWorker = async () => {
     try {

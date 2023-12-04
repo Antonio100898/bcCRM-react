@@ -1,7 +1,7 @@
-import { IProblemType } from './IProblemType';
-import { IWorker } from './IWorker';
+import { IProblemType } from "./IProblemType";
+import { IWorker } from "./IWorker";
 
-export interface User {
+export interface IUser {
   key: string;
   userName: string;
   password: string;
@@ -17,5 +17,7 @@ export interface User {
   workers: IWorker[];
   problemTypes: IProblemType[];
 }
+
+
 
 // export type UserType = "Admin" | "Client" | "GroupAdmin";
