@@ -18,7 +18,6 @@ import {
 import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
 import ProblemMessages from "../ProblemMessages";
 import ProblemFiles from "../ProblemFiles";
-import { SetStateAction } from "react";
 import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
 
 type Props = {
@@ -30,14 +29,20 @@ type Props = {
   handleProblemTypesChange: (event: SelectChangeEvent<number[]>) => void;
   problemTypes: IProblemType[];
   workers: IWorker[];
-  setSelfProblem: React.Dispatch<SetStateAction<IProblem | null>>;
   messages: IMsgLine[];
   refreshMessages: () => Promise<void>;
-  bigScreen: boolean;
   onIpChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   problemIp: string | undefined;
+  dragActive: boolean;
+  fileInput: string;
+  handleUploadFile: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  fileLoading: boolean;
+  files: string[];
+  deleteFile: (f: string) => Promise<void>;
+  fileProgress: number;
+  fileInputRef: React.MutableRefObject<HTMLInputElement | null | undefined>;
 };
 
 export default function ProblemInfo({
@@ -49,27 +54,29 @@ export default function ProblemInfo({
   selfProblem,
   workerDepartments,
   workers,
-  setSelfProblem,
   messages,
   refreshMessages,
-  bigScreen,
   onIpChange,
   problemIp,
+  deleteFile,
+  dragActive,
+  fileInput,
+  fileLoading,
+  fileProgress,
+  files,
+  handleUploadFile,
+  fileInputRef,
 }: Props) {
   return (
     <>
       <Box sx={{ display: "flex", gap: 1, mt: 1.5, mb: 1 }}>
-        {bigScreen && (
-          <>
-            <FormInputWrapper label="IP">
-              <NivTextField
-                onChange={onIpChange}
-                value={problemIp}
-                variant="filled"
-              />
-            </FormInputWrapper>
-          </>
-        )}
+        <FormInputWrapper label="IP">
+          <NivTextField
+            onChange={onIpChange}
+            value={problemIp}
+            variant="filled"
+          />
+        </FormInputWrapper>
         <FormInputWrapper label="מחלקה">
           <Select
             fullWidth
@@ -168,7 +175,16 @@ export default function ProblemInfo({
           />
         </FormInputWrapper>
       </Box>
-      <ProblemFiles myProblem={selfProblem} setSelfProblem={setSelfProblem} />
+      <ProblemFiles
+        fileInputRef={fileInputRef}
+        deleteFile={deleteFile}
+        dragActive={dragActive}
+        fileInput={fileInput}
+        fileLoading={fileLoading}
+        fileProgress={fileProgress}
+        files={files}
+        handleUploadFile={handleUploadFile}
+      />
       <Box sx={{ display: "flex", width: "100%" }}>
         {selfProblem && (
           <ProblemMessages

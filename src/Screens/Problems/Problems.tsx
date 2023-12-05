@@ -103,9 +103,11 @@ export default function Problems() {
       if (await confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
         abortController.current.abort();
         setProblemOpen(false);
+        setProblem(null);
       }
     } else {
       setProblemOpen(false);
+      setProblem(null);
     }
   };
 
@@ -190,14 +192,15 @@ export default function Problems() {
         </div>
       )}
       {showRows && <ProblemsRowsContainer someProblems={allProblems} />}
-
-      <ProblemDialog
-        key={problem?.id}
-        open={problemOpen}
-        onClose={handleClose}
-        problem={problem}
-        updateProblem={updateProblem}
-      />
+      {problem && (
+        <ProblemDialog
+          key={problem?.id}
+          open={problemOpen}
+          onClose={handleClose}
+          problem={problem}
+          updateProblem={updateProblem}
+        />
+      )}
     </div>
   );
 }

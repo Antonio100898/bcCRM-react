@@ -15,7 +15,7 @@ type Props = {
   currentProblemTypesId?: number[];
   problemTypes: IProblemType[];
   user: IUser | null;
-  setSelfProblemDialog: (value: SetStateAction<IProblem | null>) => void;
+  setSelfProblemDialog: (value: SetStateAction<IProblem>) => void;
   onDialogClose: () => void;
   refreshDepartments: () => Promise<void>;
 };

@@ -15,25 +15,27 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
-import { SetStateAction, forwardRef, useEffect, useState } from "react";
+import { SetStateAction, forwardRef, useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
 import { PlaceInfoDialog } from "./PlaceInfoDialog";
-import { IProblem, IPlace, IDepartment, IMsgLine } from "../Model";
+import { IProblem, IPlace, IDepartment, IMsgLine, CrmFile } from "../Model";
 import { useUser } from "../Context/useUser";
 import { ProblemAlert } from "../components/Problems/ProblemAlert";
 import ProblemInfo from "../components/ProblemInfo";
 import ProblemActions from "../components/ProblemActions";
-import { problemService, workerService } from "../API/services";
+import { fileService, problemService, workerService } from "../API/services";
 import { validateIp } from "../helpers/ipValidate";
 import CallIcon from "@mui/icons-material/Call";
 import { callService } from "../API/services/callService";
-import { enqueueSnackbar } from "notistack";
+import { AxiosProgressEvent } from "axios";
+import { useSnackbar } from "notistack";
+import { useConfirm } from "../Context/useConfirm";
 
 export type ProblemDialogProps = {
   open: boolean;
   onClose: () => void;
-  problem: IProblem | null;
+  problem: IProblem;
   updateProblem: (value: IProblem) => void;
 };
 
@@ -59,7 +61,7 @@ export function ProblemDialog({
   const bigScreen = useMediaQuery("(min-width: 1200px)");
   const { user, workers, problemTypes, updateDepartments } = useUser();
 
-  const [selfProblem, setSelfProblem] = useState<IProblem | null>(problem);
+  const [selfProblem, setSelfProblem] = useState<IProblem>(problem);
   const [placeDialogOpen, setPlaceDialogOpen] = useState(false);
   const [placeDialog, setPlaceDialog] = useState<IPlace | null>(null);
   const [workerDepartments, setWorkerDepartments] = useState<IDepartment[]>([]);
@@ -74,6 +76,150 @@ export function ProblemDialog({
     trackingId: number;
   } | null>(null);
   const [callDisabled, setCallDisabled] = useState(!selfProblem?.phone);
+  const { enqueueSnackbar } = useSnackbar();
+  const [fileProgress, setFileProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement | null>();
+  const [dragActive, setDragActive] = useState(false);
+  const [fileInput, setFileInput] = useState<string>("");
+  const [fileLoading, setFileLoading] = useState(false);
+  const abortController = useRef(new AbortController());
+  const { confirm } = useConfirm();
+
+  const { updateRefreshProblems } = useUser();
+
+  const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
+    setDragActive(event.type === "dragenter" || event.type === "dragover");
+  };
+
+  const toBase64 = (file: Blob): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(`${reader.result}`);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+
+  const deleteFile = async (f: string) => {
+    setFileInput("");
+    if (await confirm("האם אתה בטוח שברצונך למחוק את הקובץ?")) {
+      try {
+        const data = await fileService.deleteFile(f, selfProblem.id);
+        if (data?.d.success) {
+          setSelfProblem(() => ({
+            ...selfProblem,
+            files: selfProblem.files.filter((i) => i !== f),
+          }));
+          updateProblem(selfProblem);
+          updateRefreshProblems(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const uploadFiles = async (
+    inputFiles: FileList | null,
+    isClipboard = false
+  ) => {
+    if (inputFiles) {
+      const promises: Promise<CrmFile>[] = [];
+      const filteredFiles: File[] = [];
+
+      for (let i = 0; i < inputFiles.length; i += 1) {
+        if (
+          isClipboard ||
+          !(selfProblem.files || []).includes(
+            `${selfProblem.id}_${inputFiles?.[i].name || "file.what"}`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_")
+          )
+        ) {
+          filteredFiles.push(inputFiles?.[i]);
+        } else {
+          enqueueSnackbar(`הקובץ הזה כבר עלה ${inputFiles?.[i].name}`);
+        }
+      }
+
+      for (let i = 0; i < filteredFiles.length; i += 1) {
+        promises.push(
+          toBase64(filteredFiles[i]).then((base64) => ({
+            filename: `${isClipboard ? `${Date.now()}_` : ""}${
+              selfProblem.id
+            }_${filteredFiles?.[i].name || "file.what"}`
+              .replaceAll("-", "_")
+              .replaceAll(" ", "_"),
+            content: base64,
+          }))
+        );
+      }
+
+      if (promises.length === 0) {
+        setFileInput("");
+        return;
+      }
+
+      setFileLoading(true);
+      const files = await Promise.all(promises);
+
+      const updatedProblem = {
+        ...selfProblem,
+        crmFiles: [...(selfProblem.crmFiles || []), ...files],
+        files: [
+          ...(selfProblem.files || []),
+          ...(files || []).map((f) => f.filename),
+        ],
+      };
+
+      try {
+        const data = await fileService.uploadFiles(updatedProblem, {
+          //@ts-ignore
+          signal: abortController.signal,
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            setFileProgress(percentCompleted === 100 ? -1 : percentCompleted);
+          },
+        });
+        if (data?.d.success) {
+          setSelfProblem({
+            ...updatedProblem,
+            files: [...new Set(data.d.filesName as string[])],
+          });
+        }
+        updateProblem(selfProblem);
+      } catch (error) {
+        enqueueSnackbar({
+          message: `נכשל לטעון קבצים.`,
+          variant: "error",
+        });
+      } finally {
+        setFileLoading(false);
+        updateRefreshProblems(true);
+      }
+    }
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setDragActive(event.type === "dragover");
+
+    if (event.dataTransfer.files && event.dataTransfer.files.length === 1) {
+      uploadFiles(event.dataTransfer.files);
+    }
+  };
+
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileInput(e.target.value);
+    uploadFiles(e.target.files);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) =>
+    uploadFiles(e.clipboardData.files, true);
 
   const callClientPhone = async () => {
     if (!selfProblem?.phone) {
@@ -291,6 +437,10 @@ export function ProblemDialog({
       PaperProps={{
         style: dialogPaperStyle,
       }}
+      onDragEnter={handleDrag}
+      onDragLeave={handleDrag}
+      onDragOver={handleDrop}
+      onDrop={handleDrop}
     >
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
@@ -369,7 +519,6 @@ export function ProblemDialog({
               <ProblemInfo
                 onIpChange={handleProblemIpChange}
                 problemIp={problemIp}
-                bigScreen={bigScreen}
                 messages={messages}
                 refreshMessages={refreshMessages}
                 currentProblemTypesId={currentProblemTypesId}
@@ -380,7 +529,14 @@ export function ProblemDialog({
                 selfProblem={selfProblem}
                 workerDepartments={workerDepartments}
                 workers={workers}
-                setSelfProblem={setSelfProblem}
+                deleteFile={deleteFile}
+                dragActive={dragActive}
+                fileInput={fileInput}
+                fileLoading={fileLoading}
+                fileProgress={fileProgress}
+                files={selfProblem.files}
+                handleUploadFile={handleUploadFile}
+                fileInputRef={fileInputRef}
               />
               <ProblemActions
                 refreshDepartments={refreshDepartments}

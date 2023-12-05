@@ -101,7 +101,9 @@ export const problemService = {
     problem: Partial<IProblem>
   ): Promise<IProblemsResponse | undefined> {
     try {
-      const { data } = await instance.post("/UpdateProblem", { problem });
+      const { data } = await instance.post("/UpdateProblem", {
+        problem: { ...problem, crmFiles: [], files: [] },
+      });
       return data;
     } catch (error) {
       console.error(error);
