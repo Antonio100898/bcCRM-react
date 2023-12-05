@@ -107,11 +107,10 @@ export function ProblemDialog({
       try {
         const data = await fileService.deleteFile(f, selfProblem.id);
         if (data?.d.success) {
-          setSelfProblem(() => ({
-            ...selfProblem,
-            files: selfProblem.files.filter((i) => i !== f),
+          setSelfProblem((prevProblem) => ({
+            ...prevProblem,
+            files: prevProblem.files.filter((i) => i !== f),
           }));
-          updateProblem(selfProblem);
           updateRefreshProblems(true);
         }
       } catch (error) {
@@ -119,6 +118,9 @@ export function ProblemDialog({
       }
     }
   };
+  useEffect(() => {
+    console.log(selfProblem);
+  }, [selfProblem]);
 
   const uploadFiles = async (
     inputFiles: FileList | null,
@@ -190,7 +192,6 @@ export function ProblemDialog({
             files: [...new Set(data.d.filesName as string[])],
           });
         }
-        updateProblem(selfProblem);
       } catch (error) {
         enqueueSnackbar({
           message: `נכשל לטעון קבצים.`,
@@ -202,6 +203,9 @@ export function ProblemDialog({
       }
     }
   };
+  useEffect(() => {
+    updateProblem(selfProblem);
+  }, [selfProblem.files]);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -217,9 +221,6 @@ export function ProblemDialog({
     setFileInput(e.target.value);
     uploadFiles(e.target.files);
   };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) =>
-    uploadFiles(e.clipboardData.files, true);
 
   const callClientPhone = async () => {
     if (!selfProblem?.phone) {
@@ -442,6 +443,26 @@ export function ProblemDialog({
       onDragOver={handleDrop}
       onDrop={handleDrop}
     >
+      {dragActive && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 128, 255, 0.25)",
+            zIndex: 100000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h3" color="white" fontWeight="bold">
+            שחרר קבצים כאן
+          </Typography>
+        </Box>
+      )}
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <IconButton
@@ -530,7 +551,6 @@ export function ProblemDialog({
                 workerDepartments={workerDepartments}
                 workers={workers}
                 deleteFile={deleteFile}
-                dragActive={dragActive}
                 fileInput={fileInput}
                 fileLoading={fileLoading}
                 fileProgress={fileProgress}

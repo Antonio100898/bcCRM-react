@@ -1,17 +1,9 @@
 import { IMAGES_PATH_PROBLEMS } from "../../Consts/Consts";
-import {
-  Box,
-  Typography,
-  LinearProgress,
-  Tooltip,
-  IconButton,
-  Fab,
-} from "@mui/material";
+import { Box, LinearProgress, Tooltip, IconButton, Fab } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 type Props = {
-  dragActive: boolean;
   fileInput: string;
   handleUploadFile: React.ChangeEventHandler<HTMLInputElement>;
   fileLoading: boolean;
@@ -22,7 +14,6 @@ type Props = {
 };
 
 export default function ProblemFiles({
-  dragActive,
   fileInput,
   fileLoading,
   files,
@@ -33,26 +24,6 @@ export default function ProblemFiles({
 }: Props) {
   return (
     <Box dir="rtl">
-      {dragActive && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 128, 255, 0.25)",
-            zIndex: 100000,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h3" color="white" fontWeight="bold">
-            שחרר קבצים כאן
-          </Typography>
-        </Box>
-      )}
       <input
         type="file"
         multiple
@@ -77,11 +48,9 @@ export default function ProblemFiles({
           size="medium"
           onClick={() => fileInputRef.current?.click()}
         >
-          <div>
-            <AttachFileIcon
-              style={{ fontSize: 25, color: "rgba(251, 50, 0, 0.6)" }}
-            />
-          </div>
+          <AttachFileIcon
+            style={{ fontSize: 25, color: "rgba(251, 50, 0, 0.6)" }}
+          />
         </Fab>
       </Tooltip>
       <Box sx={{ margin: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>

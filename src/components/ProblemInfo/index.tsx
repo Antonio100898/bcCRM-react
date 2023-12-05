@@ -35,7 +35,6 @@ type Props = {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   problemIp: string | undefined;
-  dragActive: boolean;
   fileInput: string;
   handleUploadFile: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   fileLoading: boolean;
@@ -59,7 +58,6 @@ export default function ProblemInfo({
   onIpChange,
   problemIp,
   deleteFile,
-  dragActive,
   fileInput,
   fileLoading,
   fileProgress,
@@ -178,7 +176,6 @@ export default function ProblemInfo({
       <ProblemFiles
         fileInputRef={fileInputRef}
         deleteFile={deleteFile}
-        dragActive={dragActive}
         fileInput={fileInput}
         fileLoading={fileLoading}
         fileProgress={fileProgress}
