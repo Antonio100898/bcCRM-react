@@ -33,6 +33,7 @@ export default function ProblemMessages({
             variant: "success",
           });
         }
+        await refreshMessages();
       } catch (err) {
         if (err instanceof Error) {
           enqueueSnackbar({
@@ -46,7 +47,6 @@ export default function ProblemMessages({
 
   const onConfirmMsgDialog = async (value: string) => {
     await addNewMsg(value);
-    await refreshMessages();
   };
 
   useEffect(() => {

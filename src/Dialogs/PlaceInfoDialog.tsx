@@ -89,7 +89,10 @@ export function PlaceInfoDialog({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
+      <DialogTitle
+        component="div"
+        sx={{ display: "flex", alignItems: "center" }}
+      >
         <Typography variant="h6" flex={1}>
           {selfPlace?.placeId === 0 ? "הוספת עסק חדש" : "עריכת עסק"}
         </Typography>

@@ -25,6 +25,10 @@ import { ProblemAlert } from "../components/Problems/ProblemAlert";
 import ProblemInfo from "../components/ProblemInfo";
 import ProblemActions from "../components/ProblemActions";
 import { problemService, workerService } from "../API/services";
+import { validateIp } from "../helpers/ipValidate";
+import CallIcon from "@mui/icons-material/Call";
+import { callService } from "../API/services/callService";
+import { enqueueSnackbar } from "notistack";
 
 export type ProblemDialogProps = {
   open: boolean;
@@ -63,12 +67,58 @@ export function ProblemDialog({
   const [currentProblemTypesId, setCurrentProblemTypesId] = useState<
     number[] | undefined
   >([]);
-
+  const [problemIp, setProblemIp] = useState(selfProblem?.ip);
   const [tracking, setTracking] = useState<{
     historySummery: string;
     lastSupporter: string;
     trackingId: number;
   } | null>(null);
+  const [callDisabled, setCallDisabled] = useState(!selfProblem?.phone);
+
+  const callClientPhone = async () => {
+    if (!selfProblem?.phone) {
+      enqueueSnackbar({
+        variant: "error",
+        message: "מספר טלפון ריק",
+      });
+      return;
+    }
+    setCallDisabled(true);
+    try {
+      const data = await callService.callClientPhone(selfProblem.phone);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          variant: "error",
+          message: data.d.msg,
+        });
+      } else {
+        enqueueSnackbar({
+          variant: "success",
+          message: "מתקשר ללקוח...",
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          variant: "error",
+          message: error.message,
+        });
+    } finally {
+      setCallDisabled(false);
+    }
+  };
+
+  const handleProblemIpChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const problemIp = event.currentTarget.value;
+    if ((!problemIp && problemIp !== "") || !validateIp(problemIp)) return;
+    setProblemIp(problemIp);
+  };
+
+  useEffect(() => {
+    if (problemIp) onChange("ip", problemIp);
+  }, [problemIp]);
 
   const refreshMessages = async () => {
     if (selfProblem?.id) {
@@ -110,7 +160,7 @@ export function ProblemDialog({
       try {
         const data = await problemService.updateProblemTracking(
           selfProblem.id,
-          selfProblem.trackingId || 0
+          tracking.trackingId
         );
         if (data?.d.success) {
           onChange("trackingId", data.d.trackingId);
@@ -275,7 +325,7 @@ export function ProblemDialog({
               sx={{
                 display: "flex",
                 justifyContent: bigScreen ? "flex-start" : "space-between",
-                gap: 5,
+                alignItems: "center",
               }}
             >
               <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
@@ -290,32 +340,38 @@ export function ProblemDialog({
                   </Typography>
                 )}
               </Box>
-              <Box sx={{ marginLeft: 1 }}>
+              <Box sx={{ marginLeft: 5 }}>
                 {selfProblem?.phone && (
                   <Typography variant="body1">{selfProblem.phone}</Typography>
                 )}
               </Box>
+
+              <IconButton disabled={callDisabled} onClick={callClientPhone}>
+                <CallIcon />
+              </IconButton>
             </Box>
           </Box>
         </Toolbar>
       </AppBar>
       <DialogContent sx={{ p: 2 }}>
         <TransitionGroup sx={{ position: "relative" }}>
-          {selfProblem?.historySummery && selfProblem.lastSuppoter && (
+          {tracking?.historySummery && tracking.lastSupporter && (
             <Collapse>
               <ProblemAlert
-                key={selfProblem?.lastSuppoter}
-                historySummery={selfProblem?.historySummery}
-                lastSupporter={selfProblem?.lastSuppoter}
+                key={tracking?.lastSupporter}
+                historySummery={tracking?.historySummery}
+                lastSupporter={tracking?.lastSupporter}
               />
             </Collapse>
           )}
-          {selfProblem && (
+          {selfProblem && tracking && problemTypes && (
             <>
               <ProblemInfo
+                onIpChange={handleProblemIpChange}
+                problemIp={problemIp}
+                bigScreen={bigScreen}
                 messages={messages}
                 refreshMessages={refreshMessages}
-                setMessages={setMessages}
                 currentProblemTypesId={currentProblemTypesId}
                 handleProblemTypesChange={handleProblemTypesChange}
                 isChangeToWorkerEnable={isChangeToWorkerEnable}

@@ -19,6 +19,7 @@ import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
 import ProblemMessages from "../ProblemMessages";
 import ProblemFiles from "../ProblemFiles";
 import { SetStateAction } from "react";
+import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -31,8 +32,12 @@ type Props = {
   workers: IWorker[];
   setSelfProblem: React.Dispatch<SetStateAction<IProblem | null>>;
   messages: IMsgLine[];
-  setMessages: React.Dispatch<React.SetStateAction<IMsgLine[]>>;
   refreshMessages: () => Promise<void>;
+  bigScreen: boolean;
+  onIpChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  problemIp: string | undefined;
 };
 
 export default function ProblemInfo({
@@ -47,13 +52,26 @@ export default function ProblemInfo({
   setSelfProblem,
   messages,
   refreshMessages,
+  bigScreen,
+  onIpChange,
+  problemIp,
 }: Props) {
   return (
     <>
-      <Box sx={{ display: "flex", gap: 1, mt: 1.5 }}>
+      <Box sx={{ display: "flex", gap: 1, mt: 1.5, mb: 1 }}>
+        {bigScreen && (
+          <>
+            <FormInputWrapper label="IP">
+              <NivTextField
+                onChange={onIpChange}
+                value={problemIp}
+                variant="filled"
+              />
+            </FormInputWrapper>
+          </>
+        )}
         <FormInputWrapper label="מחלקה">
           <Select
-            sx={{ padding: 0 }}
             fullWidth
             variant="outlined"
             value={selfProblem?.departmentId}

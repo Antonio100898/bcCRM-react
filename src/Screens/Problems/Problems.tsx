@@ -33,6 +33,7 @@ export default function Problems() {
     updateAllProblems,
     updateShowLoader,
     selectedDepartmentId,
+    updateSelectedDepartmentId,
   } = useUser();
 
   const handleShowProblem = (clickedProblem: IProblem) => {
@@ -78,6 +79,7 @@ export default function Problems() {
       setSearchParams({ department: "-1" });
       return;
     }
+    updateSelectedDepartmentId(Number(department) || -1);
     updateDepartment(department || "-1");
   }, [searchParams]);
 

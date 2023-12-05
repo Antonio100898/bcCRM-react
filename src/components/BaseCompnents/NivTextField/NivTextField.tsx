@@ -1,23 +1,28 @@
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 
 export function NivTextField(props: TextFieldProps) {
+  const { sx, ...shareProps } = props;
   return (
     <TextField
       sx={{
-        '& .MuiInputLabel-root': {
+        "& .MuiInputLabel-root": {
           right: 35,
-          transformOrigin: 'top right',
+          transformOrigin: "top right",
         },
-        '& .MuiInputLabel-shrink': {
-          transform: 'translate(19px, -9px) scale(0.75)',
+        "& .MuiInputLabel-shrink": {
+          transform: "translate(19px, -9px) scale(0.75)",
         },
-        ' & .MuiOutlinedInput-root': {
-          '& .MuiOutlinedInput-notchedOutline': {
-            textAlign: 'right',
+        " & .MuiOutlinedInput-root": {
+          "& .MuiOutlinedInput-notchedOutline": {
+            textAlign: "right",
           },
         },
+        "& .MuiInputBase-input": {
+          padding: "10px",
+        },
+        ...sx,
       }}
-      {...props}
+      {...shareProps}
     />
   );
 }

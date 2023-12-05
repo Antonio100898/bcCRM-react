@@ -6,7 +6,6 @@ import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
 import { LoadingButton } from "@mui/lab";
 import { problemService } from "../../API/services";
-import { useUser } from "../../Context/useUser";
 
 type Props = {
   problem: IProblem;
@@ -43,6 +42,10 @@ export default function ProblemActions({
   useEffect(() => {
     setSelfProblem({ ...problem });
   }, [problem]);
+
+  useEffect(() => {
+    console.log(trackingId);
+  }, [trackingId]);
 
   const stop = () => {
     setPendingUpdate(false);
