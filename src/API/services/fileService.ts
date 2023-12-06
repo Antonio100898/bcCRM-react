@@ -1,7 +1,7 @@
 import { IProblem, IProblemsResponse } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../axoisConfig";
+import { workerKey } from "../../main";
 import { AxiosRequestConfig } from "axios";
 
 export const fileService = {

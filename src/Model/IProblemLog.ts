@@ -6,3 +6,11 @@ export interface IProblemLog {
   newValue: string;
   commitTime: string;
 }
+
+export interface IProblemLogResponse {
+  d: {
+    msg: string;
+    success: boolean;
+    logs: IProblemLog[];
+  };
+}

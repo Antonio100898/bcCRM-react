@@ -1128,47 +1128,7 @@ export default function ProblemNoteDialog({
         problemsHistory={problemsHistory}
       />
 
-      <Dialog
-        dir="rtl"
-        sx={{ textAlign: "right" }}
-        fullWidth
-        onClose={() => setShowLogs(false)}
-        maxWidth="lg"
-        open={showLogs}
-      >
-        <DialogContent>
-          <div>
-            <div className="row">
-              <div className="col-2">עובד מעדכן</div>
-              <div className="col-2">שם השדה</div>
-              <div className="col-3">ערך ישן</div>
-              <div className="col-3">ערך חדש</div>
-              <div className="col-2">תאריך</div>
-              {logs &&
-                logs.map((log: IProblemLog) => {
-                  return (
-                    <div
-                      key={log.commitTime}
-                      className="row"
-                      style={{ border: "1px black solid" }}
-                    >
-                      <div className="col-2">{log.workerName}</div>
-                      <div className="col-2">{log.fieldName}</div>
-                      <div className="col-3">{log.oldValue}</div>
-                      <div className="col-3">{log.newValue}</div>
-                      <div className="col-2">{log.commitTime}</div>
-                    </div>
-                  );
-                })}
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <Button variant="contained" onClick={() => setShowLogs(false)}>
-                סגור
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      
     </Box>
   );
 }

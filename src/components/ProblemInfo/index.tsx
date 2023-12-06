@@ -5,7 +5,6 @@ import {
   OutlinedInput,
   Select,
   Avatar,
-  TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import {
@@ -19,6 +18,8 @@ import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
 import ProblemMessages from "../ProblemMessages";
 import ProblemFiles from "../ProblemFiles";
 import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
+import CustomInput from "../customInput/customInput";
+import ProblemStatuses from "../ProblemStatuses/ProblemStatuses";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -42,6 +43,12 @@ type Props = {
   deleteFile: (f: string) => Promise<void>;
   fileProgress: number;
   fileInputRef: React.MutableRefObject<HTMLInputElement | null | undefined>;
+  bigScreen: boolean;
+  isLockEnable: boolean;
+  setEmergency: () => void;
+  setIsLocked: () => void;
+  setTakeCare: () => void;
+  setCallCustomerBack: () => void;
 };
 
 export default function ProblemInfo({
@@ -64,114 +71,148 @@ export default function ProblemInfo({
   files,
   handleUploadFile,
   fileInputRef,
+  bigScreen,
+  isLockEnable,
+  setEmergency,
+  setIsLocked,
+  setTakeCare,
+  setCallCustomerBack,
 }: Props) {
   return (
     <>
-      <Box sx={{ display: "flex", gap: 1, mt: 1.5, mb: 1 }}>
-        <FormInputWrapper label="IP">
-          <NivTextField
-            onChange={onIpChange}
-            value={problemIp}
-            variant="filled"
-          />
-        </FormInputWrapper>
-        <FormInputWrapper label="מחלקה">
-          <Select
-            fullWidth
-            variant="outlined"
-            value={selfProblem?.departmentId}
-            onChange={(e) =>
-              onChange("departmentId", parseInt(`${e.target.value}`, 10))
-            }
-          >
-            {workerDepartments?.map((d) => {
-              return (
-                <MenuItem value={d.id} key={d.id}>
-                  {d.departmentName}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormInputWrapper>
-        <FormInputWrapper label="עובד מטפל">
-          <Select
-            fullWidth
-            variant="outlined"
-            disabled={!isChangeToWorkerEnable()}
-            value={selfProblem?.toWorker}
-            onChange={(e) =>
-              onChange("toWorker", parseInt(`${e.target.value}`, 10))
-            }
-          >
-            {workers &&
-              workers.map((worker: IWorker) => {
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <FormInputWrapper label="IP">
+            <NivTextField
+              onChange={onIpChange}
+              value={problemIp}
+              variant="filled"
+            />
+          </FormInputWrapper>
+          <FormInputWrapper label="מחלקה">
+            <Select
+              fullWidth
+              variant="outlined"
+              value={selfProblem?.departmentId}
+              onChange={(e) =>
+                onChange("departmentId", parseInt(`${e.target.value}`, 10))
+              }
+            >
+              {workerDepartments?.map((d) => {
                 return (
-                  <MenuItem key={worker.Id} value={worker.Id}>
-                    {worker.workerName}
+                  <MenuItem value={d.id} key={d.id}>
+                    {d.departmentName}
                   </MenuItem>
                 );
               })}
-          </Select>
-        </FormInputWrapper>
-      </Box>
-      <Box>
-        <FormInputWrapper label="תיוגים">
-          <Select
-            fullWidth
-            multiple
-            value={currentProblemTypesId}
-            onChange={handleProblemTypesChange}
-            input={<OutlinedInput label="Chip" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip
-                    key={value}
-                    style={{ margin: "3px" }}
-                    label={
-                      problemTypes.find((e) => e.id === value)?.problemTypeName
-                    }
-                    size="small"
-                    variant="outlined"
-                    avatar={
-                      <Avatar
-                        sx={{
-                          bgcolor: problemTypes.find((e) => e.id === value)
-                            ?.color,
-                        }}
-                        style={{
-                          marginRight: "5px",
-                          border: "1px solid black",
-                        }}
-                      >
-                        {" "}
-                      </Avatar>
-                    }
-                  />
-                ))}
-              </Box>
-            )}
-          >
-            {problemTypes &&
-              problemTypes.map((problemType: IProblemType) => {
-                return (
-                  <MenuItem key={problemType.id} value={problemType.id}>
-                    {problemType.problemTypeName}
-                  </MenuItem>
-                );
-              })}
-          </Select>
-        </FormInputWrapper>
-      </Box>
-      <Box sx={{ display: "flex", width: "100%" }}>
-        <FormInputWrapper label="תיאור תקלה">
-          <TextField
-            multiline
-            fullWidth
-            type="text"
-            value={selfProblem?.desc}
-          />
-        </FormInputWrapper>
+            </Select>
+          </FormInputWrapper>
+
+          <FormInputWrapper label="עובד מטפל">
+            <Select
+              fullWidth
+              variant="outlined"
+              disabled={!isChangeToWorkerEnable()}
+              value={selfProblem?.toWorker}
+              onChange={(e) =>
+                onChange("toWorker", parseInt(`${e.target.value}`, 10))
+              }
+            >
+              {workers &&
+                workers.map((worker: IWorker) => {
+                  return (
+                    <MenuItem key={worker.Id} value={worker.Id}>
+                      {worker.workerName}
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+          </FormInputWrapper>
+        </Box>
+
+        <Box>
+          <FormInputWrapper label="תיוגים">
+            <Select
+              fullWidth
+              multiple
+              value={currentProblemTypesId}
+              onChange={handleProblemTypesChange}
+              input={<OutlinedInput label="Chip" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip
+                      key={value}
+                      style={{ margin: "3px" }}
+                      label={
+                        problemTypes.find((e) => e.id === value)
+                          ?.problemTypeName
+                      }
+                      size="small"
+                      variant="outlined"
+                      avatar={
+                        <Avatar
+                          sx={{
+                            bgcolor: problemTypes.find((e) => e.id === value)
+                              ?.color,
+                          }}
+                          style={{
+                            marginRight: "5px",
+                            border: "1px solid black",
+                          }}
+                        >
+                          {" "}
+                        </Avatar>
+                      }
+                    />
+                  ))}
+                </Box>
+              )}
+            >
+              {problemTypes &&
+                problemTypes.map((problemType: IProblemType) => {
+                  return (
+                    <MenuItem key={problemType.id} value={problemType.id}>
+                      {problemType.problemTypeName}
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+          </FormInputWrapper>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: bigScreen ? "row" : "column",
+            width: "100%",
+            gap: 1,
+            alignItems: "center",
+          }}
+        >
+          <Box sx={{ width: bigScreen ? "60%" : "100%" }}>
+            <CustomInput
+              label="תיאור תקלה"
+              fullWidth
+              multiline
+              type="text"
+              value={selfProblem?.desc}
+            />
+          </Box>
+          <Box sx={{ flex: 1, width: '100%' }}>
+            <ProblemStatuses
+              bigScreen={bigScreen}
+              setCallCustomerBack={setCallCustomerBack}
+              callCustomerBack={selfProblem.callCustomerBack}
+              emergencyId={selfProblem.emergencyId}
+              isLockEnable={isLockEnable}
+              isLocked={selfProblem.isLocked}
+              setEmergency={setEmergency}
+              setIsLocked={setIsLocked}
+              setTakeCare={setTakeCare}
+              takingCare={selfProblem.takingCare}
+            />
+          </Box>
+        </Box>
       </Box>
       <ProblemFiles
         fileInputRef={fileInputRef}

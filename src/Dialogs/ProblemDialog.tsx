@@ -19,7 +19,15 @@ import { SetStateAction, forwardRef, useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
 import { PlaceInfoDialog } from "./PlaceInfoDialog";
-import { IProblem, IPlace, IDepartment, IMsgLine, CrmFile } from "../Model";
+import {
+  IProblem,
+  IPlace,
+  IDepartment,
+  IMsgLine,
+  CrmFile,
+  IProblemLog,
+  ISearchProblem,
+} from "../Model";
 import { useUser } from "../Context/useUser";
 import { ProblemAlert } from "../components/Problems/ProblemAlert";
 import ProblemInfo from "../components/ProblemInfo";
@@ -31,6 +39,8 @@ import { callService } from "../API/services/callService";
 import { AxiosProgressEvent } from "axios";
 import { useSnackbar } from "notistack";
 import { useConfirm } from "../Context/useConfirm";
+import { ProblemHistoryDialog } from "./ProblemHistory";
+import ProblemLogsDialog from "./ProblemLogsDialog";
 
 export type ProblemDialogProps = {
   open: boolean;
@@ -82,6 +92,11 @@ export function ProblemDialog({
   const [dragActive, setDragActive] = useState(false);
   const [fileInput, setFileInput] = useState<string>("");
   const [fileLoading, setFileLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showHistoryLoading, setShowHistoryLoading] = useState(false);
+  const [problemsHistory, setProblemsHistory] = useState<IProblem[]>([]);
+  const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState<IProblemLog[]>([]);
   const abortController = useRef(new AbortController());
   const { confirm } = useConfirm();
 
@@ -118,9 +133,6 @@ export function ProblemDialog({
       }
     }
   };
-  useEffect(() => {
-    console.log(selfProblem);
-  }, [selfProblem]);
 
   const uploadFiles = async (
     inputFiles: FileList | null,
@@ -203,6 +215,7 @@ export function ProblemDialog({
       }
     }
   };
+
   useEffect(() => {
     updateProblem(selfProblem);
   }, [selfProblem.files]);
@@ -236,7 +249,7 @@ export function ProblemDialog({
       if (!data?.d.success) {
         enqueueSnackbar({
           variant: "error",
-          message: data.d.msg,
+          message: data?.d.msg,
         });
       } else {
         enqueueSnackbar({
@@ -252,6 +265,36 @@ export function ProblemDialog({
         });
     } finally {
       setCallDisabled(false);
+    }
+  };
+
+  const showProblemHistory = async () => {
+    setShowHistory(true);
+    setShowHistoryLoading(true);
+
+    const searchProblem: Partial<ISearchProblem> = {
+      place: true,
+      daysBack: 90,
+      searchValue: selfProblem.placeName,
+    };
+
+    try {
+      const data = await problemService.searchProblems(searchProblem);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+      } else {
+        setProblemsHistory(data.d.problems);
+      }
+    } catch (error) {
+      enqueueSnackbar({
+        message: "אופס, משהו השתבש.. נסה שוב",
+        variant: "error",
+      });
+    } finally {
+      setShowHistoryLoading(false);
     }
   };
 
@@ -318,6 +361,42 @@ export function ProblemDialog({
         console.error(error);
       }
     }
+  };
+
+  function isLockEnable(): boolean {
+    if (user?.userType === 1) return true;
+
+    if (
+      !selfProblem.isLocked &&
+      (selfProblem.toWorker === user?.workerId ||
+        selfProblem.workerCreateId === user?.workerId)
+    )
+      return true;
+
+    if (
+      selfProblem.isLocked &&
+      (selfProblem.toWorker === user?.workerId ||
+        selfProblem.workerCreateId === user?.workerId)
+    )
+      return true;
+
+    return false;
+  }
+
+  const setEmergency = () => {
+    if (selfProblem.emergencyId === 0) {
+      onChange("emergencyId", 1);
+    } else {
+      onChange("emergencyId", 0);
+    }
+  };
+
+  const setTakeCare = () => {
+    onChange("takingCare", !selfProblem.takingCare);
+  };
+
+  const setIsLocked = () => {
+    onChange("isLocked", !selfProblem.isLocked);
   };
 
   const openEditPlace = () => {
@@ -391,6 +470,28 @@ export function ProblemDialog({
     }
   };
 
+  const onShowLogs = async (problemId: number) => {
+    try {
+      const data = await problemService.getProblemLogs(problemId);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: data?.d.msg,
+          variant: "error",
+        });
+      } else {
+        setLogs(data.d.logs);
+        setShowLogs(true);
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
+      console.error(error);
+    }
+  };
+
   const fetchDepartments = async () => {
     if (user)
       try {
@@ -402,6 +503,9 @@ export function ProblemDialog({
       } catch (error) {
         console.error(error);
       }
+  };
+  const setCallCustomerBack = () => {
+    onChange("callCustomerBack", !selfProblem.callCustomerBack);
   };
 
   useEffect(() => {
@@ -538,6 +642,12 @@ export function ProblemDialog({
           {selfProblem && tracking && problemTypes && (
             <>
               <ProblemInfo
+                setCallCustomerBack={setCallCustomerBack}
+                isLockEnable={isLockEnable()}
+                setEmergency={setEmergency}
+                setIsLocked={setIsLocked}
+                setTakeCare={setTakeCare}
+                bigScreen={bigScreen}
                 onIpChange={handleProblemIpChange}
                 problemIp={problemIp}
                 messages={messages}
@@ -559,6 +669,7 @@ export function ProblemDialog({
                 fileInputRef={fileInputRef}
               />
               <ProblemActions
+                showProblemHistory={showProblemHistory}
                 refreshDepartments={refreshDepartments}
                 trackingId={tracking?.trackingId}
                 onDialogClose={onClose}
@@ -580,6 +691,19 @@ export function ProblemDialog({
         open={placeDialogOpen}
         place={placeDialog}
         onPlaceUpdate={handlePlaceUpdate}
+      />
+      <ProblemHistoryDialog
+        onClose={() => setShowHistory(false)}
+        open={showHistory}
+        loading={showHistoryLoading}
+        onShowLogs={onShowLogs}
+        problem={problem}
+        problemsHistory={problemsHistory}
+      />
+      <ProblemLogsDialog
+        logs={logs}
+        onClose={() => setShowLogs(false)}
+        showLogs={showLogs}
       />
     </Dialog>
   );

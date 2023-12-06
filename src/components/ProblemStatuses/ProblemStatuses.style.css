@@ -1,0 +1,23 @@
+.statusButton {
+  width: 40%;
+}
+
+.statusButtonsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  row-gap: 10px;
+}
+
+.statusButtonsWrapper-small {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.statusButton-small {
+}
+
+.button-flex-column {
+  display: flex;
+  flex-direction: column;
+}

@@ -63,7 +63,6 @@ export function ProblemHistoryDialog({
                 aria-label="תקלות"
                 sx={{
                   "& .MuiTableCell-body": {
-                    fontFamily: "Rubik",
                     fontWeight: 400,
                     fontSize: "16px",
                     textAlign: "center",
@@ -72,7 +71,7 @@ export function ProblemHistoryDialog({
 
                   "& .MuiTableCell-head": {
                     background: "#E0E0E0",
-                    fontFamily: "Rubik",
+
                     fontWeight: 700,
                     fontSize: "24px",
                     textAlign: "center",

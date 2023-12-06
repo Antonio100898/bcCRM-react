@@ -8,6 +8,9 @@ import App from "./App";
 import { UserContextProvider } from "./Context/UserContext";
 import { theme } from "./utils/theme";
 import EmotionCache from "./utils/EmotionCache";
+import { TOKEN_KEY } from "./Consts/Consts";
+
+export const workerKey = localStorage.getItem(TOKEN_KEY);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

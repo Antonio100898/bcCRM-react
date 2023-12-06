@@ -8,7 +8,7 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../axoisConfig";
+import { workerKey } from "../../main";
 
 export const shiftService = {
   async updateShiftPlan(

@@ -1,11 +1,13 @@
-import { Box, Switch, useTheme } from "@mui/material";
+import { Box, Fab, Switch, Tooltip, useTheme } from "@mui/material";
 import { SetStateAction, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { IProblem, IProblemType, IUser } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import { useConfirm } from "../../Context/useConfirm";
-import { LoadingButton } from "@mui/lab";
 import { problemService } from "../../API/services";
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
+import LockIcon from "@mui/icons-material/Lock";
+import HistoryIcon from "@mui/icons-material/History";
 
 type Props = {
   problem: IProblem;
@@ -18,6 +20,7 @@ type Props = {
   setSelfProblemDialog: (value: SetStateAction<IProblem>) => void;
   onDialogClose: () => void;
   refreshDepartments: () => Promise<void>;
+  showProblemHistory: () => Promise<void>;
 };
 
 export default function ProblemActions({
@@ -31,6 +34,7 @@ export default function ProblemActions({
   updateProblemTracking,
   trackingId,
   refreshDepartments,
+  showProblemHistory,
 }: Props) {
   const [selfProblem, setSelfProblem] = useState<IProblem>({ ...problem });
   const [pendingClose, setPendingClose] = useState(false);
@@ -42,10 +46,6 @@ export default function ProblemActions({
   useEffect(() => {
     setSelfProblem({ ...problem });
   }, [problem]);
-
-  useEffect(() => {
-    console.log(trackingId);
-  }, [trackingId]);
 
   const stop = () => {
     setPendingUpdate(false);
@@ -142,42 +142,88 @@ export default function ProblemActions({
           width: "100%",
           background: "white",
           display: "flex",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
           alignItems: "center",
           paddingY: 1,
+          paddingX: "5%",
         }}
       >
-        <LoadingButton
-          disabled={pendingClose || pendingUpdate}
-          loading={pendingClose}
-          variant="outlined"
+        <Box
           sx={{
-            fontSize: 18,
-            height: "40px",
-            width: "25%",
-            color: "rgba(0, 0, 0, 0.87)",
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            width: "30%",
+            gap: "5%",
           }}
-          onClick={() => saveProblem(true, true)}
         >
-          סגור
-        </LoadingButton>
-        <LoadingButton
-          disabled={pendingClose || pendingUpdate}
-          loading={pendingUpdate}
-          variant="contained"
-          sx={{ fontSize: 18, height: "40px", width: "25%" }}
-          onClick={() => saveProblem(true, false)}
+          <Fab
+            onClick={showProblemHistory}
+            sx={{ margin: 0, boxShadow: 0 }}
+            size="medium"
+          >
+            <Tooltip title="הצג הסטוריה">
+              <HistoryIcon style={{ fontSize: 25, color: "black" }} />
+            </Tooltip>
+          </Fab>{" "}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            width: "70%",
+            gap: "5%",
+          }}
         >
-          עדכן
-        </LoadingButton>
-        <Box sx={{ width: "25%" }}>
-          <Box sx={{ color: theme.palette.primary.main }}>מעקב</Box>
-          <Switch
-            disabled={pendingClose || pendingUpdate}
-            size="small"
-            checked={trackingId !== 0}
-            onChange={updateProblemTracking}
-          />
+          {(!selfProblem.isLocked ||
+            user?.userType === 1 ||
+            (selfProblem.isLocked &&
+              (selfProblem.toWorker === user?.workerId ||
+                selfProblem.workerCreateId === user?.workerId))) && (
+            <Fab
+              disabled={pendingClose || pendingUpdate}
+              size="medium"
+              sx={{ margin: 0, boxShadow: 0 }}
+              onClick={() => {
+                saveProblem(true, false);
+              }}
+            >
+              <Tooltip title="עדכן אל תסגור תקלה">
+                <PendingActionsIcon
+                  style={{ fontSize: 25, color: "rgba(251, 140, 0, 0.6)" }}
+                />
+              </Tooltip>
+            </Fab>
+          )}
+          {(!selfProblem.isLocked ||
+            (selfProblem.isLocked &&
+              (selfProblem.toWorker === user?.workerId ||
+                selfProblem.workerCreateId === user?.workerId))) && (
+            <Fab
+              disabled={pendingClose || pendingUpdate}
+              size="medium"
+              sx={{ margin: 0, boxShadow: 0 }}
+              onClick={() => {
+                saveProblem(true, true);
+              }}
+            >
+              <Tooltip title="עדכן ותסגור את התקלה">
+                <LockIcon
+                  style={{ fontSize: 25, color: "rgba(56, 142, 60, 0.7)" }}
+                />
+              </Tooltip>
+            </Fab>
+          )}
+          <Box>
+            <Box sx={{ color: theme.palette.primary.main }}>מעקב</Box>
+            <Switch
+              disabled={pendingClose || pendingUpdate}
+              size="small"
+              checked={trackingId !== 0}
+              onChange={updateProblemTracking}
+            />
+          </Box>
         </Box>
       </Box>
     </Box>

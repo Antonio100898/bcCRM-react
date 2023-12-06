@@ -1,13 +1,14 @@
 import {
   IChatLinesResponse,
   IProblem,
+  IProblemLogResponse,
   IProblemSummeryResponse,
   IProblemsResponse,
   ISearchProblem,
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../axoisConfig";
+import { workerKey } from "../../main";
 
 export const problemService = {
   async getProblems(
@@ -88,8 +89,7 @@ export const problemService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/SearchProblems", {
-        ...filter,
-        key: workerKey,
+        search: { ...filter, key: workerKey },
       });
       return data;
     } catch (error) {
@@ -132,6 +132,20 @@ export const problemService = {
     try {
       const { data } = await instance.post("/AnsweredCall", {
         department,
+        workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async getProblemLogs(
+    problemId: number
+  ): Promise<IProblemLogResponse | undefined> {
+    try {
+      const { data } = await instance.post("/GetProblemLogs", {
+        problemId,
         workerKey,
       });
       return data;
