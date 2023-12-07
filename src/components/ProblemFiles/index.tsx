@@ -67,7 +67,7 @@ export default function ProblemFiles({
                 />
               </Fab>
             </Tooltip>
-            <FilesContainer deleteFile={deleteFile} files={files} />{" "}
+            <FilesContainer bigScreen={bigScreen} deleteFile={deleteFile} files={files} />{" "}
           </>
         ) : (
           <Box sx={{ width: "100%" }}>

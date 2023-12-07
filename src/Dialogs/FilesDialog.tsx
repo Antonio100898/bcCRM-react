@@ -3,12 +3,15 @@ import {
   Slide,
   useMediaQuery,
   useTheme,
-  DialogActions,
-  Button,
+  Typography,
+  AppBar,
+  Toolbar,
+  IconButton,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { forwardRef } from "react";
 import FileContainer from "../components/FilesContainer/FilesContainer";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -54,16 +57,24 @@ function FilesDialog({
         sx: { justifyContent: "space-between" },
       }}
     >
-      <FileContainer deleteFile={deleteFile} files={files} />
-      <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          sx={{ fontSize: 18, paddingX: 6 }}
-          onClick={onClose}
-          variant="contained"
-        >
-          סגור
-        </Button>
-      </DialogActions>
+      <AppBar>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={onClose}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography>קבצים</Typography>
+        </Toolbar>
+      </AppBar>
+      <FileContainer
+        bigScreen={bigScreen}
+        deleteFile={deleteFile}
+        files={files}
+      />
     </Dialog>
   );
 }

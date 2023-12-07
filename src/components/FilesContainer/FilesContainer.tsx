@@ -1,15 +1,27 @@
 import { Box, Tooltip, IconButton } from "@mui/material";
 import { IMAGES_PATH_PROBLEMS } from "../../Consts/Consts";
 import DeleteIcon from "@mui/icons-material/Delete";
+import "./FilesContainer.style.css";
 
 type Props = {
   files: string[];
   deleteFile: (f: string) => Promise<void>;
+  bigScreen: boolean;
 };
 
-function FilesContainer({ deleteFile, files }: Props) {
+function FilesContainer({ deleteFile, files, bigScreen }: Props) {
+  const styles = {
+    filesContainer: {
+      margin: 2,
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: bigScreen ? 1 : 4,
+    },
+  };
   return (
-    <Box sx={{ margin: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+    <Box sx={styles.filesContainer}>
       {files &&
         [...new Set(files)].map((file, index) => {
           return (
@@ -26,13 +38,7 @@ function FilesContainer({ deleteFile, files }: Props) {
                     onError={(e) => {
                       e.currentTarget.src = "broken.png";
                     }}
-                    style={{
-                      backgroundColor: "#0E0E0E",
-                      height: 80,
-                      width: 142.2,
-                      objectFit: "contain",
-                      borderRadius: 8,
-                    }}
+                    className={`img ${bigScreen ? "img-small" : "img-large"}`}
                   />
                 </Tooltip>
               </a>

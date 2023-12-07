@@ -1,0 +1,15 @@
+.img {
+  background-color: "#0E0E0E";
+  object-fit: "contain";
+  border-radius: 8px;
+}
+
+.img-small {
+  height: 80px;
+  width: 142.2px;
+}
+
+.img-large {
+  height: 160px;
+  width: 284px;
+}

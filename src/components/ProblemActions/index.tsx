@@ -162,7 +162,7 @@ export default function ProblemActions({
           <Fab
             onClick={showProblemHistory}
             sx={{ margin: 0, boxShadow: 0 }}
-            size={bigScreen ? "medium" : "large"}
+            size="medium"
           >
             <Tooltip title="הצג הסטוריה">
               <HistoryIcon style={{ fontSize: 25, color: "black" }} />
@@ -185,7 +185,7 @@ export default function ProblemActions({
                 selfProblem.workerCreateId === user?.workerId))) && (
             <Fab
               disabled={pendingClose || pendingUpdate}
-              size={bigScreen ? "medium" : "large"}
+              size="medium"
               sx={{ margin: 0, boxShadow: 0 }}
               onClick={() => {
                 saveProblem(true, false);
@@ -204,7 +204,7 @@ export default function ProblemActions({
                 selfProblem.workerCreateId === user?.workerId))) && (
             <Fab
               disabled={pendingClose || pendingUpdate}
-              size={bigScreen ? "medium" : "large"}
+              size="medium"
               sx={{ margin: 0, boxShadow: 0 }}
               onClick={() => {
                 saveProblem(true, true);
