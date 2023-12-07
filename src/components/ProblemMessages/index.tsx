@@ -1,4 +1,4 @@
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Typography, Divider } from "@mui/material";
 import { useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import CreateIcon from "@mui/icons-material/Create";
@@ -55,22 +55,23 @@ export default function ProblemMessages({
 
   return (
     <Box sx={{ width: "100%", marginBottom: 6 }}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          margin: 1,
-        }}
-      >
-        <IconButton onClick={() => handleOpenCloseDialog(true)}>
-          <Typography fontSize={20} color={"black"} fontWeight="bold">
-            הודעה
-          </Typography>
-          <CreateIcon />
-        </IconButton>
-      </Box>
-
+      <Divider>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: 1,
+          }}
+        >
+          <IconButton onClick={() => handleOpenCloseDialog(true)}>
+            <Typography fontSize={20} color={"black"} fontWeight="bold">
+              הודעה
+            </Typography>
+            <CreateIcon />
+          </IconButton>
+        </Box>
+      </Divider>
       {messages?.map((m) => (
         <Box sx={{ marginBottom: 1 }} key={m.commitTime + m.workerId}>
           <Box

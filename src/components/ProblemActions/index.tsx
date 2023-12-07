@@ -21,6 +21,7 @@ type Props = {
   onDialogClose: () => void;
   refreshDepartments: () => Promise<void>;
   showProblemHistory: () => Promise<void>;
+  bigScreen: boolean;
 };
 
 export default function ProblemActions({
@@ -35,6 +36,7 @@ export default function ProblemActions({
   trackingId,
   refreshDepartments,
   showProblemHistory,
+  bigScreen,
 }: Props) {
   const [selfProblem, setSelfProblem] = useState<IProblem>({ ...problem });
   const [pendingClose, setPendingClose] = useState(false);
@@ -160,7 +162,7 @@ export default function ProblemActions({
           <Fab
             onClick={showProblemHistory}
             sx={{ margin: 0, boxShadow: 0 }}
-            size="medium"
+            size={bigScreen ? "medium" : "large"}
           >
             <Tooltip title="הצג הסטוריה">
               <HistoryIcon style={{ fontSize: 25, color: "black" }} />
@@ -173,7 +175,7 @@ export default function ProblemActions({
             justifyContent: "flex-end",
             alignItems: "center",
             width: "70%",
-            gap: "5%",
+            gap: "10%",
           }}
         >
           {(!selfProblem.isLocked ||
@@ -183,7 +185,7 @@ export default function ProblemActions({
                 selfProblem.workerCreateId === user?.workerId))) && (
             <Fab
               disabled={pendingClose || pendingUpdate}
-              size="medium"
+              size={bigScreen ? "medium" : "large"}
               sx={{ margin: 0, boxShadow: 0 }}
               onClick={() => {
                 saveProblem(true, false);
@@ -202,7 +204,7 @@ export default function ProblemActions({
                 selfProblem.workerCreateId === user?.workerId))) && (
             <Fab
               disabled={pendingClose || pendingUpdate}
-              size="medium"
+              size={bigScreen ? "medium" : "large"}
               sx={{ margin: 0, boxShadow: 0 }}
               onClick={() => {
                 saveProblem(true, true);

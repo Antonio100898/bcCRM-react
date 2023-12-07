@@ -8,12 +8,12 @@ import {
   ToggleButton,
 } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
-import { IWorkExpensesType } from "../../Model/IWorkExpensesType";
+import { IWorkExpensesType } from "../../Model";
 import AddWorkerExpenseToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBar";
 import AddWorkerExpenseBonusesToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseBonusesToolBar";
 import AddWorkerExpenseGuideToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseGuideToolBar";
@@ -40,7 +40,7 @@ export default function WorkerExpenses() {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("1");
 
-  const fetchWorkerExpenses = async () => {
+  const getWorkerExpenses = async () => {
     try {
       const data = await workerService.getWorkersExpenses(
         filterYear,
@@ -63,18 +63,20 @@ export default function WorkerExpenses() {
         });
         return;
       }
-
       setWorkerExpenses(data.d.workerExpenses);
       setTotalSum(data.d.workExpensesSum);
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: error.message,
+          variant: "error",
+        });
     }
-
     updateShowLoader(false);
   };
 
   useEffect(() => {
-    fetchWorkerExpenses();
+    getWorkerExpenses();
   }, [filterYear, filterMonth]);
 
   const workerExpensTypeCategoryChanged = (
@@ -109,28 +111,26 @@ export default function WorkerExpenses() {
           return;
         }
 
-        fetchWorkerExpenses();
+        getWorkerExpenses();
       } catch (error) {
-        console.error(error);
+        if (error instanceof Error)
+          enqueueSnackbar({
+            message: error.message,
+            variant: "error",
+          });
       }
-
       updateShowLoader(false);
     }
   };
 
-  const refreshlist = () => {
-    fetchWorkerExpenses();
-  };
-
-  // function updateFilterMonth(m: any) {
-  //   setFilterMonth(m);
-  // }
+  const refreshlist = useCallback(() => {
+    getWorkerExpenses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterMonth, filterYear]);
 
   return (
     <div className="row" style={{ margin: 10 }}>
       <WorkersHeader />
-
-      {/* <h2 className="col-12">החזרים</h2> */}
       <div id="addWorExpense" className="row">
         <div className="col-9 right">
           <ToggleButtonGroup

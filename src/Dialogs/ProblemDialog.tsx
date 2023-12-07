@@ -41,6 +41,8 @@ import { useSnackbar } from "notistack";
 import { useConfirm } from "../Context/useConfirm";
 import { ProblemHistoryDialog } from "./ProblemHistory";
 import ProblemLogsDialog from "./ProblemLogsDialog";
+import { toBase64 } from "../helpers/toBase64";
+import FilesDialog from "./FilesDialog";
 
 export type ProblemDialogProps = {
   open: boolean;
@@ -69,7 +71,6 @@ export function ProblemDialog({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const bigScreen = useMediaQuery("(min-width: 1200px)");
-  const { user, workers, problemTypes, updateDepartments } = useUser();
 
   const [selfProblem, setSelfProblem] = useState<IProblem>(problem);
   const [placeDialogOpen, setPlaceDialogOpen] = useState(false);
@@ -86,9 +87,8 @@ export function ProblemDialog({
     trackingId: number;
   } | null>(null);
   const [callDisabled, setCallDisabled] = useState(!selfProblem?.phone);
-  const { enqueueSnackbar } = useSnackbar();
+  const [logs, setLogs] = useState<IProblemLog[]>([]);
   const [fileProgress, setFileProgress] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement | null>();
   const [dragActive, setDragActive] = useState(false);
   const [fileInput, setFileInput] = useState<string>("");
   const [fileLoading, setFileLoading] = useState(false);
@@ -96,25 +96,32 @@ export function ProblemDialog({
   const [showHistoryLoading, setShowHistoryLoading] = useState(false);
   const [problemsHistory, setProblemsHistory] = useState<IProblem[]>([]);
   const [showLogs, setShowLogs] = useState(false);
-  const [logs, setLogs] = useState<IProblemLog[]>([]);
-  const abortController = useRef(new AbortController());
-  const { confirm } = useConfirm();
+  const [openFilesDialog, setOpenFilesDialog] = useState(false);
 
-  const { updateRefreshProblems } = useUser();
+  const fileInputRef = useRef<HTMLInputElement | null>();
+  const abortController = useRef(new AbortController());
+
+  const { confirm } = useConfirm();
+  const {
+    updateRefreshProblems,
+    user,
+    workers,
+    problemTypes,
+    updateDepartments,
+  } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const onOpenFilesDialog = () => {
+    if (!openFilesDialog) setOpenFilesDialog(true);
+  };
+
+  const onCloseFilesDialog = () => {
+    if (openFilesDialog) setOpenFilesDialog(false);
+  };
 
   const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
     setDragActive(event.type === "dragenter" || event.type === "dragover");
   };
-
-  const toBase64 = (file: Blob): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(`${reader.result}`);
-      };
-      reader.onerror = (error) => reject(error);
-    });
 
   const deleteFile = async (f: string) => {
     setFileInput("");
@@ -642,6 +649,7 @@ export function ProblemDialog({
           {selfProblem && tracking && problemTypes && (
             <>
               <ProblemInfo
+                onOpenFilesDialog={onOpenFilesDialog}
                 setCallCustomerBack={setCallCustomerBack}
                 isLockEnable={isLockEnable()}
                 setEmergency={setEmergency}
@@ -669,6 +677,7 @@ export function ProblemDialog({
                 fileInputRef={fileInputRef}
               />
               <ProblemActions
+                bigScreen={bigScreen}
                 showProblemHistory={showProblemHistory}
                 refreshDepartments={refreshDepartments}
                 trackingId={tracking?.trackingId}
@@ -705,6 +714,16 @@ export function ProblemDialog({
         onClose={() => setShowLogs(false)}
         showLogs={showLogs}
       />
+      {selfProblem.files && !bigScreen && (
+        <FilesDialog
+          bigScreen={bigScreen}
+          deleteFile={deleteFile}
+          files={selfProblem.files}
+          isMobile={isMobile}
+          onClose={onCloseFilesDialog}
+          open={openFilesDialog}
+        />
+      )}
     </Dialog>
   );
 }

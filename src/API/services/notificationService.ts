@@ -4,7 +4,7 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 
 export const notificationService = {
   async deleteNotification(

@@ -1,5 +1,5 @@
 import { ICustomResponse } from "../../Model/ICustomResponse";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 import { instance } from "../axoisConfig";
 
 export const callService = {

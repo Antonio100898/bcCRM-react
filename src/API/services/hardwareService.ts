@@ -1,6 +1,6 @@
 import { IHardware, IProblemsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 
 export const hardwareService = {
   async getHardwareCounts(

@@ -49,6 +49,7 @@ type Props = {
   setIsLocked: () => void;
   setTakeCare: () => void;
   setCallCustomerBack: () => void;
+  onOpenFilesDialog: () => void;
 };
 
 export default function ProblemInfo({
@@ -76,6 +77,7 @@ export default function ProblemInfo({
   setEmergency,
   setIsLocked,
   setTakeCare,
+  onOpenFilesDialog,
   setCallCustomerBack,
 }: Props) {
   return (
@@ -198,7 +200,7 @@ export default function ProblemInfo({
               value={selfProblem?.desc}
             />
           </Box>
-          <Box sx={{ flex: 1, width: '100%' }}>
+          <Box sx={{ flex: 1, width: "100%" }}>
             <ProblemStatuses
               bigScreen={bigScreen}
               setCallCustomerBack={setCallCustomerBack}
@@ -215,6 +217,8 @@ export default function ProblemInfo({
         </Box>
       </Box>
       <ProblemFiles
+        onOpenFilesDialog={onOpenFilesDialog}
+        bigScreen={bigScreen}
         fileInputRef={fileInputRef}
         deleteFile={deleteFile}
         fileInput={fileInput}
@@ -224,13 +228,11 @@ export default function ProblemInfo({
         handleUploadFile={handleUploadFile}
       />
       <Box sx={{ display: "flex", width: "100%" }}>
-        {selfProblem && (
-          <ProblemMessages
-            refreshMessages={refreshMessages}
-            messages={messages}
-            problemId={selfProblem.id}
-          />
-        )}
+        <ProblemMessages
+          refreshMessages={refreshMessages}
+          messages={messages}
+          problemId={selfProblem.id}
+        />
       </Box>
     </>
   );

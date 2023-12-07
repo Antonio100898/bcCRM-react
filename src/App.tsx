@@ -26,6 +26,9 @@ import ConfirmProvider from "./Context/ConfirmContext";
 import AppLayout from "./AppLayout";
 import { useUser } from "./Context/useUser";
 import { useLayoutEffect } from "react";
+import { TOKEN_KEY } from "./Consts/Consts";
+
+export const workerKey = localStorage.getItem(TOKEN_KEY);
 
 function App() {
   const { showLoader } = useUser();

@@ -1,6 +1,6 @@
 import { IStatsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 
 export const statisticService = {
   async getStats(): Promise<IStatsResponse | undefined> {

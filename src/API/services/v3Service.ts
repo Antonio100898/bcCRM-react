@@ -1,6 +1,6 @@
 import { Iv3Response } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 
 export const v3Service = {
   async getV3Groups(): Promise<Iv3Response | undefined> {

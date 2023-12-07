@@ -1,6 +1,6 @@
 import { IPlace, IProblemsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../main";
+import { workerKey } from "../../App"; 
 
 export const placeService = {
   async updatePlaceInfo(

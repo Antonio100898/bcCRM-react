@@ -17,6 +17,7 @@
     "@mui/lab": "^5.0.0-alpha.153",
     "@mui/material": "^5.14.18",
     "@mui/x-date-pickers": "^6.18.2",
+    "@sheet/core": "^1.20230414.1",
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "mui-nested-menu": "^3.2.2",

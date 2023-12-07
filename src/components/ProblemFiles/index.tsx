@@ -1,7 +1,14 @@
-import { IMAGES_PATH_PROBLEMS } from "../../Consts/Consts";
-import { Box, LinearProgress, Tooltip, IconButton, Fab } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  LinearProgress,
+  Tooltip,
+  Fab,
+  Button,
+  Divider,
+  Typography,
+} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import FilesContainer from "../FilesContainer/FilesContainer";
 
 type Props = {
   fileInput: string;
@@ -11,6 +18,8 @@ type Props = {
   deleteFile: (f: string) => Promise<void>;
   fileProgress: number;
   fileInputRef: React.MutableRefObject<HTMLInputElement | null | undefined>;
+  bigScreen: boolean;
+  onOpenFilesDialog: () => void;
 };
 
 export default function ProblemFiles({
@@ -21,6 +30,8 @@ export default function ProblemFiles({
   deleteFile,
   fileProgress,
   fileInputRef,
+  bigScreen,
+  onOpenFilesDialog,
 }: Props) {
   return (
     <Box dir="rtl">
@@ -41,66 +52,48 @@ export default function ProblemFiles({
           value={fileProgress}
         />
       )}
-      <Box sx={{display: 'flex'}}>
-        <Tooltip title="צרף קבצים">
-          <Fab
-            disabled={fileLoading}
-            sx={{ margin: "5px 0 0 0", boxShadow: 0 }}
-            size="medium"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <AttachFileIcon
-              style={{ fontSize: 25, color: "rgba(251, 50, 0, 0.6)" }}
-            />
-          </Fab>
-        </Tooltip>
-        <Box sx={{ margin: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {files &&
-            [...new Set(files)].map((file, index) => {
-              return (
-                <Box key={`${file}${index}`} sx={{ position: "relative" }}>
-                  <a
-                    href={IMAGES_PATH_PROBLEMS + file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Tooltip title={file}>
-                      <img
-                        src={IMAGES_PATH_PROBLEMS + file}
-                        alt={file}
-                        onError={(e) => {
-                          e.currentTarget.src = "broken.png";
-                        }}
-                        style={{
-                          backgroundColor: "#0E0E0E",
-                          height: 80,
-                          width: 142.2,
-                          objectFit: "contain",
-                          borderRadius: 8,
-                        }}
-                      />
-                    </Tooltip>
-                  </a>
-                  <IconButton
-                    color="info"
-                    sx={{
-                      zIndex: 1000,
-                      position: "absolute",
-                      left: 0,
-                      bottom: 0,
-                    }}
-                    onClick={() => {
-                      deleteFile(file);
-                    }}
-                  >
-                    <Tooltip title="מחק קובץ">
-                      <DeleteIcon />
-                    </Tooltip>
-                  </IconButton>
-                </Box>
-              );
-            })}
-        </Box>
+      <Box sx={{ display: "flex" }}>
+        {bigScreen ? (
+          <>
+            <Tooltip title="צרף קבצים">
+              <Fab
+                disabled={fileLoading}
+                sx={{ margin: "5px 0 0 0", boxShadow: 0 }}
+                size="medium"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <AttachFileIcon
+                  style={{ fontSize: 25, color: "rgba(251, 50, 0, 0.6)" }}
+                />
+              </Fab>
+            </Tooltip>
+            <FilesContainer deleteFile={deleteFile} files={files} />{" "}
+          </>
+        ) : (
+          <Box sx={{ width: "100%" }}>
+            <Divider />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                marginTop: 2,
+              }}
+            >
+              <Button
+                disabled={fileLoading}
+                onClick={() => fileInputRef.current?.click()}
+                variant="contained"
+              >
+                <Typography fontSize={16}>העלאת קובץ</Typography>
+                <AttachFileIcon style={{ fontSize: 25, color: "black" }} />
+              </Button>
+              <Button onClick={onOpenFilesDialog} variant="contained">
+                <Typography fontSize={16}>צפייה בקצים</Typography>
+                <AttachFileIcon style={{ fontSize: 25, color: "black" }} />
+              </Button>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Box>
   );
