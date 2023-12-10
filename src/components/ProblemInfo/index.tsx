@@ -20,6 +20,9 @@ import ProblemFiles from "../ProblemFiles";
 import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
 import CustomInput from "../customInput/customInput";
 import ProblemStatuses from "../ProblemStatuses/ProblemStatuses";
+import { WorkersList } from "../WorkersList/WorkersList";
+import { useEffect, useState } from "react";
+import CustomCollapseTrigger from "../CustomCollapseTrigger/CustomCollapse";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -80,8 +83,22 @@ export default function ProblemInfo({
   onOpenFilesDialog,
   setCallCustomerBack,
 }: Props) {
+  const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
+
+  const handleMessagesCollapse = () => {
+    setOpenMessagesCollapse(!openMessagesCollapse);
+  };
+
+  useEffect(() => {
+    if (openMessagesCollapse)
+      document.getElementById("content")?.scrollTo({
+        behavior: "smooth",
+        top: 2000
+      })
+  }, [openMessagesCollapse])
+
   return (
-    <>
+    <Box sx={{ marginBottom: 6 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
         <Box sx={{ display: "flex", gap: 1 }}>
           <FormInputWrapper label="IP">
@@ -132,56 +149,58 @@ export default function ProblemInfo({
           </FormInputWrapper>
         </Box>
 
-        <Box>
-          <FormInputWrapper label="תיוגים">
-            <Select
-              fullWidth
-              multiple
-              value={currentProblemTypesId}
-              onChange={handleProblemTypesChange}
-              input={<OutlinedInput label="Chip" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip
-                      key={value}
-                      style={{ margin: "3px" }}
-                      label={
-                        problemTypes.find((e) => e.id === value)
-                          ?.problemTypeName
-                      }
-                      size="small"
-                      variant="outlined"
-                      avatar={
-                        <Avatar
-                          sx={{
-                            bgcolor: problemTypes.find((e) => e.id === value)
-                              ?.color,
-                          }}
-                          style={{
-                            marginRight: "5px",
-                            border: "1px solid black",
-                          }}
-                        >
-                          {" "}
-                        </Avatar>
-                      }
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {problemTypes &&
-                problemTypes.map((problemType: IProblemType) => {
-                  return (
-                    <MenuItem key={problemType.id} value={problemType.id}>
-                      {problemType.problemTypeName}
-                    </MenuItem>
-                  );
-                })}
-            </Select>
-          </FormInputWrapper>
-        </Box>
+        <FormInputWrapper label="תיוגים">
+          <Select
+            fullWidth
+            multiple
+            value={currentProblemTypesId}
+            onChange={handleProblemTypesChange}
+            input={<OutlinedInput label="Chip" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    style={{ margin: "3px" }}
+                    label={
+                      problemTypes.find((e) => e.id === value)?.problemTypeName
+                    }
+                    size="small"
+                    variant="outlined"
+                    avatar={
+                      <Avatar
+                        sx={{
+                          bgcolor: problemTypes.find((e) => e.id === value)
+                            ?.color,
+                        }}
+                        style={{
+                          marginRight: "5px",
+                          border: "1px solid black",
+                        }}
+                      >
+                        {" "}
+                      </Avatar>
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            {problemTypes &&
+              problemTypes.map((problemType: IProblemType) => {
+                return (
+                  <MenuItem key={problemType.id} value={problemType.id}>
+                    {problemType.problemTypeName}
+                  </MenuItem>
+                );
+              })}
+          </Select>
+        </FormInputWrapper>
+        <WorkersList
+          workersSelected={selfProblem.toWorkers || []}
+          setWorkersSelected={(selected) => onChange("toWorkers", selected)}
+        />
+
         <Box
           sx={{
             display: "flex",
@@ -227,13 +246,20 @@ export default function ProblemInfo({
         files={files}
         handleUploadFile={handleUploadFile}
       />
-      <Box sx={{ display: "flex", width: "100%" }}>
-        <ProblemMessages
-          refreshMessages={refreshMessages}
-          messages={messages}
-          problemId={selfProblem.id}
-        />
-      </Box>
-    </>
+      <CustomCollapseTrigger
+        open={openMessagesCollapse}
+        label="הודעות"
+        collapseOpen={openMessagesCollapse}
+        onHandleValueClick={handleMessagesCollapse}
+      >
+        <Box sx={{ display: "flex", width: "100%" }}>
+          <ProblemMessages
+            refreshMessages={refreshMessages}
+            messages={messages}
+            problemId={selfProblem.id}
+          />
+        </Box>
+      </CustomCollapseTrigger>
+    </Box>
   );
 }

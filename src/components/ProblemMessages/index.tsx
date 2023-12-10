@@ -5,6 +5,8 @@ import CreateIcon from "@mui/icons-material/Create";
 import { IMsgLine } from "../../Model";
 import PromptDialog from "../../Dialogs/PromptDialog";
 import { problemService } from "../../API/services";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 type Props = {
   problemId: number;
@@ -18,6 +20,25 @@ export default function ProblemMessages({
   refreshMessages,
 }: Props) {
   const [openMsgDialog, setOpenMsgDialog] = useState(false);
+  const [allMessages, setAllMessages] = useState<IMsgLine[]>([]);
+  const [messagesToShow, setMessagesToShow] = useState<IMsgLine[]>([]);
+  const [showAllMessages, setShowAllMessages] = useState(false);
+
+  useEffect(() => {
+    setAllMessages(messages);
+    console.log(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    let mymessages: IMsgLine[] = [];
+    mymessages = [...allMessages];
+
+    if (showAllMessages) {
+      setMessagesToShow(mymessages.reverse());
+    } else {
+      setMessagesToShow(mymessages.reverse().slice(0, 3));
+    }
+  }, [showAllMessages, allMessages]);
 
   const handleOpenCloseDialog = (value: boolean) => {
     setOpenMsgDialog(value);
@@ -54,7 +75,7 @@ export default function ProblemMessages({
   }, [problemId]);
 
   return (
-    <Box sx={{ width: "100%", marginBottom: 6 }}>
+    <Box sx={{ width: "100%"}}>
       <Divider>
         <Box
           sx={{
@@ -66,13 +87,20 @@ export default function ProblemMessages({
         >
           <IconButton onClick={() => handleOpenCloseDialog(true)}>
             <Typography fontSize={20} color={"black"} fontWeight="bold">
-              הודעה
+              להוסיף הודעה
             </Typography>
             <CreateIcon />
           </IconButton>
         </Box>
       </Divider>
-      {messages?.map((m) => (
+      {showAllMessages && (
+        <Box sx={{ textAlign: "center" }}>
+          <IconButton onClick={() => setShowAllMessages(false)}>
+            <ExpandLessIcon />
+          </IconButton>
+        </Box>
+      )}
+      {messagesToShow.map((m) => (
         <Box sx={{ marginBottom: 1 }} key={m.commitTime + m.workerId}>
           <Box
             sx={{
@@ -100,7 +128,13 @@ export default function ProblemMessages({
           />
         </Box>
       ))}
-
+      {allMessages.length > messagesToShow.length && !showAllMessages && (
+        <Box sx={{ textAlign: "center" }}>
+          <IconButton onClick={() => setShowAllMessages(true)}>
+            <ExpandMoreIcon />
+          </IconButton>
+        </Box>
+      )}
       <PromptDialog
         defaultText=""
         message="הזן הודעה"

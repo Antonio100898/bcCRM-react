@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import FilesContainer from "../FilesContainer/FilesContainer";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 type Props = {
   fileInput: string;
@@ -67,7 +68,11 @@ export default function ProblemFiles({
                 />
               </Fab>
             </Tooltip>
-            <FilesContainer bigScreen={bigScreen} deleteFile={deleteFile} files={files} />{" "}
+            <FilesContainer
+              bigScreen={bigScreen}
+              deleteFile={deleteFile}
+              files={files}
+            />{" "}
           </>
         ) : (
           <Box sx={{ width: "100%" }}>
@@ -85,7 +90,7 @@ export default function ProblemFiles({
                 variant="contained"
               >
                 <Typography fontSize={16}>העלאת קובץ</Typography>
-                <AttachFileIcon style={{ fontSize: 25, color: "black" }} />
+                <UploadFileIcon style={{ fontSize: 25, color: "black" }} />
               </Button>
               <Button onClick={onOpenFilesDialog} variant="contained">
                 <Typography fontSize={16}>צפייה בקצים</Typography>

@@ -54,10 +54,9 @@ function FilesDialog({
       TransitionComponent={Transition}
       PaperProps={{
         style: dialogPaperStyle,
-        sx: { justifyContent: "space-between" },
       }}
     >
-      <AppBar>
+      <AppBar sx={{ position: "sticky" }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -67,7 +66,9 @@ function FilesDialog({
           >
             <CloseIcon />
           </IconButton>
-          <Typography>קבצים</Typography>
+          <Typography sx={{ marginLeft: 4 }} variant="h5" fontWeight="bold">
+            קבצים
+          </Typography>
         </Toolbar>
       </AppBar>
       <FileContainer

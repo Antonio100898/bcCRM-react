@@ -25,7 +25,10 @@ function FilesContainer({ deleteFile, files, bigScreen }: Props) {
       {files &&
         [...new Set(files)].map((file, index) => {
           return (
-            <Box key={`${file}${index}`} sx={{ position: "relative" }}>
+            <Box
+              key={`${file}${index}`}
+              sx={{ position: "relative", backgroundColor: "grey", border: "1px solid black", borderRadius: "5px" }}
+            >
               <a
                 href={IMAGES_PATH_PROBLEMS + file}
                 target="_blank"

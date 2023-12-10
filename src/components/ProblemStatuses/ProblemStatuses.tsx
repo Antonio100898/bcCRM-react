@@ -36,7 +36,7 @@ const ProblemStatuses = ({
       <Button
         className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setCallCustomerBack}
-        sx={{ opacity: callCustomerBack ? 1 : 0.4,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{ opacity: callCustomerBack ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
       >
         <ContactPhoneIcon
           style={{
@@ -48,7 +48,7 @@ const ProblemStatuses = ({
       <Button
         className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setEmergency}
-        sx={{ opacity: emergencyId === 0 ? 0.4 : 1,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{ opacity: emergencyId === 0 ? 0.2 : 1,  color: "rgba(0, 0, 0, 0.87)" }}
       >
         <NotificationsActiveIcon
           style={{
@@ -61,7 +61,7 @@ const ProblemStatuses = ({
       <Button
         className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setTakeCare}
-        sx={{ opacity: takingCare ? 1 : 0.4,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{ opacity: takingCare ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
       >
         <AccessTimeIcon
           style={{
@@ -75,7 +75,7 @@ const ProblemStatuses = ({
           <Button
             className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
             onClick={setIsLocked}
-            sx={{ opacity: isLocked ? 1 : 0.4,  color: "rgba(0, 0, 0, 0.87)" }}
+            sx={{ opacity: isLocked ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
           >
             {isLocked ? (
               <LockIcon

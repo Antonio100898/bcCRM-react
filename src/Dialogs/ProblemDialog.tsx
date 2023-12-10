@@ -635,7 +635,7 @@ export function ProblemDialog({
           </Box>
         </Toolbar>
       </AppBar>
-      <DialogContent sx={{ p: 2 }}>
+      <DialogContent id="content" sx={{ p: 2 }}>
         <TransitionGroup sx={{ position: "relative" }}>
           {tracking?.historySummery && tracking.lastSupporter && (
             <Collapse>
