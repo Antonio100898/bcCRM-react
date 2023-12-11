@@ -36,7 +36,6 @@ export default function ProblemActions({
   trackingId,
   refreshDepartments,
   showProblemHistory,
-  bigScreen,
 }: Props) {
   const [selfProblem, setSelfProblem] = useState<IProblem>({ ...problem });
   const [pendingClose, setPendingClose] = useState(false);
@@ -137,6 +136,7 @@ export default function ProblemActions({
         left: 0,
         width: "100%",
         textAlign: "center",
+        zIndex: 2000
       }}
     >
       <Box

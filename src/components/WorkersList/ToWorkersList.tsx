@@ -31,7 +31,11 @@ export function ToWorkersList({
     selectedWorkers.length && setAnchorEl(e.currentTarget);
 
   return (
-    <div onMouseEnter={onOpen}>
+    <div
+      onMouseEnter={onOpen}
+      onMouseLeave={onClose}
+      onClick={anchorEl ? onClose : onOpen}
+    >
       <div>
         <InfoOutlined className="endIcon" />
       </div>

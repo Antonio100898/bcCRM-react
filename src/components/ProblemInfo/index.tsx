@@ -21,7 +21,7 @@ import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
 import CustomInput from "../customInput/customInput";
 import ProblemStatuses from "../ProblemStatuses/ProblemStatuses";
 import { WorkersList } from "../WorkersList/WorkersList";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import CustomCollapseTrigger from "../CustomCollapseTrigger/CustomCollapse";
 
 type Props = {
@@ -84,6 +84,11 @@ export default function ProblemInfo({
   setCallCustomerBack,
 }: Props) {
   const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
+  const [openFilesCollapse, setOpenFilesCollapse] = useState(false);
+
+  const handleOpenFilesCollapse = () => {
+    setOpenFilesCollapse(!openFilesCollapse);
+  };
 
   const handleMessagesCollapse = () => {
     setOpenMessagesCollapse(!openMessagesCollapse);
@@ -91,11 +96,12 @@ export default function ProblemInfo({
 
   useEffect(() => {
     if (openMessagesCollapse)
-      document.getElementById("content")?.scrollTo({
-        behavior: "smooth",
-        top: 2000
-      })
-  }, [openMessagesCollapse])
+      setTimeout(() => {
+        document.getElementById("show-all-messages")?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 300);
+  }, [openMessagesCollapse]);
 
   return (
     <Box sx={{ marginBottom: 6 }}>
@@ -151,7 +157,6 @@ export default function ProblemInfo({
 
         <FormInputWrapper label="תיוגים">
           <Select
-            fullWidth
             multiple
             value={currentProblemTypesId}
             onChange={handleProblemTypesChange}
@@ -234,32 +239,40 @@ export default function ProblemInfo({
             />
           </Box>
         </Box>
-      </Box>
-      <ProblemFiles
-        onOpenFilesDialog={onOpenFilesDialog}
-        bigScreen={bigScreen}
-        fileInputRef={fileInputRef}
-        deleteFile={deleteFile}
-        fileInput={fileInput}
-        fileLoading={fileLoading}
-        fileProgress={fileProgress}
-        files={files}
-        handleUploadFile={handleUploadFile}
-      />
-      <CustomCollapseTrigger
-        open={openMessagesCollapse}
-        label="הודעות"
-        collapseOpen={openMessagesCollapse}
-        onHandleValueClick={handleMessagesCollapse}
-      >
-        <Box sx={{ display: "flex", width: "100%" }}>
-          <ProblemMessages
-            refreshMessages={refreshMessages}
-            messages={messages}
-            problemId={selfProblem.id}
+        <CustomCollapseTrigger
+          counter={selfProblem.files.length}
+          open={openFilesCollapse}
+          label="קבצים"
+          onHandleValueClick={handleOpenFilesCollapse}
+        >
+          <ProblemFiles
+            onOpenFilesDialog={onOpenFilesDialog}
+            bigScreen={bigScreen}
+            fileInputRef={fileInputRef}
+            deleteFile={deleteFile}
+            fileInput={fileInput}
+            fileLoading={fileLoading}
+            fileProgress={fileProgress}
+            files={files}
+            handleUploadFile={handleUploadFile}
           />
-        </Box>
-      </CustomCollapseTrigger>
+        </CustomCollapseTrigger>
+
+        <CustomCollapseTrigger
+          counter={messages.length}
+          open={openMessagesCollapse}
+          label="הודעות"
+          onHandleValueClick={handleMessagesCollapse}
+        >
+          <Box id="messages" sx={{ display: "flex", width: "100%" }}>
+            <ProblemMessages
+              refreshMessages={refreshMessages}
+              messages={messages}
+              problemId={selfProblem.id}
+            />
+          </Box>
+        </CustomCollapseTrigger>
+      </Box>
     </Box>
   );
 }

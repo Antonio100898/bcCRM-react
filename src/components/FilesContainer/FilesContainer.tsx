@@ -1,4 +1,4 @@
-import { Box, Tooltip, IconButton } from "@mui/material";
+import { Box, Tooltip, IconButton, Typography } from "@mui/material";
 import { IMAGES_PATH_PROBLEMS } from "../../Consts/Consts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "./FilesContainer.style.css";
@@ -20,14 +20,23 @@ function FilesContainer({ deleteFile, files, bigScreen }: Props) {
       gap: bigScreen ? 1 : 4,
     },
   };
-  return (
+  return files.length === 0 ? (
+    <Box sx={{ textAlign: "center" }}>
+      <Typography>אין פה קבצים כרגע...</Typography>
+    </Box>
+  ) : (
     <Box sx={styles.filesContainer}>
       {files &&
         [...new Set(files)].map((file, index) => {
           return (
             <Box
               key={`${file}${index}`}
-              sx={{ position: "relative", backgroundColor: "grey", border: "1px solid black", borderRadius: "5px" }}
+              sx={{
+                position: "relative",
+                backgroundColor: "grey",
+                border: "1px solid black",
+                borderRadius: "5px",
+              }}
             >
               <a
                 href={IMAGES_PATH_PROBLEMS + file}

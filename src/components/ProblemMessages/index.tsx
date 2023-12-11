@@ -25,8 +25,15 @@ export default function ProblemMessages({
   const [showAllMessages, setShowAllMessages] = useState(false);
 
   useEffect(() => {
+    if (showAllMessages)
+      document.getElementById("test")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }, [showAllMessages]);
+
+  useEffect(() => {
     setAllMessages(messages);
-    console.log(messages);
   }, [messages]);
 
   useEffect(() => {
@@ -39,6 +46,10 @@ export default function ProblemMessages({
       setMessagesToShow(mymessages.reverse().slice(0, 3));
     }
   }, [showAllMessages, allMessages]);
+
+  useEffect(() => {
+    refreshMessages();
+  }, [problemId]);
 
   const handleOpenCloseDialog = (value: boolean) => {
     setOpenMsgDialog(value);
@@ -70,12 +81,8 @@ export default function ProblemMessages({
     await addNewMsg(value);
   };
 
-  useEffect(() => {
-    refreshMessages();
-  }, [problemId]);
-
   return (
-    <Box sx={{ width: "100%"}}>
+    <Box id="test" sx={{ width: "100%" }}>
       <Divider>
         <Box
           sx={{
@@ -93,6 +100,11 @@ export default function ProblemMessages({
           </IconButton>
         </Box>
       </Divider>
+      {messagesToShow.length === 0 && (
+        <Box sx={{ textAlign: "center" }}>
+          <Typography>אין פה הודעות כרגע...</Typography>
+        </Box>
+      )}
       {showAllMessages && (
         <Box sx={{ textAlign: "center" }}>
           <IconButton onClick={() => setShowAllMessages(false)}>
@@ -129,7 +141,7 @@ export default function ProblemMessages({
         </Box>
       ))}
       {allMessages.length > messagesToShow.length && !showAllMessages && (
-        <Box sx={{ textAlign: "center" }}>
+        <Box id="show-all-messages" sx={{ textAlign: "center" }}>
           <IconButton onClick={() => setShowAllMessages(true)}>
             <ExpandMoreIcon />
           </IconButton>

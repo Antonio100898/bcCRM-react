@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSnackbar } from "notistack";
 import { IPlace } from "../Model";
 import { useUser } from "../Context/useUser";
@@ -31,10 +31,6 @@ export function PlaceInfoDialog({
   const { enqueueSnackbar } = useSnackbar();
   const [selfPlace, setSelfPlace] = useState(place);
   const { user } = useUser();
-
-  useEffect(() => {
-    console.log(selfPlace);
-  }, [selfPlace]);
 
   const handleChange = <T extends keyof IPlace>(key: T, value: IPlace[T]) => {
     if (!selfPlace) return;
@@ -65,28 +61,29 @@ export function PlaceInfoDialog({
     if (!validateInput("cusName", "אנא הזן שם לקוח")) return;
     if (!validateInput("phone", "אנא הזן טלפון")) return;
     //try {
-    // const data = await placeService.updatePlaceInfo({
-    // placeId: selfPlace.placeId,
-    //phone: selfPlace.phone,
-    //phoneId: selfPlace.phoneId,
-    //placeName: selfPlace.placeName,
-    //cusName: selfPlace.cusName,
-    //remark: selfPlace.remark,
-    // vip: selfPlace.vip,
-    //});
-    //if (!data?.d.success) {
-    //  enqueueSnackbar({
-    //  message: `נכשל לעדכן פרטי עסק. ${data?.d.msg}`,
-    // variant: "error",
-    // });
-    //return;
-    //}
+    //  const data = await placeService.updatePlaceInfo({
+    //    placeId: selfPlace.placeId,
+    //    phone: selfPlace.phone,
+    //    phoneId: selfPlace.phoneId,
+    //    placeName: selfPlace.placeName,
+    //    cusName: selfPlace.cusName,
+    //    remark: selfPlace.remark,
+    //    vip: selfPlace.vip,
+    //  });
+    //  if (!data?.d.success) {
+    //    enqueueSnackbar({
+    //      message: `נכשל לעדכן פרטי עסק. ${data?.d.msg}`,
+    //      variant: "error",
+    //    });
+    //    return;
+    //  }
     onPlaceUpdate(selfPlace);
-    //  } catch (error) {
-    //  console.error(error);
+    onClose();
+
+    //} catch (error) {
+    //  console.error(error)
     //}
   };
-
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle
@@ -116,12 +113,7 @@ export function PlaceInfoDialog({
           label="שם לקוח"
           fullWidth
         />
-        <TextField
-          value={selfPlace?.phone}
-          onChange={(e) => handleChange("phone", e.target.value)}
-          label="טלפון"
-          fullWidth
-        />
+        <TextField value={selfPlace?.phone} label="טלפון" fullWidth />
         {user && user.userType === 1 && (
           <>
             <TextField

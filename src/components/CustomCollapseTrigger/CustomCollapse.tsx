@@ -3,28 +3,28 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 type Props = {
-  collapseOpen: boolean;
   onHandleValueClick: () => void;
   label: string;
   open: boolean;
   children?: React.ReactNode;
+  counter: number;
 };
 
 const CustomCollapseTrigger = ({
-  collapseOpen,
   onHandleValueClick,
   label,
   open,
   children,
+  counter,
 }: Props) => {
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <Button variant="text" onClick={onHandleValueClick}>
           <Typography color="black" variant="h6">
-            {label}
+            {label} ({counter})
           </Typography>
-          {collapseOpen ? (
+          {open ? (
             <ExpandLessIcon color="primary" />
           ) : (
             <ExpandMoreIcon color="primary" />

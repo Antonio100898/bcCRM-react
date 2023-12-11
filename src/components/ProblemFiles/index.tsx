@@ -53,13 +53,13 @@ export default function ProblemFiles({
           value={fileProgress}
         />
       )}
-      <Box sx={{ display: "flex" }}>
+      <>
         {bigScreen ? (
           <>
             <Tooltip title="צרף קבצים">
               <Fab
                 disabled={fileLoading}
-                sx={{ margin: "5px 0 0 0", boxShadow: 0 }}
+                sx={{ margin: "5px 0 0 0", boxShadow: 0}}
                 size="medium"
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -72,7 +72,7 @@ export default function ProblemFiles({
               bigScreen={bigScreen}
               deleteFile={deleteFile}
               files={files}
-            />{" "}
+            />
           </>
         ) : (
           <Box sx={{ width: "100%" }}>
@@ -99,7 +99,7 @@ export default function ProblemFiles({
             </Box>
           </Box>
         )}
-      </Box>
+      </>
     </Box>
   );
 }
