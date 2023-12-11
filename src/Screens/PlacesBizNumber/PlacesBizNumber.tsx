@@ -14,30 +14,29 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
-import { IPlace } from "../../Model";
+import { IPhonePlace, IPlace } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
+import { placeService } from "../../API/services/placeService";
 
 export default function PlacesBizNumber() {
   const { confirm } = useConfirm();
   const { updateShowLoader } = useUser();
-  const [places, setPlaces] = useState<IPlace[]>([]);
-  const [currentPlace, setCurrentPlace] = useState<Partial<IPlace>>();
+  const [places, setPlaces] = useState<IPhonePlace[]>([]);
+  const [currentPlace, setCurrentPlace] = useState<Partial<IPhonePlace>>();
   const [filterWorkerName, setFilterWorkerName] = useState("");
   const [filterBiznumber, setFilterBiznumber] = useState("");
   const [showPlaceDialog, updateShowPlaceDialog] = useState<boolean>(false);
 
-  const getPlaces = () => {
+  const getPlaces = async () => {
     updateShowLoader(true);
-    
-    api
-      .post("/GetPlacesBizNumber", {
-        workerKey: "123",
-      })
-      .then(({ data }) => {
-        setPlaces(data.d.places);
-        updateShowLoader(false);
-      });
+    try {
+      const data = await placeService.getPlacesBizNumber();
+      if (data?.d.success) setPlaces(data.d.places);
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
   };
 
   useEffect(() => {
@@ -55,12 +54,13 @@ export default function PlacesBizNumber() {
   };
 
   const savePlace = async () => {
-    const sameName: IPlace[] = places.filter((a: IPlace) =>
-      a.placeName.includes(currentPlace?.placeName || "")
+    if (!currentPlace) return;
+    const sameName: IPhonePlace[] = places.filter((a: IPhonePlace) =>
+      a.placeName.includes(currentPlace.placeName || "")
     );
 
-    const sameBizNumber: IPlace[] = places.filter((a: IPlace) =>
-      a.bizNumber.includes(currentPlace?.bizNumber || "")
+    const sameBizNumber: IPhonePlace[] = places.filter((a: IPhonePlace) =>
+      a.bizNumber.includes(currentPlace.bizNumber || "")
     );
 
     if (sameName.length > 0) {
@@ -75,25 +75,26 @@ export default function PlacesBizNumber() {
       }
     }
 
-    api
-      .post("/UpdatePlaceBizNumber", {
-        workerKey: "123",
-        id: currentPlace?.id,
-        placeName: currentPlace?.placeName,
-        bizNumber: currentPlace?.bizNumber,
-        warrantyType: currentPlace?.warrantyType,
-      })
-      .then(() => {
-        getPlaces();
-        updateShowPlaceDialog(false);
-      });
+    try {
+      const data = await placeService.updatePlaceBizNumber(
+        currentPlace.id,
+        currentPlace.placeName,
+        currentPlace.bizNumber,
+        currentPlace.warrantyType
+      );
+      if (data?.d.success) getPlaces();
+    } catch (error) {
+      console.error(error);
+    }
+
+    updateShowPlaceDialog(false);
   };
 
   const onChange = <K extends keyof IPlace>(key: K, val: IPlace[K]) => {
     setCurrentPlace({ ...currentPlace, [key]: val });
   };
 
-  function showWorkerInfo(place: IPlace) {
+  function showWorkerInfo(place: IPhonePlace) {
     setCurrentPlace(place);
     updateShowPlaceDialog(true);
   }
@@ -147,9 +148,13 @@ export default function PlacesBizNumber() {
             <TableBody>
               {places &&
                 places
-                  .filter((a: IPlace) => a.placeName.includes(filterWorkerName))
-                  .filter((a: IPlace) => a.bizNumber.includes(filterBiznumber))
-                  .map((place: IPlace) => {
+                  .filter((a: IPhonePlace) =>
+                    a.placeName.includes(filterWorkerName)
+                  )
+                  .filter((a: IPhonePlace) =>
+                    a.bizNumber.includes(filterBiznumber)
+                  )
+                  .map((place: IPhonePlace) => {
                     return (
                       <TableRow key={place.id} hover>
                         <TableCell align="right">{place.placeName}</TableCell>

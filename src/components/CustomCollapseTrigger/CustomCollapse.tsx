@@ -7,7 +7,7 @@ type Props = {
   label: string;
   open: boolean;
   children?: React.ReactNode;
-  counter: number;
+  counter?: number;
 };
 
 const CustomCollapseTrigger = ({

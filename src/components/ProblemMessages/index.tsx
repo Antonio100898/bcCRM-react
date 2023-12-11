@@ -113,7 +113,7 @@ export default function ProblemMessages({
         </Box>
       )}
       {messagesToShow.map((m) => (
-        <Box sx={{ marginBottom: 1 }} key={m.commitTime + m.workerId}>
+        <Box sx={{ marginBottom: 1 }} key={m.id}>
           <Box
             sx={{
               display: "flex",

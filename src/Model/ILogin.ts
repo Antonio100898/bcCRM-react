@@ -19,5 +19,6 @@ export interface ILoginResponse {
     workers: IWorker[];
     problemTypes: IProblemType[];
     summery: HeaderSummery;
+    workerType: number;
   };
 }

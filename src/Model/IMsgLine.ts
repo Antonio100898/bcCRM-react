@@ -1,4 +1,5 @@
 export interface IMsgLine {
+  id: number;
   workerId: number;
   workerName: string;
   msg: string;

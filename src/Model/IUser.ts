@@ -16,6 +16,7 @@ export interface IUser {
   teudatZehut: number;
   workers: IWorker[];
   problemTypes: IProblemType[];
+  workerType: number;
 }
 
 

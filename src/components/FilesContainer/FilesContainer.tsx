@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import "./FilesContainer.style.css";
 
 type Props = {
-  files: string[];
+  files?: string[];
   deleteFile: (f: string) => Promise<void>;
   bigScreen: boolean;
 };
@@ -20,7 +20,7 @@ function FilesContainer({ deleteFile, files, bigScreen }: Props) {
       gap: bigScreen ? 1 : 4,
     },
   };
-  return files.length === 0 ? (
+  return files?.length === 0 ? (
     <Box sx={{ textAlign: "center" }}>
       <Typography>אין פה קבצים כרגע...</Typography>
     </Box>

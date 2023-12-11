@@ -23,6 +23,7 @@ import ProblemStatuses from "../ProblemStatuses/ProblemStatuses";
 import { WorkersList } from "../WorkersList/WorkersList";
 import { useState, useEffect } from "react";
 import CustomCollapseTrigger from "../CustomCollapseTrigger/CustomCollapse";
+import { useUser } from "../../Context/useUser";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -86,6 +87,8 @@ export default function ProblemInfo({
   const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
   const [openFilesCollapse, setOpenFilesCollapse] = useState(false);
 
+  const { user } = useUser();
+
   const handleOpenFilesCollapse = () => {
     setOpenFilesCollapse(!openFilesCollapse);
   };
@@ -107,13 +110,15 @@ export default function ProblemInfo({
     <Box sx={{ marginBottom: 6 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <FormInputWrapper label="IP">
-            <NivTextField
-              onChange={onIpChange}
-              value={problemIp}
-              variant="filled"
-            />
-          </FormInputWrapper>
+          {user?.workerType !== 0 && (
+            <FormInputWrapper label="IP">
+              <NivTextField
+                onChange={onIpChange}
+                value={problemIp}
+                variant="filled"
+              />
+            </FormInputWrapper>
+          )}
           <FormInputWrapper label="מחלקה">
             <Select
               fullWidth
@@ -217,6 +222,7 @@ export default function ProblemInfo({
         >
           <Box sx={{ width: bigScreen ? "60%" : "100%" }}>
             <CustomInput
+              onChange={(e) => onChange("desc", e.target.value)}
               label="תיאור תקלה"
               fullWidth
               multiline
@@ -240,7 +246,7 @@ export default function ProblemInfo({
           </Box>
         </Box>
         <CustomCollapseTrigger
-          counter={selfProblem.files.length}
+          counter={selfProblem.files?.length || 0}
           open={openFilesCollapse}
           label="קבצים"
           onHandleValueClick={handleOpenFilesCollapse}
@@ -259,7 +265,7 @@ export default function ProblemInfo({
         </CustomCollapseTrigger>
 
         <CustomCollapseTrigger
-          counter={messages.length}
+          counter={messages?.length || 0}
           open={openMessagesCollapse}
           label="הודעות"
           onHandleValueClick={handleMessagesCollapse}
