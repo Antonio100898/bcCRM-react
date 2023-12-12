@@ -1,11 +1,15 @@
-import { Box, TextField, TextFieldProps } from "@mui/material";
+import { Box, SxProps, TextField, TextFieldProps, Theme } from "@mui/material";
 
-const CustomInput = (props: TextFieldProps) => {
-  const { label, ...inputProps } = props;
+type Props = TextFieldProps & {
+  labelProps?: SxProps<Theme> | undefined;
+};
+
+const CustomInput = (props: Props) => {
+  const { labelProps, label, ...inputProps } = props;
 
   return (
     <>
-      <Box sx={{ fontWeight: "bold" }}> {label}</Box>
+      <Box sx={{ ...labelProps, fontWeight: "bold" }}>{label}</Box>
       <TextField {...inputProps} />
     </>
   );

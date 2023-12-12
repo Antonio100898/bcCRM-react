@@ -27,6 +27,7 @@ import {
   CrmFile,
   IProblemLog,
   ISearchProblem,
+  IProblemType,
 } from "../Model";
 import { useUser } from "../Context/useUser";
 import { ProblemAlert } from "../components/Problems/ProblemAlert";
@@ -335,18 +336,38 @@ export function ProblemDialog({
     } = event;
     if (value) {
       setCurrentProblemTypesId(value as SetStateAction<number[] | undefined>);
+      onChange("problemTypesList", value as number[]);
     }
   };
 
-  const onChange = <K extends keyof IProblem>(key: K, val: IProblem[K]) => {
+  const onChange = <K extends keyof IProblem>(
+    key: K,
+    val: IProblem[K] | number[]
+  ) => {
     if (!selfProblem) return;
     if (
       key === "toWorker" &&
       val !== selfProblem.toWorker &&
       workers.find((w) => w.Id === val)
     ) {
-      setSelfProblem({ ...selfProblem, [key]: val });
+      setSelfProblem({
+        ...selfProblem,
+        [key]: val,
+      });
       return;
+    }
+    if (key === "problemTypesList") {
+      const copyOfVal: number[] = val as number[];
+      if (copyOfVal && copyOfVal.length > 0) {
+        const newProblemTypes: IProblemType[] = [];
+
+        copyOfVal.forEach((id: number) => {
+          const newPt = problemTypes.find((pt) => pt.id === id);
+          if (newPt) newProblemTypes.push(newPt);
+        });
+        setSelfProblem({ ...selfProblem, problemTypesList: newProblemTypes });
+        return;
+      }
     }
 
     setSelfProblem({ ...selfProblem, [key]: val });

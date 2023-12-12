@@ -1,0 +1,16 @@
+.flex-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.new-message-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+}

@@ -93,7 +93,7 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const { user, departments } = useUser();
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -128,8 +128,12 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
 
   useEffect(() => {
     setAnchorEl(null);
-    setOpen(false);
+    //setOpen(false);
   }, [pathname]);
+  
+  useEffect(() => {
+    if (isMobile) setOpen(false);
+  }, [isMobile])
 
   return (
     <Box sx={{ display: "flex" }}>

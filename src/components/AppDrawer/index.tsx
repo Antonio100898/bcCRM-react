@@ -237,7 +237,7 @@ export default function AppDrawer({
         {(departments || []).map((department) => (
           <ListItem key={department.departmentId} disablePadding>
             <ListItemButton
-              onClick={() => handleDrawerClose()}
+              onClick={isMobile? () => handleDrawerClose(): undefined}
               selected={
                 searchParams.get("department") === `${department.departmentId}`
               }

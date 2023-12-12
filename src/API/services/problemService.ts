@@ -8,7 +8,7 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
+import { workerKey } from "../../App";
 
 export const problemService = {
   async getProblems(
@@ -147,6 +147,31 @@ export const problemService = {
       const { data } = await instance.post("/GetProblemLogs", {
         problemId,
         workerKey,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async updateMsgLine(msgId: number, updatedMsg: string) {
+    try {
+      const { data } = await instance.post("/UpdateMsgLine", {
+        workerKey,
+        msgId,
+        updatedMsg,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  async deleteMsgLine(msgId: number) {
+    try {
+      const { data } = await instance.post("/DeleteMsgLine", {
+        workerKey,
+        msgId,
       });
       return data;
     } catch (error) {

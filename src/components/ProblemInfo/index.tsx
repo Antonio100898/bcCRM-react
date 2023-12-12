@@ -15,7 +15,6 @@ import {
   IMsgLine,
 } from "../../Model";
 import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
-import ProblemMessages from "../ProblemMessages";
 import ProblemFiles from "../ProblemFiles";
 import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
 import CustomInput from "../customInput/customInput";
@@ -24,6 +23,7 @@ import { WorkersList } from "../WorkersList/WorkersList";
 import { useState, useEffect } from "react";
 import CustomCollapseTrigger from "../CustomCollapseTrigger/CustomCollapse";
 import { useUser } from "../../Context/useUser";
+import ProblemMessages from "../ProblemMessages/ProblemMessages";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -100,10 +100,10 @@ export default function ProblemInfo({
   useEffect(() => {
     if (openMessagesCollapse)
       setTimeout(() => {
-        document.getElementById("show-all-messages")?.scrollIntoView({
+        document.getElementById("bottom-of-messages")?.scrollIntoView({
           behavior: "smooth",
         });
-      }, 300);
+      }, 500);
   }, [openMessagesCollapse]);
 
   return (
@@ -222,12 +222,21 @@ export default function ProblemInfo({
         >
           <Box sx={{ width: bigScreen ? "60%" : "100%" }}>
             <CustomInput
+              labelProps={{
+                fontSize: 22,
+              }}
               onChange={(e) => onChange("desc", e.target.value)}
               label="תיאור תקלה"
               fullWidth
               multiline
               type="text"
               value={selfProblem?.desc}
+              sx={{
+                "& .MuiInputBase-root": {
+                  minHeight: "200px",
+                  alignItems: "flex-start",
+                },
+              }}
             />
           </Box>
           <Box sx={{ flex: 1, width: "100%" }}>
