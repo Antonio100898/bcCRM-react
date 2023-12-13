@@ -156,7 +156,7 @@ export default function Workers() {
     );
   };
 
-  const onChangeAddExpenseType = (id: number, val: string) => {
+  const onChangeAddExpenseType = (_id: number, val: string) => {
     setAddNewWorkerExpenseType(val);
   };
 

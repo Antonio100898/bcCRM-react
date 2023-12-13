@@ -80,7 +80,7 @@ export default function WorkerExpenses() {
   }, [filterYear, filterMonth]);
 
   const workerExpensTypeCategoryChanged = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newCategoryId: string
   ) => {
     if (newCategoryId === null) {
