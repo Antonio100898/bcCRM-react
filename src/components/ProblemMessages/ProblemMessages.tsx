@@ -33,34 +33,7 @@ export default function ProblemMessages({
   const [updateMsgId, setUpdateMsgId] = useState<undefined | number>(undefined);
 
   const { user } = useUser();
-  const {confirm} = useConfirm();
-
-  useEffect(() => {
-    if (showAllMessages)
-      document.getElementById("test")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-  }, [showAllMessages]);
-
-  useEffect(() => {
-    setAllMessages(messages);
-  }, [messages]);
-
-  useEffect(() => {
-    let mymessages: IMsgLine[] = [];
-    mymessages = [...allMessages];
-
-    if (showAllMessages) {
-      setMessagesToShow(mymessages.reverse());
-    } else {
-      setMessagesToShow(mymessages.reverse().slice(0, 3));
-    }
-  }, [showAllMessages, allMessages]);
-
-  useEffect(() => {
-    refreshMessages();
-  }, [problemId]);
+  const { confirm } = useConfirm();
 
   const handleOpenNewCloseDialog = (value: boolean) => {
     setOpenNewMsgDialog(value);
@@ -144,7 +117,7 @@ export default function ProblemMessages({
   };
 
   const onDeleteMsg = async (value: number) => {
-    if (!await confirm("למחוק את ההודעה?")) return;
+    if (!(await confirm("למחוק את ההודעה?"))) return;
     await deleteMsg(value);
   };
 
@@ -158,6 +131,25 @@ export default function ProblemMessages({
     setOpenUpdateNewMsgDialog(false);
     setDefaultTextUpdateMessage("");
   };
+
+  useEffect(() => {
+    setAllMessages(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    let mymessages: IMsgLine[] = [];
+    mymessages = [...allMessages];
+
+    if (showAllMessages) {
+      setMessagesToShow(mymessages.reverse());
+    } else {
+      setMessagesToShow(mymessages.reverse().slice(0, 3));
+    }
+  }, [showAllMessages, allMessages]);
+
+  useEffect(() => {
+    refreshMessages();
+  }, [problemId]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -204,7 +196,7 @@ export default function ProblemMessages({
                 },
               }}
             />
-            {m.workerId === user?.workerId && (
+            {(m.workerId === user?.workerId || user?.userType === 1) && (
               <>
                 <IconButton
                   onClick={() => handleOpenUpdateCloseDialog(true, m.msg, m.id)}
@@ -213,7 +205,7 @@ export default function ProblemMessages({
                 </IconButton>
 
                 <IconButton onClick={() => onDeleteMsg(m.id)}>
-                  <DeleteIcon color="error"/>
+                  <DeleteIcon color="error" />
                 </IconButton>
               </>
             )}
