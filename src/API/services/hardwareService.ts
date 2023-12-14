@@ -1,6 +1,6 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import { IHardware, IProblemsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 
 export const hardwareService = {
   async getHardwareCounts(
@@ -8,7 +8,7 @@ export const hardwareService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetHardwaresCount", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         barcode,
       });
       return data;
@@ -20,7 +20,7 @@ export const hardwareService = {
   async getHardWare(barcode: string): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetHardware", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         barcode,
       });
       return data;
@@ -34,7 +34,7 @@ export const hardwareService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateHardware", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         hardware,
       });
       return data;
@@ -48,7 +48,7 @@ export const hardwareService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateHardwareTracking", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         hardwareId: hardware.id,
         statusId: hardware.statusId,
         cusName: hardware.cusName,

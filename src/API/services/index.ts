@@ -5,3 +5,6 @@ export * from "./problemService";
 export * from "./shiftService";
 export * from "./workerService";
 export * from "./fileService.ts";
+export * from "./v3Service.ts";
+export * from "./callService.ts";
+export * from "./workerService.ts";

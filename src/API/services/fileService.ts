@@ -1,7 +1,7 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import { IProblem, IProblemsResponse } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 import { AxiosRequestConfig } from "axios";
 
 export const fileService = {
@@ -13,7 +13,7 @@ export const fileService = {
       const { data } = await instance.post("/DeleteFile", {
         fileName,
         problemId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {

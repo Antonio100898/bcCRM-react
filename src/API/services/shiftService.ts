@@ -1,3 +1,4 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import {
   IDayInfo,
   IProblemsResponse,
@@ -8,7 +9,6 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 
 export const shiftService = {
   async updateShiftPlan(
@@ -16,7 +16,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftPlan", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         shiftDetails,
       });
       return data;
@@ -30,7 +30,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/CancelShiftPlan", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         shiftPlanId,
       });
       return data;
@@ -45,7 +45,7 @@ export const shiftService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftDayRemark", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         day,
         shiftGroupID,
       });
@@ -61,7 +61,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/AppendDefultWeekShifts", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
         shiftGroupID,
       });
@@ -77,7 +77,7 @@ export const shiftService = {
   ): Promise<IShiftAndDaysInfoResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftDetails", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
         shiftGroupID,
       });
@@ -92,7 +92,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkersMissingShiftsPlan", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         start,
       });
       return data;
@@ -106,7 +106,7 @@ export const shiftService = {
   ): Promise<IShiftAndDaysInfoResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftPlans", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
       });
       return data;
@@ -120,7 +120,7 @@ export const shiftService = {
   ): Promise<IShiftAndDaysInfoResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftPlansForWorker", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
       });
       return data;
@@ -136,7 +136,7 @@ export const shiftService = {
       const { data } = await instance.post(
         "/GetShiftPlansGetShiftPlansWeekReportForWorker",
         {
-          workerKey,
+          workerKey: localStorage.getItem(TOKEN_KEY),
           startTime,
           addDays: 7,
         }
@@ -152,7 +152,7 @@ export const shiftService = {
   ): Promise<IShiftDetailsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftsForWorker", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
       });
       return data;
@@ -166,7 +166,7 @@ export const shiftService = {
   ): Promise<IShiftDetailsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftPlansDetails", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
         addDays: 1,
       });
@@ -182,7 +182,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftDetails", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         shiftDetail,
         shiftGroupID,
       });
@@ -195,7 +195,7 @@ export const shiftService = {
   async cancelShift(shiftId: number): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/CancelShift", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         shiftId,
       });
       return data;
@@ -210,7 +210,7 @@ export const shiftService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftStartDate", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         shiftId,
         newDate,
       });

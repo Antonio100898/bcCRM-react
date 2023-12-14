@@ -1,6 +1,6 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import { IPlace, IProblemsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App";
 
 export const placeService = {
   async updatePlaceInfo(
@@ -8,7 +8,7 @@ export const placeService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdatePhonePlace", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         ...placeInfo,
       });
       return data;
@@ -35,7 +35,7 @@ export const placeService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdatePhonePlace", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         ...place,
       });
       return data;
@@ -47,7 +47,7 @@ export const placeService = {
   async getPlacesBizNumber(): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetPlacesBizNumber", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -63,7 +63,7 @@ export const placeService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdatePlaceBizNumber", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         id,
         placeName,
         bizNumber,

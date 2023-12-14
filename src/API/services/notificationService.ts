@@ -1,10 +1,10 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import {
   INotificationsCountResponse,
   INotifictionsResponse,
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 
 export const notificationService = {
   async deleteNotification(
@@ -13,7 +13,7 @@ export const notificationService = {
     try {
       const { data } = await instance.post("/DeleteNotification", {
         notificationId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -29,7 +29,7 @@ export const notificationService = {
       const { data } = await instance.post("/UpdateNotificationHadSeen", {
         notificationId,
         hadSeen,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -42,7 +42,7 @@ export const notificationService = {
   > {
     try {
       const { data } = await instance.post("/GetNotificationsCount", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -53,7 +53,7 @@ export const notificationService = {
   async getNotifications(): Promise<INotifictionsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetNotifications", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -64,7 +64,7 @@ export const notificationService = {
   async deleteNotificationAll(): Promise<INotifictionsResponse | undefined> {
     try {
       const { data } = await instance.post("/DeleteNotificationAll", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {

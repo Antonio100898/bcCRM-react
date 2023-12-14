@@ -1,3 +1,4 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import {
   IDepartmentResponse,
   IWorkExpensesType,
@@ -13,7 +14,6 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 
 export const workerService = {
   async getWorkExpensesTypes(): Promise<
@@ -21,7 +21,7 @@ export const workerService = {
   > {
     try {
       const { data } = await instance.post("/GetWorkExpensesTypes", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -34,7 +34,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkExpensesTypes", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         expensesType,
       });
       return data;
@@ -50,7 +50,7 @@ export const workerService = {
   ): Promise<IWorkerSickdayResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkersSickdays", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         year,
         month,
         justMe,
@@ -66,7 +66,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkerSickday", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         sickDay,
       });
       return data;
@@ -78,7 +78,7 @@ export const workerService = {
   async getWorkers(): Promise<IWorkersResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkers", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -92,7 +92,7 @@ export const workerService = {
     try {
       const { data } = await instance.post("/GetWorkerDepartments", {
         workerId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -106,7 +106,7 @@ export const workerService = {
     try {
       const { data } = await instance.post("/GetWorkerExpensesValue", {
         workerId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -122,7 +122,7 @@ export const workerService = {
     try {
       const { data } = await instance.post("/AppendWorkerExpensesValue", {
         workerId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         workExpensesType,
         sum,
       });
@@ -139,7 +139,7 @@ export const workerService = {
   ): Promise<IWorkerFreedayResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkersFreedays", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         year,
         month,
         justMe,
@@ -155,7 +155,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkerFreeday", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         freeDay,
       });
       return data;
@@ -167,7 +167,7 @@ export const workerService = {
   async getWorkersCars(): Promise<IWorkersResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkersCars", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -178,7 +178,7 @@ export const workerService = {
   async getWorker(): Promise<IWorkerResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorker", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -191,7 +191,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorker", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         worker,
         departments: null,
         workerExpensesValue: null,
@@ -209,7 +209,7 @@ export const workerService = {
   ): Promise<IWorkerExpensesTypeResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkersExpenses", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         year,
         months,
         filterWorkerId,
@@ -225,7 +225,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkesExpensesApprove", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         workerExpenses,
       });
       return data;
@@ -239,7 +239,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/CancelWorkerExpenses", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         expenseId,
       });
       return data;
@@ -256,7 +256,7 @@ export const workerService = {
   ): Promise<IExpenseAndShiftWeekResponse | undefined> {
     try {
       const { data } = await instance.post("/GetExpensesAndShiftForMonth", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         year,
         month,
         departmentId,
@@ -273,7 +273,7 @@ export const workerService = {
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkerExpence", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         expense,
       });
       return data;
@@ -287,7 +287,7 @@ export const workerService = {
   > {
     try {
       const { data } = await instance.post("/GetWorkExpensesTypesForWorker", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         filterWorkerId: 0,
       });
       return data;
@@ -307,7 +307,7 @@ export const workerService = {
   ): Promise<IWorkerExpensesTypeResponse | undefined> {
     try {
       const { data } = await instance.post("/AppendWorkerExpence", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startExpenceDate,
         finishExpenceDate,
         expenseType,

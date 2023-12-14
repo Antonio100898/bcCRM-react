@@ -1,3 +1,4 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import {
   IChatLinesResponse,
   IProblem,
@@ -8,7 +9,6 @@ import {
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App";
 
 export const problemService = {
   async getProblems(
@@ -17,7 +17,7 @@ export const problemService = {
     try {
       const { data } = await instance.post("/GetProblems", {
         filter: department || "-1",
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
 
       return data;
@@ -29,7 +29,7 @@ export const problemService = {
   async getProblemSummary(): Promise<IProblemSummeryResponse | undefined> {
     try {
       const { data } = await instance.post("/GetProblemSummery", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -43,7 +43,7 @@ export const problemService = {
   ): Promise<IChatLinesResponse | undefined> {
     try {
       const { data } = await instance.post("/AddNewChatLine", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         problemId,
         newLine,
         lineType: 1,
@@ -59,7 +59,7 @@ export const problemService = {
   ): Promise<IChatLinesResponse | undefined> {
     try {
       const { data } = await instance.post("/GetChatLines", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         problemId,
       });
       return data;
@@ -76,7 +76,7 @@ export const problemService = {
       const { data } = await instance.post("/GetProblemHistorySummery", {
         placeId,
         problemId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -89,7 +89,7 @@ export const problemService = {
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/SearchProblems", {
-        search: { ...filter, key: workerKey },
+        search: { ...filter, key: localStorage.getItem(TOKEN_KEY) },
       });
       return data;
     } catch (error) {
@@ -118,7 +118,7 @@ export const problemService = {
       const { data } = await instance.post("/UpdateProblemTracking", {
         problemId,
         trackingId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -132,7 +132,7 @@ export const problemService = {
     try {
       const { data } = await instance.post("/AnsweredCall", {
         department,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -146,7 +146,7 @@ export const problemService = {
     try {
       const { data } = await instance.post("/GetProblemLogs", {
         problemId,
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
@@ -157,7 +157,7 @@ export const problemService = {
   async updateMsgLine(msgId: number, updatedMsg: string) {
     try {
       const { data } = await instance.post("/UpdateMsgLine", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         msgId,
         updatedMsg,
       });
@@ -170,7 +170,7 @@ export const problemService = {
   async deleteMsgLine(msgId: number) {
     try {
       const { data } = await instance.post("/DeleteMsgLine", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
         msgId,
       });
       return data;

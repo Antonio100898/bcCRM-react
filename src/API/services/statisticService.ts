@@ -1,12 +1,12 @@
+import { TOKEN_KEY } from "../../Consts/Consts";
 import { IStatsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
-import { workerKey } from "../../App"; 
 
 export const statisticService = {
   async getStats(): Promise<IStatsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetStats", {
-        workerKey,
+        workerKey: localStorage.getItem(TOKEN_KEY),
       });
       return data;
     } catch (error) {
