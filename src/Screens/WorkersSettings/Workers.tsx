@@ -494,6 +494,7 @@ export default function Workers() {
                             <MenuItem value="3">תוכנה</MenuItem>
                             <MenuItem value="9">תמיכה</MenuItem>
                             <MenuItem value="4">תפריטים</MenuItem>
+                            <MenuItem value="17">Social</MenuItem>
                           </Select>
                         )}
 
