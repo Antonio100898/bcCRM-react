@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { InputLabel, Tooltip, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useConfirm } from "../../Context/useConfirm";
 import { IDayInfo } from "../../Model";
 import { shiftService } from "../../API/services";
+import styles from "./Shifts.module.css";
 
 export type Props = {
   weekDaysAll: IDayInfo[];
   shiftGroupId: number;
 };
 
-export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
+export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   const { prompt } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
   const [weekDays, setweekDays] = useState<IDayInfo[]>();
@@ -75,70 +76,21 @@ export default function DaysHeader({ weekDaysAll, shiftGroupId }: Props) {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: "row",
-        textAlign: "center",
-        fontFamily: "Rubik",
-        fontStyle: "normal",
-        fontWeight: "700",
-        fontSize: "26px",
-        lineHeight: "35px",
-        marginRight: "40px",
-        background: "#F5F5F5",
-        minWidth: "1280px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "end",
-          minWidth: "180px",
-          paddingRight: "40px",
-        }}
-      >
-        סוג עובד
-      </div>
+    <div className={styles.days_container}>
       {weekDays &&
         weekDays.map((day: IDayInfo) => (
-          <div
-            key={day.dayValue}
-            style={{
-              width: "175px",
-              marginRight: "15px",
-              color: day.isToday ? "blue" : "black",
-            }}
-          >
-            <Typography variant="h5" fontWeight="bold" fontFamily="Rubik">
+          <div className={styles.day_container} key={day.dayValue}>
+            <Typography
+              fontSize={18}
+              variant="h5"
+              fontFamily="Rubik"
+              fontWeight="bold"
+            >
               {day.dayName}&apos;
             </Typography>
-            <Typography
-              variant="h6"
-              fontFamily="Rubik"
-              sx={{ color: day.holydayName ? "inherit" : "transparent" }}
-            >
-              {day.holydayName || "-"}
-            </Typography>
-            <Typography variant="h6" fontWeight="bold" fontFamily="Rubik">
+            <Typography fontSize={16} variant="h6" fontFamily="Rubik">
               {day.dayValueEN.replaceAll("00:00", "")}
             </Typography>
-            <div style={{ display: "flex", flex: "row", marginBottom: "5px" }}>
-              <Tooltip title={day.remark}>
-                <InputLabel
-                  style={{
-                    border: "1px dashed ",
-                    width: "200px",
-                    minHeight: "20px",
-                  }}
-                  onClick={() => {
-                    updateDayRemark(day);
-                  }}
-                >
-                  {day.remark}
-                </InputLabel>
-              </Tooltip>
-            </div>
           </div>
         ))}
     </div>

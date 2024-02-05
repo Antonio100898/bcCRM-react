@@ -10,6 +10,7 @@ import {
 } from "../Model";
 import { TOKEN_KEY } from "../Consts/Consts";
 import { authService } from "../API/services/authService";
+import { problemService } from "../API/services";
 
 export interface Props {
   children: React.ReactNode;
@@ -52,6 +53,15 @@ export interface IUserContext {
   problemTypes: IProblemType[];
   updateProblemTypes: (u: IProblemType[]) => void;
   login: (credentials: LoginCredetials) => Promise<IUser | null>;
+  handleClose: () => void;
+  updateProblem: (value: IProblem) => Promise<void>;
+  problemOpen: boolean;
+  setProblemOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  problem: IProblem | null;
+  setProblem: React.Dispatch<React.SetStateAction<IProblem | null>>;
+  orderBy: keyof IProblem;
+  setOrderBy: React.Dispatch<React.SetStateAction<keyof IProblem>>;
+  fileLoading: boolean;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -80,6 +90,15 @@ export const UserContext = createContext<IUserContext>({
   problemTypes: [],
   updateProblemTypes: () => {},
   login: async () => null,
+  handleClose: () => {},
+  updateProblem: () => new Promise(() => {}),
+  problemOpen: false,
+  setProblemOpen: () => {},
+  problem: null,
+  setProblem: () => {},
+  orderBy: "startTimeEN",
+  setOrderBy: () => {},
+  fileLoading: false,
 });
 
 export function UserContextProvider(props: Props) {
@@ -207,6 +226,52 @@ export function UserContextProvider(props: Props) {
     }
   };
 
+  const [problemOpen, setProblemOpen] = useState(false);
+  const [problem, setProblem] = useState<IProblem | null>(null);
+  const [fileLoading] = useState(false);
+  const [orderBy, setOrderBy] = useState<keyof IProblem>("startTimeEN");
+
+  const updateProblem = async (value: IProblem) => {
+    updateAllProblems(
+      allProblems
+        ?.sort((a: IProblem, b: IProblem) => {
+          return (a[orderBy] || "")
+            .toString()
+            .localeCompare((b[orderBy] || "").toString());
+        })
+        .map((p) => (p.id === value.id ? value : p)) || []
+    );
+    updateRefreshProblemCount(true);
+    updateRefreshProblems(true);
+    updateDepartment(selectedDepartmentId.toString());
+  };
+
+  const updateDepartment = async (department: string) => {
+    updateShowLoader(true);
+    try {
+      const data = await problemService.getProblems(department);
+      if (data?.d.success) {
+        updateRefreshProblemCount(true);
+        updateAllProblems(data.d.problems);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    updateShowLoader(false);
+  };
+
+  const handleClose = () => {
+    if (fileLoading) {
+      if (confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
+        setProblemOpen(false);
+        setProblem(null);
+      }
+    } else {
+      setProblemOpen(false);
+      setProblem(null);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -235,6 +300,15 @@ export function UserContextProvider(props: Props) {
         problemTypes,
         updateProblemTypes,
         login,
+        handleClose,
+        updateProblem,
+        problemOpen,
+        setProblemOpen,
+        problem,
+        setProblem,
+        orderBy,
+        setOrderBy,
+        fileLoading,
       }}
       {...props}
     />

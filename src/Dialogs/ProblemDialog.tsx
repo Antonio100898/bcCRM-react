@@ -557,8 +557,8 @@ export function ProblemDialog({
   }, [selfProblem]);
 
   const dialogPaperStyle = {
-    maxWidth: bigScreen ? "1000px" : "600px",
-    width: bigScreen ? "1000px" : "",
+    minWidth: bigScreen ? "1000px" : isMobile ? "" : "600px",
+    height: isMobile ? "" : "800px",
   };
 
   return (

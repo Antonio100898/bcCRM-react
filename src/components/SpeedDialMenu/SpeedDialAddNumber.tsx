@@ -20,7 +20,6 @@ import {
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import EditIcon from "@mui/icons-material/Edit";
 import StarIcon from "@mui/icons-material/Star";
-import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { useSnackbar } from "notistack";
 import { IProblem } from "../../Model";
@@ -29,10 +28,22 @@ import { useUser } from "../../Context/useUser";
 import { placeService } from "../../API/services/placeService";
 import { problemService } from "../../API/services";
 import { IPhonePlace } from "../../Model/IPhonePlace";
+import { ProblemDialog } from "../../Dialogs/ProblemDialog";
+import { useLocation, useNavigate, useNavigation } from "react-router-dom";
 
 export default function SpeedDialAddNumber() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, updateShowProblemDialog, updateCurrentProblem } = useUser();
+  const {
+    user,
+    updateShowProblemDialog,
+    updateCurrentProblem,
+    problem,
+    setProblem,
+    problemOpen,
+    handleClose,
+    updateProblem,
+    setProblemOpen,
+  } = useUser();
   const [placesOptions, setPlacesOptions] = React.useState<IPhonePlace[]>();
   const [showSelectPlace, setShowSelectPlace] = React.useState(false);
   const [showAddNewPlace, setShowAddNewPlace] = React.useState(false);
@@ -42,7 +53,8 @@ export default function SpeedDialAddNumber() {
   const [newCusName, setNewCusName] = React.useState("");
   const [newRemark, setNewRemark] = React.useState("");
   const [newVip, setNewVip] = React.useState(false);
-  const history = useNavigate();
+
+  const navigate = useNavigate();
 
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
@@ -70,7 +82,8 @@ export default function SpeedDialAddNumber() {
   };
 
   const selectPlace = async (place: IPhonePlace) => {
-    const problem: Partial<IProblem> = {
+    if (!user) return;
+    const problem: IProblem = {
       workerKey,
       workerCreateName: user?.workerName || "",
       customerName: place.customerName,
@@ -85,8 +98,38 @@ export default function SpeedDialAddNumber() {
       startTime: `${new Date().toLocaleString()}`,
       startTimeEN: new Date().toString(),
       problemTypes: [],
+      callCustomerBack: false,
+      crmFiles: [],
+      departmentName: "",
+      desc: "",
+      fileCount: 0,
+      files: [],
+      filesName: "",
+      finishTime: "",
+      finishTimeEN: "",
+      historySummery: "",
+      id: 0,
+      ip: "",
+      isLocked: false,
+      lastSuppoter: "",
+      msgLinesCount: 0,
+      problemTypesList: [],
+      solution: "",
+      statusId: 0,
+      statusName: "",
+      takingCare: false,
+      toWorker: 0,
+      toWorkerJobTitle: "",
+      toWorkerName: "",
+      trackingId: 0,
+      updaterWorkerDepartmentId: 0,
+      updaterWorkerId: 0,
+      updaterWorkerName: "",
+      vip: false,
+      workerCreateId: 0,
     };
     try {
+      //because we dont provide problem id, server will append a new one to the database
       const data = await problemService.updateProblem(problem);
       if (!data?.d.success) {
         enqueueSnackbar({
@@ -102,9 +145,8 @@ export default function SpeedDialAddNumber() {
       updateCurrentProblem(problem);
       updateShowProblemDialog(true);
 
-      if (!window.location.href.endsWith("/Problems")) {
-        history("/Problems");
-      }
+      setProblem(problem);
+      setProblemOpen(true);
     } catch (error) {
       console.error(error);
     }
@@ -542,6 +584,15 @@ export default function SpeedDialAddNumber() {
             </Button>
           </div>
         </DialogContent>
+        {problem && (
+          <ProblemDialog
+            key={problem?.id}
+            open={problemOpen}
+            onClose={handleClose}
+            problem={problem}
+            updateProblem={updateProblem}
+          />
+        )}
       </Dialog>
     </div>
   );

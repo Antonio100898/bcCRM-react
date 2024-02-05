@@ -64,10 +64,7 @@ export default function ProblemActions({
   const saveProblem = async (close: boolean, closeProblem: boolean) => {
     if (closeProblem) {
       setPendingClose(true);
-      if (!(await confirm("האם את\\ה בטוח שברצונך לסגור את התקלה הזאת?"))) {
-        await stopPending();
-        return;
-      }
+
       selfProblem.statusId = 2;
     } else {
       setPendingUpdate(true);
@@ -136,7 +133,7 @@ export default function ProblemActions({
         left: 0,
         width: "100%",
         textAlign: "center",
-        zIndex: 2000
+        zIndex: 2000,
       }}
     >
       <Box

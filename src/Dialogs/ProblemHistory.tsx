@@ -18,7 +18,7 @@ import { useUser } from "../Context/useUser";
 export type ProblemHistoryDialogProps = {
   open: boolean;
   onClose: (takeAction: boolean) => void;
-  problem: IProblem;
+  problem: Partial<IProblem>;
   loading: boolean;
   problemsHistory: IProblem[];
   onShowLogs: (problemId: number) => void;

@@ -15,6 +15,7 @@ import {
   alpha,
   useTheme,
   styled,
+  Box,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React from "react";
@@ -217,17 +218,18 @@ export default function AppDrawer({
         >
           {menuEntities.map((e) => (
             <NestedMenuItem
-              sx={{ direction: "rtl" }}
               key={`${e.label}`}
               label={e.label}
               parentMenuOpen={Boolean(anchorEl)}
             >
-              {e.entities.map((en) => (
-                <MenuItem key={en.label} component={Link} to={en.to}>
-                  <ListItemIcon sx={{ pr: 1.5 }}>{en.icon}</ListItemIcon>
-                  <ListItemText>{en.label}</ListItemText>
-                </MenuItem>
-              ))}
+              <Box>
+                {e.entities.map((en) => (
+                  <MenuItem key={en.label} component={Link} to={en.to}>
+                    <ListItemIcon sx={{ pr: 1.5 }}>{en.icon}</ListItemIcon>
+                    <ListItemText>{en.label}</ListItemText>
+                  </MenuItem>
+                ))}
+              </Box>
             </NestedMenuItem>
           ))}
         </Menu>
@@ -237,7 +239,7 @@ export default function AppDrawer({
         {(departments || []).map((department) => (
           <ListItem key={department.departmentId} disablePadding>
             <ListItemButton
-              onClick={isMobile? () => handleDrawerClose(): undefined}
+              onClick={isMobile ? () => handleDrawerClose() : undefined}
               selected={
                 searchParams.get("department") === `${department.departmentId}`
               }

@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import {
+  Button,
+  ButtonGroup,
   MenuItem,
   Select,
   SelectChangeEvent,
   Switch,
+  TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
 import { useSnackbar } from "notistack";
 import { ShiftsContainer } from "../../components/Shifts/ShiftsContainer";
-import DaysHeader from "../../components/Shifts/DaysHeader";
-import "./Shifts.styles.css";
+import Days from "./Days";
 import DateSelect from "../../components/Shifts/DateSelect";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { shiftService } from "../../API/services";
 import { IDayInfo, IshiftWeek } from "../../Model";
+import styles from "./Shifts.module.css";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -150,13 +154,8 @@ export default function Shifts() {
   };
 
   return (
-    <div
-      style={{
-        marginRight: "5px",
-        background: "#F5F5F5",
-      }}
-    >
-      <h2>סידור משמרות</h2>
+    <div className={styles.shifts_container}>
+      <h2 className={styles.title}>סידור משמרות</h2>
       <div
         style={{
           display: "flex",
@@ -202,79 +201,74 @@ export default function Shifts() {
       </div>
 
       <DateSelect setDate={setStartDate} />
-
-      <br />
-      <div style={{ overflow: "scroll", position: "relative" }}>
-        <div>
-          <div
-            style={{
-              position: "relative",
-            }}
-          >
-            <div style={{ position: "sticky", top: "0", zIndex: "1000" }}>
-              <DaysHeader
-                weekDaysAll={myWeekDays}
-                shiftGroupId={shiftGroupId}
-              />
-            </div>
-            <div style={{ marginTop: 20 }}>
-              {shifts && (
-                <div>
-                  <ShiftsContainer
-                    refreshList={fetchShifts}
-                    shiftsList={shifts}
-                    startOfWeek={startDate}
-                    title="בוקר"
-                    shiftTypeId={1}
-                    showDetails={showShiftDetails}
-                    shiftGroupId={shiftGroupId}
-                  />
-
-                  <ShiftsContainer
-                    refreshList={fetchShifts}
-                    shiftsList={shifts}
-                    startOfWeek={startDate}
-                    title="צהריים"
-                    shiftTypeId={2}
-                    showDetails={showShiftDetails}
-                    shiftGroupId={shiftGroupId}
-                  />
-
-                  <ShiftsContainer
-                    refreshList={fetchShifts}
-                    shiftsList={shifts}
-                    startOfWeek={startDate}
-                    title="ערב"
-                    shiftTypeId={3}
-                    showDetails={showShiftDetails}
-                    shiftGroupId={shiftGroupId}
-                  />
-
-                  <ShiftsContainer
-                    refreshList={fetchShifts}
-                    shiftsList={shifts}
-                    startOfWeek={startDate}
-                    title="לילה"
-                    shiftTypeId={4}
-                    showDetails={showShiftDetails}
-                    shiftGroupId={shiftGroupId}
-                  />
-
-                  <ShiftsContainer
-                    refreshList={fetchShifts}
-                    shiftsList={shifts}
-                    startOfWeek={startDate}
-                    title="בלתמ"
-                    shiftTypeId={5}
-                    showDetails={showShiftDetails}
-                    shiftGroupId={shiftGroupId}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      <Days weekDaysAll={myWeekDays} shiftGroupId={shiftGroupId} />
+      <div className={styles.comment}>
+        <Typography fontSize={18} fontWeight="bold">
+          הערה של יום:
+        </Typography>
+        <TextField />
       </div>
+      <ButtonGroup sx={{mt: "22px", fontSize: "20px"}}>
+        <Button variant="contained">בוקר</Button>
+        <Button>צהריים</Button>
+        <Button>ערב</Button>
+        <Button>לילה</Button>
+      </ButtonGroup>
+      {/* <div style={{ marginTop: 20 }}>
+        {shifts && (
+              <div>
+                <ShiftsContainer
+                  refreshList={fetchShifts}
+                  shiftsList={shifts}
+                  startOfWeek={startDate}
+                  title="בוקר"
+                  shiftTypeId={1}
+                  showDetails={showShiftDetails}
+                  shiftGroupId={shiftGroupId}
+                />
+
+                <ShiftsContainer
+                  refreshList={fetchShifts}
+                  shiftsList={shifts}
+                  startOfWeek={startDate}
+                  title="צהריים"
+                  shiftTypeId={2}
+                  showDetails={showShiftDetails}
+                  shiftGroupId={shiftGroupId}
+                />
+
+                <ShiftsContainer
+                  refreshList={fetchShifts}
+                  shiftsList={shifts}
+                  startOfWeek={startDate}
+                  title="ערב"
+                  shiftTypeId={3}
+                  showDetails={showShiftDetails}
+                  shiftGroupId={shiftGroupId}
+                />
+
+                <ShiftsContainer
+                  refreshList={fetchShifts}
+                  shiftsList={shifts}
+                  startOfWeek={startDate}
+                  title="לילה"
+                  shiftTypeId={4}
+                  showDetails={showShiftDetails}
+                  shiftGroupId={shiftGroupId}
+                />
+
+                <ShiftsContainer
+                  refreshList={fetchShifts}
+                  shiftsList={shifts}
+                  startOfWeek={startDate}
+                  title="בלתמ"
+                  shiftTypeId={5}
+                  showDetails={showShiftDetails}
+                  shiftGroupId={shiftGroupId}
+                />
+              </div>
+            )}
+      </div> */}
     </div>
   );
 }

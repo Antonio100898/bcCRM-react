@@ -11,7 +11,6 @@ import WorkerInfo from "./Screens/WorkerInfo/WorkerInfo";
 import WorkExpenseTypeSettings from "./Screens/WorkExpenseTypeSettings/WorkExpenseTypeSettings";
 import WorkerExpensesReports from "./Screens/WorkerExpensesReports/WorkerExpensesReports";
 import Stats from "./Screens/V3Settings/Stats/Stats";
-import Shifts from "./Screens/Shifts/Shifts";
 import HardwareCenter from "./components/Hardware/HardwareCenter";
 import V3Settings from "./Screens/V3Settings/V3Settings";
 import ShiftPlans from "./Screens/ShiftPlans/ShiftPlans";
@@ -26,6 +25,7 @@ import ConfirmProvider from "./Context/ConfirmContext";
 import AppLayout from "./AppLayout";
 import { useUser } from "./Context/useUser";
 import { useLayoutEffect } from "react";
+import Shifts from "./components/Shifts/Shifts";
 
 function App() {
   const { showLoader } = useUser();

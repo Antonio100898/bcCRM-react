@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useConfirm } from "../../Context/useConfirm";
@@ -18,14 +18,7 @@ export default function Problems() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { confirm } = useConfirm();
-  const abortController = useRef(new AbortController());
   const [showRows, setShowRows] = useState(false);
-  const [fileLoading] = useState(false);
-  const [orderBy, setOrderBy] = useState<keyof IProblem>("startTimeEN");
-
-  const [problemOpen, setProblemOpen] = useState(false);
-  const [problem, setProblem] = useState<IProblem | null>(null);
-
   const {
     updateRefreshProblemCount,
     updateRefreshProblems,
@@ -34,7 +27,17 @@ export default function Problems() {
     updateShowLoader,
     selectedDepartmentId,
     updateSelectedDepartmentId,
+    setProblem,
+    setProblemOpen,
+    orderBy,
+    fileLoading,
+    setOrderBy,
+    problem,
+    problemOpen,
+    updateProblem,
+    handleClose
   } = useUser();
+  const abortController = useRef(new AbortController());
 
   const handleShowProblem = (clickedProblem: IProblem) => {
     setProblem(clickedProblem);
@@ -83,33 +86,33 @@ export default function Problems() {
     updateDepartment(department || "-1");
   }, [searchParams]);
 
-  const updateProblem = async (value: IProblem) => {
-    updateAllProblems(
-      allProblems
-        ?.sort((a: IProblem, b: IProblem) => {
-          return (a[orderBy] || "")
-            .toString()
-            .localeCompare((b[orderBy] || "").toString());
-        })
-        .map((p) => (p.id === value.id ? value : p)) || []
-    );
-    updateRefreshProblemCount(true);
-    updateRefreshProblems(true);
-    updateDepartment(selectedDepartmentId.toString());
-  };
+  // const updateProblem = async (value: IProblem) => {
+  //   updateAllProblems(
+  //     allProblems
+  //       ?.sort((a: IProblem, b: IProblem) => {
+  //         return (a[orderBy] || "")
+  //           .toString()
+  //           .localeCompare((b[orderBy] || "").toString());
+  //       })
+  //       .map((p) => (p.id === value.id ? value : p)) || []
+  //   );
+  //   updateRefreshProblemCount(true);
+  //   updateRefreshProblems(true);
+  //   updateDepartment(selectedDepartmentId.toString());
+  // };
 
-  const handleClose = async () => {
-    if (fileLoading) {
-      if (await confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
-        abortController.current.abort();
-        setProblemOpen(false);
-        setProblem(null);
-      }
-    } else {
-      setProblemOpen(false);
-      setProblem(null);
-    }
-  };
+  // const handleClose = async () => {
+  //   if (fileLoading) {
+  //     if (await confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
+  //       abortController.current.abort();
+  //       setProblemOpen(false);
+  //       setProblem(null);
+  //     }
+  //   } else {
+  //     setProblemOpen(false);
+  //     setProblem(null);
+  //   }
+  // };
 
   return (
     <div>
