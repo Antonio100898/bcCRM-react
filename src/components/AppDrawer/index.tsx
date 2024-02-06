@@ -38,6 +38,7 @@ import PunchClockIcon from "@mui/icons-material/PunchClock";
 import { MenuCategory } from "../../AppLayout";
 import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
 import { IUser, ProblemSummery } from "../../Model";
+import MultiMenu from "./multi-menu";
 
 const drawerWidth = 240;
 
@@ -209,30 +210,11 @@ export default function AppDrawer({
             </Avatar>
           </IconButton>
         </Tooltip>
-        <Menu
+        <MultiMenu
           anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        >
-          {menuEntities.map((e) => (
-            <NestedMenuItem
-              key={`${e.label}`}
-              label={e.label}
-              parentMenuOpen={Boolean(anchorEl)}
-            >
-              <Box>
-                {e.entities.map((en) => (
-                  <MenuItem key={en.label} component={Link} to={en.to}>
-                    <ListItemIcon sx={{ pr: 1.5 }}>{en.icon}</ListItemIcon>
-                    <ListItemText>{en.label}</ListItemText>
-                  </MenuItem>
-                ))}
-              </Box>
-            </NestedMenuItem>
-          ))}
-        </Menu>
+          handleMenuClose={handleMenuClose}
+          items={menuEntities}
+        />
       </DrawerHeader>
       <Divider />
       <List>
