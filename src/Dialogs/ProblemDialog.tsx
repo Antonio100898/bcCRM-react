@@ -661,8 +661,8 @@ export function ProblemDialog({
           {tracking?.historySummery && tracking.lastSupporter && (
             <Collapse>
               <ProblemAlert
-                historySummery={tracking?.historySummery}
-                lastSupporter={tracking?.lastSupporter}
+                historysummery={tracking?.historySummery}
+                lastsupporter={tracking?.lastSupporter}
               />
             </Collapse>
           )}

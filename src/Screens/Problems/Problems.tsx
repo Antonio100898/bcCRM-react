@@ -1,14 +1,10 @@
-import { useEffect, useState, useRef } from "react";
-import { MenuItem, Select, Switch, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
 import { IProblem } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
 import ProblemsContainer from "../../components/Problems/ProblemsContainer";
-import ProblemsRowsContainer from "../../components/Problems/ProblemsRowsContainer";
-import { ProblemDialog } from "../../Dialogs/ProblemDialog";
-import { problemService } from "../../API/services";
+import styles from "./Problems.module.css";
 
 export type Props = {
   someProblems: IProblem[] | null;
@@ -17,31 +13,22 @@ export type Props = {
 export default function Problems() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { confirm } = useConfirm();
-  const [showRows, setShowRows] = useState(false);
+  const [showRows] = useState(false);
+
   const {
     updateRefreshProblemCount,
-    updateRefreshProblems,
     allProblems,
     updateAllProblems,
-    updateShowLoader,
-    selectedDepartmentId,
+    updateDepartment,
     updateSelectedDepartmentId,
-    setProblem,
-    setProblemOpen,
     orderBy,
-    fileLoading,
-    setOrderBy,
-    problem,
-    problemOpen,
-    updateProblem,
-    handleClose
+    updateShowProblemDialog,
+    updateCurrentProblem,
   } = useUser();
-  const abortController = useRef(new AbortController());
 
   const handleShowProblem = (clickedProblem: IProblem) => {
-    setProblem(clickedProblem);
-    setProblemOpen(true);
+    updateCurrentProblem(clickedProblem);
+    updateShowProblemDialog(true);
   };
 
   useEffect(() => {
@@ -62,20 +49,6 @@ export default function Problems() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBy]);
 
-  const updateDepartment = async (department: string) => {
-    updateShowLoader(true);
-    try {
-      const data = await problemService.getProblems(department);
-      if (data?.d.success) {
-        updateRefreshProblemCount(true);
-        updateAllProblems(data.d.problems);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    updateShowLoader(false);
-  };
-
   useEffect(() => {
     const department = searchParams.get("department");
     if (department === null) {
@@ -86,37 +59,9 @@ export default function Problems() {
     updateDepartment(department || "-1");
   }, [searchParams]);
 
-  // const updateProblem = async (value: IProblem) => {
-  //   updateAllProblems(
-  //     allProblems
-  //       ?.sort((a: IProblem, b: IProblem) => {
-  //         return (a[orderBy] || "")
-  //           .toString()
-  //           .localeCompare((b[orderBy] || "").toString());
-  //       })
-  //       .map((p) => (p.id === value.id ? value : p)) || []
-  //   );
-  //   updateRefreshProblemCount(true);
-  //   updateRefreshProblems(true);
-  //   updateDepartment(selectedDepartmentId.toString());
-  // };
-
-  // const handleClose = async () => {
-  //   if (fileLoading) {
-  //     if (await confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
-  //       abortController.current.abort();
-  //       setProblemOpen(false);
-  //       setProblem(null);
-  //     }
-  //   } else {
-  //     setProblemOpen(false);
-  //     setProblem(null);
-  //   }
-  // };
-
   return (
     <div>
-      {false && (
+      {/* {false && (
         <>
           <Select
             label="סדר לפי"
@@ -135,9 +80,9 @@ export default function Problems() {
             <Switch onChange={() => setShowRows(!showRows)} />
           </Tooltip>
         </>
-      )}
+      )} */}
       {!showRows && (
-        <div>
+        <div className={styles.container}>
           <ProblemsContainer
             someProblems={allProblems}
             title="היום"
@@ -154,7 +99,6 @@ export default function Problems() {
             finishDays={7}
             ticketColor="#FFF4E4"
             onClick={handleShowProblem}
-            // ticketColor="#FFC092"
           />
 
           <ProblemsContainer
@@ -194,16 +138,7 @@ export default function Problems() {
           />
         </div>
       )}
-      {showRows && <ProblemsRowsContainer someProblems={allProblems} />}
-      {problem && (
-        <ProblemDialog
-          key={problem?.id}
-          open={problemOpen}
-          onClose={handleClose}
-          problem={problem}
-          updateProblem={updateProblem}
-        />
-      )}
+      {/* {showRows && <ProblemsRowsContainer someProblems={allProblems} />} */}
     </div>
   );
 }

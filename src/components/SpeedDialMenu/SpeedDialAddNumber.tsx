@@ -28,22 +28,12 @@ import { useUser } from "../../Context/useUser";
 import { placeService } from "../../API/services/placeService";
 import { problemService } from "../../API/services";
 import { IPhonePlace } from "../../Model/IPhonePlace";
-import { ProblemDialog } from "../../Dialogs/ProblemDialog";
-import { useLocation, useNavigate, useNavigation } from "react-router-dom";
 
 export default function SpeedDialAddNumber() {
   const { enqueueSnackbar } = useSnackbar();
-  const {
-    user,
-    updateShowProblemDialog,
-    updateCurrentProblem,
-    problem,
-    setProblem,
-    problemOpen,
-    handleClose,
-    updateProblem,
-    setProblemOpen,
-  } = useUser();
+
+  const { user, updateShowProblemDialog, updateCurrentProblem } = useUser();
+
   const [placesOptions, setPlacesOptions] = React.useState<IPhonePlace[]>();
   const [showSelectPlace, setShowSelectPlace] = React.useState(false);
   const [showAddNewPlace, setShowAddNewPlace] = React.useState(false);
@@ -53,8 +43,6 @@ export default function SpeedDialAddNumber() {
   const [newCusName, setNewCusName] = React.useState("");
   const [newRemark, setNewRemark] = React.useState("");
   const [newVip, setNewVip] = React.useState(false);
-
-  const navigate = useNavigate();
 
   const workerKey: string = localStorage.getItem(TOKEN_KEY) || "";
 
@@ -145,8 +133,8 @@ export default function SpeedDialAddNumber() {
       updateCurrentProblem(problem);
       updateShowProblemDialog(true);
 
-      setProblem(problem);
-      setProblemOpen(true);
+      updateCurrentProblem(problem);
+      updateShowProblemDialog(true);
     } catch (error) {
       console.error(error);
     }
@@ -584,15 +572,6 @@ export default function SpeedDialAddNumber() {
             </Button>
           </div>
         </DialogContent>
-        {problem && (
-          <ProblemDialog
-            key={problem?.id}
-            open={problemOpen}
-            onClose={handleClose}
-            problem={problem}
-            updateProblem={updateProblem}
-          />
-        )}
       </Dialog>
     </div>
   );

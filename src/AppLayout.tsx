@@ -21,6 +21,7 @@ import SpeedDialAddNumber from "./components/SpeedDialMenu/SpeedDialAddNumber";
 import SpeedDialAnswerPhone from "./components/SpeedDialMenu/SpeedDialAnswerPhone";
 import Search from "./components/Search/Search";
 import { useUser } from "./Context/useUser";
+import { ProblemDialog } from "./Dialogs/ProblemDialog";
 
 const drawerWidth = 240;
 
@@ -61,10 +62,6 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  ...theme.mixins.toolbar,
-}));
-
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
@@ -94,7 +91,15 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
   const { pathname } = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = useState(true);
-  const { user, departments } = useUser();
+  const {
+    user,
+    departments,
+    currentProblem,
+    updateProblem,
+    handleProblemClose,
+    showProblemDialog,
+  } = useUser();
+
   const [searchOpen, setSearchOpen] = useState(false);
 
   const trigger = useScrollTrigger({
@@ -128,16 +133,24 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
 
   useEffect(() => {
     setAnchorEl(null);
-    //setOpen(false);
   }, [pathname]);
-  
+
   useEffect(() => {
     if (isMobile) setOpen(false);
-  }, [isMobile])
+  }, [isMobile]);
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+      {currentProblem && (
+        <ProblemDialog
+          key={currentProblem?.id}
+          open={showProblemDialog}
+          onClose={handleProblemClose}
+          problem={currentProblem}
+          updateProblem={updateProblem}
+        />
+      )}
       <AppBar
         position="fixed"
         open={open}
@@ -206,13 +219,7 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
       </Slide>
 
       <Main open={open}>
-        <Box>
-          <Slide appear={false} direction="down" in={searchOpen}>
-            <Box sx={{ backgroundColor: "red" }}>
-              <DrawerHeader />
-            </Box>
-          </Slide>
-          <DrawerHeader />
+        <Box sx={{ pt: "64px" }}>
           {children}
           <Box
             sx={{

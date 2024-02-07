@@ -6,7 +6,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { MenuCategory } from "../../AppLayout";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./drawer.module.css";
 
@@ -49,12 +49,8 @@ const MultiMenu = ({ items, handleMenuClose, anchorEl }: Props) => {
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       {items.map((i) => (
-        <>
-          <MenuItem
-            sx={{ width: "180px" }}
-            key={i.label}
-            onClick={() => onClick(i.label)}
-          >
+        <div key={i.label}>
+          <MenuItem sx={{ width: "180px" }} onClick={() => onClick(i.label)}>
             {i.label}
           </MenuItem>
           <Collapse
@@ -68,7 +64,7 @@ const MultiMenu = ({ items, handleMenuClose, anchorEl }: Props) => {
               </MenuItem>
             ))}
           </Collapse>
-        </>
+        </div>
       ))}
     </Menu>
   );

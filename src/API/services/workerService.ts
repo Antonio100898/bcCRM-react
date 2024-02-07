@@ -62,12 +62,12 @@ export const workerService = {
   },
 
   async updateWorkerSickday(
-    sickDay: IWorkerSickday
+    sickday: IWorkerSickday
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkerSickday", {
         workerKey: localStorage.getItem(TOKEN_KEY),
-        sickDay,
+        sickday,
       });
       return data;
     } catch (error) {
@@ -151,12 +151,12 @@ export const workerService = {
   },
 
   async updateWorkerFreeday(
-    freeDay: IWorkerFreeday
+    freeday: IWorkerFreeday
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateWorkerFreeday", {
         workerKey: localStorage.getItem(TOKEN_KEY),
-        freeDay,
+        freeday,
       });
       return data;
     } catch (error) {

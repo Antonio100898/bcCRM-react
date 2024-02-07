@@ -27,6 +27,7 @@ import { IWorkerSickday } from "../../Model";
 import { useConfirm } from "../../Context/useConfirm";
 import { useUser } from "../../Context/useUser";
 import { workerService } from "../../API/services";
+import { enqueueSnackbar } from "notistack";
 
 export default function WorkersSickday() {
   const { confirm } = useConfirm();
@@ -112,11 +113,22 @@ export default function WorkersSickday() {
     };
     try {
       const data = await workerService.updateWorkerSickday(sickDay);
-      if (data?.d.success) getWorkersSickdays();
+      if (data?.d.success) {
+        enqueueSnackbar({
+          variant: "success",
+          message: "בוצע שינוי בימי מחלה",
+        });
+        getWorkersSickdays();
+      }
     } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          variant: "error",
+          message: error.message,
+        });
       console.error(error);
     }
-
+    updateShowLoader(false);
     setShowDialog(false);
   };
 

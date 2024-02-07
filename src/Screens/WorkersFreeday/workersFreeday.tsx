@@ -30,6 +30,7 @@ import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTex
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { workerService } from "../../API/services";
+import { enqueueSnackbar } from "notistack";
 
 export default function WorkersFreeday() {
   const { confirm } = useConfirm();
@@ -108,11 +109,22 @@ export default function WorkersFreeday() {
     };
     try {
       const data = await workerService.updateWorkerFreeday(freeDay);
-      if (data?.d.success) fetchWorkersFreedays();
+      if (data?.d.success) {
+        enqueueSnackbar({
+          variant: "success",
+          message: "בוצי שינוי בימי חופש",
+        });
+        fetchWorkersFreedays();
+      }
     } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          variant: "error",
+          message: error.message,
+        });
       console.error(error);
     }
-
+    updateShowLoader(false);
     setShowDialog(false);
   };
 

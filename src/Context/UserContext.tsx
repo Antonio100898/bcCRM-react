@@ -34,8 +34,8 @@ export interface IUserContext {
   updateDepartments: (summery: ProblemSummery[]) => void;
   showProblemDialog: boolean;
   updateShowProblemDialog: (u: boolean) => void;
-  currentProblem: Partial<IProblem> | null;
-  updateCurrentProblem: (u: Partial<IProblem> | null) => void;
+  currentProblem: IProblem | null;
+  updateCurrentProblem: (u: IProblem | null) => void;
   refreshProblemCount: boolean;
   updateRefreshProblemCount: (u: boolean) => void;
   showLoader: boolean;
@@ -53,15 +53,12 @@ export interface IUserContext {
   problemTypes: IProblemType[];
   updateProblemTypes: (u: IProblemType[]) => void;
   login: (credentials: LoginCredetials) => Promise<IUser | null>;
-  handleClose: () => void;
+  handleProblemClose: () => void;
   updateProblem: (value: IProblem) => Promise<void>;
-  problemOpen: boolean;
-  setProblemOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  problem: IProblem | null;
-  setProblem: React.Dispatch<React.SetStateAction<IProblem | null>>;
   orderBy: keyof IProblem;
   setOrderBy: React.Dispatch<React.SetStateAction<keyof IProblem>>;
   fileLoading: boolean;
+  updateDepartment: (department: string) => Promise<void>;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -90,15 +87,12 @@ export const UserContext = createContext<IUserContext>({
   problemTypes: [],
   updateProblemTypes: () => {},
   login: async () => null,
-  handleClose: () => {},
+  handleProblemClose: () => {},
   updateProblem: () => new Promise(() => {}),
-  problemOpen: false,
-  setProblemOpen: () => {},
-  problem: null,
-  setProblem: () => {},
   orderBy: "startTimeEN",
   setOrderBy: () => {},
   fileLoading: false,
+  updateDepartment: () => new Promise(() => {}),
 });
 
 export function UserContextProvider(props: Props) {
@@ -122,10 +116,9 @@ export function UserContextProvider(props: Props) {
     setShowProblemDialog(u);
   };
 
-  const [currentProblem, setCurrentProblem] =
-    useState<Partial<IProblem> | null>(null);
+  const [currentProblem, setCurrentProblem] = useState<IProblem | null>(null);
 
-  const updateCurrentProblem = (u: Partial<IProblem> | null) => {
+  const updateCurrentProblem = (u: IProblem | null) => {
     setCurrentProblem(u);
   };
 
@@ -226,8 +219,6 @@ export function UserContextProvider(props: Props) {
     }
   };
 
-  const [problemOpen, setProblemOpen] = useState(false);
-  const [problem, setProblem] = useState<IProblem | null>(null);
   const [fileLoading] = useState(false);
   const [orderBy, setOrderBy] = useState<keyof IProblem>("startTimeEN");
 
@@ -260,15 +251,15 @@ export function UserContextProvider(props: Props) {
     updateShowLoader(false);
   };
 
-  const handleClose = () => {
+  const handleProblemClose = () => {
     if (fileLoading) {
       if (confirm("הקבצים שהעלת עדיין לא נשמרו, שנבטל?")) {
-        setProblemOpen(false);
-        setProblem(null);
+        updateShowProblemDialog(false);
+        setCurrentProblem(null);
       }
     } else {
-      setProblemOpen(false);
-      setProblem(null);
+      updateShowProblemDialog(false);
+      setCurrentProblem(null);
     }
   };
 
@@ -279,6 +270,7 @@ export function UserContextProvider(props: Props) {
         updateUser,
         departments,
         updateDepartments,
+        updateDepartment,
         showProblemDialog,
         updateShowProblemDialog,
         currentProblem,
@@ -300,12 +292,8 @@ export function UserContextProvider(props: Props) {
         problemTypes,
         updateProblemTypes,
         login,
-        handleClose,
+        handleProblemClose,
         updateProblem,
-        problemOpen,
-        setProblemOpen,
-        problem,
-        setProblem,
         orderBy,
         setOrderBy,
         fileLoading,
