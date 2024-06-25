@@ -28,8 +28,7 @@
     "react-router-dom": "^6.20.0",
     "recharts": "^2.10.1",
     "stylis": "^4.3.0",
-    "stylis-plugin-rtl": "^2.1.1",
-    "usehooks-ts": "^2.9.1"
+    "stylis-plugin-rtl": "^2.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

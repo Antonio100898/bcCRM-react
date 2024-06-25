@@ -31,7 +31,6 @@ export function ProblemNote({
   problem,
   onClick,
   ticketColor,
-  dense,
 }: ProblemNoteProps) {
   const [showLogs, setShowLogs] = useState(false);
 
@@ -46,9 +45,9 @@ export function ProblemNote({
           pt: 1,
           border: "0.1px solid rgba(0, 0, 0, 0.1)",
           boxShadow: theme.shadows[3],
+          cursor: "pointer"
         })}
       >
-        {dense && <>asd</>}
         <Box>
           <Box
             sx={{
@@ -60,10 +59,10 @@ export function ProblemNote({
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Tooltip title="שם העסק">
                 <Typography
-                  fontSize={22}
+                  fontSize={18}
                   fontWeight="bold"
                   sx={{
-                    maxWidth: problem!.ip ? 120 : 200,
+                    maxWidth: problem!.ip ? 200 : 300,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "pre",

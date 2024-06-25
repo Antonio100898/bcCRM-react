@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Masonry from "@mui/lab/Masonry";
 
-import { useMediaQuery } from "usehooks-ts";
-import { Typography, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { IProblem } from "../../Model";
 import { ProblemNote } from "./ProblemNote";
 import { useUser } from "../../Context/useUser";

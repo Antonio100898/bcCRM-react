@@ -1,24 +1,18 @@
 import {
-  AppBar,
-  Box,
   Collapse,
   Dialog,
   DialogContent,
-  IconButton,
   Slide,
-  Toolbar,
-  Typography,
   useMediaQuery,
   useTheme,
+  Box,
+  CircularProgress,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
 import { TransitionProps } from "@mui/material/transitions";
 import { SetStateAction, forwardRef, useEffect, useState, useRef } from "react";
-import dayjs from "dayjs";
 import { TransitionGroup } from "react-transition-group";
-import { PlaceInfoDialog } from "./PlaceInfoDialog";
+import { PlaceInfoDialog } from "../PlaceInfoDialog";
 import {
   IProblem,
   IPlace,
@@ -28,22 +22,23 @@ import {
   IProblemLog,
   ISearchProblem,
   IProblemType,
-} from "../Model";
-import { useUser } from "../Context/useUser";
-import { ProblemAlert } from "../components/Problems/ProblemAlert";
-import ProblemInfo from "../components/ProblemInfo";
-import ProblemActions from "../components/ProblemActions";
-import { fileService, problemService, workerService } from "../API/services";
-import { validateIp } from "../helpers/ipValidate";
-import CallIcon from "@mui/icons-material/Call";
-import { callService } from "../API/services/callService";
+} from "../../Model";
+import { useUser } from "../../Context/useUser";
+import { ProblemAlert } from "../../components/Problems/ProblemAlert";
+import ProblemInfo from "../../components/ProblemInfo";
+import ProblemActions from "../../components/ProblemActions";
+import { fileService, problemService, workerService } from "../../API/services";
+import { validateIp } from "../../helpers/ipValidate";
+import { callService } from "../../API/services/callService";
 import { AxiosProgressEvent } from "axios";
 import { useSnackbar } from "notistack";
-import { useConfirm } from "../Context/useConfirm";
-import { ProblemHistoryDialog } from "./ProblemHistory";
-import ProblemLogsDialog from "./ProblemLogsDialog";
-import { toBase64 } from "../helpers/toBase64";
-import FilesDialog from "./FilesDialog";
+import { useConfirm } from "../../Context/useConfirm";
+import { ProblemHistoryDialog } from "../ProblemHistory";
+import ProblemLogsDialog from "../ProblemLogsDialog";
+import { toBase64 } from "../../helpers/toBase64";
+import FilesDialog from "../FilesDialog";
+import DragActiveLayer from "./DragActiveLayer";
+import ProblemDialogHeader from "./ProblemDialogHeader";
 
 export type ProblemDialogProps = {
   open: boolean;
@@ -73,6 +68,7 @@ export function ProblemDialog({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const bigScreen = useMediaQuery("(min-width: 1200px)");
 
+  const [loading, setLoading] = useState(false);
   const [selfProblem, setSelfProblem] = useState<IProblem>(problem);
   const [placeDialogOpen, setPlaceDialogOpen] = useState(false);
   const [placeDialog, setPlaceDialog] = useState<IPlace | null>(null);
@@ -81,13 +77,13 @@ export function ProblemDialog({
   const [currentProblemTypesId, setCurrentProblemTypesId] = useState<
     number[] | undefined
   >([]);
-  const [problemIp, setProblemIp] = useState(selfProblem?.ip);
+  const [problemIp, setProblemIp] = useState(selfProblem.ip);
   const [tracking, setTracking] = useState<{
     historySummery: string;
     lastSupporter: string;
     trackingId: number;
   } | null>(null);
-  const [callDisabled, setCallDisabled] = useState(!selfProblem?.phone);
+  const [callDisabled, setCallDisabled] = useState(!selfProblem.phone);
   const [logs, setLogs] = useState<IProblemLog[]>([]);
   const [fileProgress, setFileProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
@@ -224,9 +220,9 @@ export function ProblemDialog({
     }
   };
 
-  useEffect(() => {
-    updateProblem(selfProblem);
-  }, [selfProblem.files]);
+  // useEffect(() => {
+  //   updateProblem(selfProblem);
+  // }, [selfProblem.files]);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -315,7 +311,7 @@ export function ProblemDialog({
   };
 
   useEffect(() => {
-    if (problemIp) onChange("ip", problemIp);
+    //if (problemIp) onChange("ip", problemIp);
   }, [problemIp]);
 
   const refreshMessages = async () => {
@@ -537,8 +533,12 @@ export function ProblemDialog({
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchProblemHistorySummary();
     fetchDepartments();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, []);
 
   const refreshDepartments = async () => {
@@ -575,87 +575,17 @@ export function ProblemDialog({
       onDragOver={handleDrop}
       onDrop={handleDrop}
     >
-      {dragActive && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 128, 255, 0.25)",
-            zIndex: 100000,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h3" color="white" fontWeight="bold">
-            שחרר קבצים כאן
-          </Typography>
-        </Box>
-      )}
-      <AppBar sx={{ position: "relative" }}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={onClose}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </IconButton>
-          <Box
-            sx={{
-              ml: 2,
-              flex: 1,
-            }}
-          >
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Typography
-                variant="h6"
-                component="div"
-                lineHeight={1}
-                fontWeight="bold"
-              >
-                {selfProblem?.placeName}
-              </Typography>
-              <IconButton size="small" onClick={openEditPlace}>
-                <EditIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: bigScreen ? "flex-start" : "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {selfProblem?.customerName && (
-                  <Typography variant="body1">
-                    {selfProblem.customerName}
-                  </Typography>
-                )}
-                {selfProblem?.startTimeEN && (
-                  <Typography variant="body1">
-                    {dayjs(selfProblem.startTimeEN).format("HH:mm DD/MM")}
-                  </Typography>
-                )}
-              </Box>
-              <Box sx={{ marginLeft: 5 }}>
-                {selfProblem?.phone && (
-                  <Typography variant="body1">{selfProblem.phone}</Typography>
-                )}
-              </Box>
-
-              <IconButton disabled={callDisabled} onClick={callClientPhone}>
-                <CallIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      {dragActive && <DragActiveLayer />}
+      <ProblemDialogHeader
+        callClientPhone={callClientPhone}
+        callDisabled={callDisabled}
+        customerName={selfProblem.customerName}
+        onClose={onClose}
+        openEditPlace={openEditPlace}
+        phone={selfProblem.phone}
+        placeName={selfProblem.placeName}
+        startTimeEN={selfProblem.startTimeEN}
+      />
       <DialogContent id="content" sx={{ p: 2 }}>
         <TransitionGroup sx={{ position: "relative" }}>
           {tracking?.historySummery && tracking.lastSupporter && (
@@ -666,51 +596,64 @@ export function ProblemDialog({
               />
             </Collapse>
           )}
-          {selfProblem && tracking && problemTypes && (
-            <>
-              <ProblemInfo
-                onOpenFilesDialog={onOpenFilesDialog}
-                setCallCustomerBack={setCallCustomerBack}
-                isLockEnable={isLockEnable()}
-                setEmergency={setEmergency}
-                setIsLocked={setIsLocked}
-                setTakeCare={setTakeCare}
-                bigScreen={bigScreen}
-                onIpChange={handleProblemIpChange}
-                problemIp={problemIp}
-                messages={messages}
-                refreshMessages={refreshMessages}
-                currentProblemTypesId={currentProblemTypesId}
-                handleProblemTypesChange={handleProblemTypesChange}
-                isChangeToWorkerEnable={isChangeToWorkerEnable}
-                onChange={onChange}
-                problemTypes={problemTypes}
-                selfProblem={selfProblem}
-                workerDepartments={workerDepartments}
-                workers={workers}
-                deleteFile={deleteFile}
-                fileInput={fileInput}
-                fileLoading={fileLoading}
-                fileProgress={fileProgress}
-                files={selfProblem.files}
-                handleUploadFile={handleUploadFile}
-                fileInputRef={fileInputRef}
-              />
-              <ProblemActions
-                bigScreen={bigScreen}
-                showProblemHistory={showProblemHistory}
-                refreshDepartments={refreshDepartments}
-                trackingId={tracking?.trackingId}
-                onDialogClose={onClose}
-                user={user}
-                currentProblemTypesId={currentProblemTypesId}
-                problem={selfProblem}
-                problemTypes={problemTypes}
-                setSelfProblemDialog={setSelfProblem}
-                updateProblem={updateProblem}
-                updateProblemTracking={updateProblemTracking}
-              />
-            </>
+          {loading ? (
+            <CircularProgress
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          ) : (
+            selfProblem &&
+            tracking &&
+            problemTypes && (
+              <>
+                <ProblemInfo
+                  onOpenFilesDialog={onOpenFilesDialog}
+                  setCallCustomerBack={setCallCustomerBack}
+                  isLockEnable={isLockEnable()}
+                  setEmergency={setEmergency}
+                  setIsLocked={setIsLocked}
+                  setTakeCare={setTakeCare}
+                  bigScreen={bigScreen}
+                  onIpChange={handleProblemIpChange}
+                  problemIp={problemIp}
+                  messages={messages}
+                  refreshMessages={refreshMessages}
+                  currentProblemTypesId={currentProblemTypesId}
+                  handleProblemTypesChange={handleProblemTypesChange}
+                  isChangeToWorkerEnable={isChangeToWorkerEnable}
+                  onChange={onChange}
+                  problemTypes={problemTypes}
+                  selfProblem={selfProblem}
+                  workerDepartments={workerDepartments}
+                  workers={workers}
+                  deleteFile={deleteFile}
+                  fileInput={fileInput}
+                  fileLoading={fileLoading}
+                  fileProgress={fileProgress}
+                  files={selfProblem.files}
+                  handleUploadFile={handleUploadFile}
+                  fileInputRef={fileInputRef}
+                />
+                <ProblemActions
+                  bigScreen={bigScreen}
+                  showProblemHistory={showProblemHistory}
+                  refreshDepartments={refreshDepartments}
+                  trackingId={tracking?.trackingId}
+                  onDialogClose={onClose}
+                  user={user}
+                  currentProblemTypesId={currentProblemTypesId}
+                  problem={selfProblem}
+                  problemTypes={problemTypes}
+                  setSelfProblemDialog={setSelfProblem}
+                  updateProblem={updateProblem}
+                  updateProblemTracking={updateProblemTracking}
+                />
+              </>
+            )
           )}
         </TransitionGroup>
       </DialogContent>

@@ -21,7 +21,7 @@ import SpeedDialAddNumber from "./components/SpeedDialMenu/SpeedDialAddNumber";
 import SpeedDialAnswerPhone from "./components/SpeedDialMenu/SpeedDialAnswerPhone";
 import Search from "./components/Search/Search";
 import { useUser } from "./Context/useUser";
-import { ProblemDialog } from "./Dialogs/ProblemDialog";
+import { ProblemDialog } from "./Dialogs/ProblemDialog/ProblemDialog";
 
 const drawerWidth = 240;
 
