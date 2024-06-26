@@ -1,15 +1,22 @@
-import "./WorkerInfo.styles.css";
-import { TextField, Tooltip, IconButton } from "@mui/material";
+import {
+  TextField,
+  Typography,
+  Box,
+  Stack,
+  Divider,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { useEffect, useState } from "react";
-import SaveIcon from "@mui/icons-material/Save";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
 import { IWorker } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
-import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useUser } from "../../Context/useUser";
 import { workerService } from "../../API/services";
+import { TextFieldsTwoTone } from "@mui/icons-material";
 
 export default function WorkerInfo() {
   const { enqueueSnackbar } = useSnackbar();
@@ -100,167 +107,133 @@ export default function WorkerInfo() {
     }
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <div style={{ marginRight: 10, marginLeft: 10 }}>
+    <Box sx={{ maxWidth: "1000px", margin: "auto", px: 2, mb: 10 }}>
       <WorkersHeader />
       {currentWorker && (
-        <div>
-          <div className="row right">
-            <p className="sectionHeader center">פרטים אישיים</p>
-          </div>
-          <div className="row rowInfo">
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
-                label="שם פרטי"
-                value={currentWorker.firstName}
-                onChange={(e) => onChange("firstName", e.target.value)}
-              />
-            </div>
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
-                label="שם משפחה"
-                value={currentWorker.lastName}
-                onChange={(e) => onChange("lastName", e.target.value)}
-              />
-            </div>
-            <div className="col-xs-6 col-md-6 col-lg-2">
-              <NivTextField
-                className="inputBox"
-                fullWidth
-                label="תעודת זהות"
-                value={currentWorker.teudatZehut}
-                onChange={(e) => onChange("teudatZehut", e.target.value)}
-              />
-            </div>
-            <div
-              className="col-xs-6 col-md-6 col-lg-4"
-              style={{ display: "flex" }}
-            >
-              <img
-                src={
-                  currentWorker && IMAGES_PATH_WORKERS + currentWorker.imgPath
-                }
-                alt="iamge"
-                style={{
-                  width: 50,
-                  height: 50,
-                  margin: 5,
-                  borderRadius: 50,
-                }}
-              />
-              <div>
-                <input
-                  type="file"
-                  name="myImage"
-                  style={{ marginTop: "15px" }}
-                  onChange={async (event) => {
-                    if (event) {
-                      if (event.target) {
-                        if (event.target.files) {
-                          const b = await toBase64(event.target.files[0]);
-                          onChange("imgContent", b);
-                        }
-                      }
-                    }
-                  }}
+        <Stack gap={2}>
+          <Box>
+            <Typography sx={{ mb: 3 }} variant="h4">
+              פרטים אישיים
+            </Typography>
+            <Box>
+              <Stack direction={isMobile ? "column" : "row"} gap={3}>
+                <TextField
+                  variant="filled"
+                  fullWidth={isMobile}
+                  label="שם פרטי"
+                  value={currentWorker.firstName}
+                  onChange={(e) => onChange("firstName", e.target.value)}
                 />
+                <TextField
+                  variant="filled"
+                  label="שם משפחה"
+                  value={currentWorker.lastName}
+                  onChange={(e) => onChange("lastName", e.target.value)}
+                />
+                <TextField
+                  variant="filled"
+                  label="תעודת זהות"
+                  value={currentWorker.teudatZehut}
+                  onChange={(e) => onChange("teudatZehut", e.target.value)}
+                />
+              </Stack>
+              <div style={{ display: "flex" }}>
+                <div>
+                  <Button sx={{ mt: 2 }} variant="contained" component="label">
+                    העלת התמונה
+                    <input
+                      type="file"
+                      name="myImage"
+                      hidden
+                      onChange={async (event) => {
+                        if (event) {
+                          if (event.target) {
+                            if (event.target.files) {
+                              const b = await toBase64(event.target.files[0]);
+                              onChange("imgContent", b);
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="row right">
-            <p className="sectionHeader">פרטי התחברות</p>
-          </div>
-          <div className="row rowInfo">
-            <div className="col-xs-12 col-md-6 col-lg-3">
+            </Box>
+          </Box>
+          <Box>
+            <Typography sx={{ mb: 3 }} variant="h4">
+              פרטי התחברות
+            </Typography>
+            <Stack direction={isMobile ? "column" : "row"} gap={3}>
               <TextField
-                className="inputBox"
-                fullWidth
+                variant="filled"
                 label="שם משתמש"
                 value={currentWorker.userName}
                 onChange={(e) => onChange("userName", e.target.value)}
               />
-            </div>
-            <div className="col-xs-12 col-md-6 col-lg-3">
               <TextField
-                className="inputBox"
-                fullWidth
+                variant="filled"
                 label="סיסמה"
                 value={currentWorker.password}
                 onChange={(e) => onChange("password", e.target.value)}
               />
-            </div>
-          </div>
-
-          <div className="row right">
-            <p className="sectionHeader">טלפון/שלוחה</p>
-          </div>
-          <div className="row rowInfo">
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
+            </Stack>
+          </Box>
+          <Box>
+            <Typography sx={{ mb: 3 }} variant="h4">
+              טלפון\שלוחה
+            </Typography>
+            <Stack direction={isMobile ? "column" : "row"} gap={3}>
+              <TextField
+                variant="filled"
                 label="טלפון"
                 value={currentWorker.phone}
                 onChange={(e) => onChange("phone", e.target.value)}
               />
-            </div>
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
+
+              <TextField
+                variant="filled"
                 label="שלוחה"
                 value={currentWorker.shluha}
                 onChange={(e) => onChange("shluha", e.target.value)}
               />
-            </div>
-          </div>
-
-          <div className="row right">
-            <p className="sectionHeader">רכב</p>
-          </div>
-          <div className="row rowInfo">
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
+            </Stack>
+          </Box>
+          <Box>
+            <Typography sx={{ mb: 3 }} variant="h4">
+              רכב
+            </Typography>
+            <Stack direction={isMobile ? "column" : "row"} gap={3}>
+              <TextField
+                variant="filled"
                 label="סוג רכב"
                 value={currentWorker.carType}
                 onChange={(e) => onChange("carType", e.target.value)}
               />
-            </div>
-            <div className="col-xs-12 col-md-6 col-lg-3">
-              <NivTextField
-                className="inputBox"
-                fullWidth
+
+              <TextField
+                variant="filled"
                 label="מספר רכב"
                 value={currentWorker.carNumber}
                 onChange={(e) => onChange("carNumber", e.target.value)}
               />
-            </div>
-          </div>
-          <div className="left">
-            <Tooltip title="שמור">
-              <IconButton
-                onClick={saveWorker}
-                style={{
-                  background: "#F3BE80",
-                  borderRadius: "12px",
-                  margin: 5,
-                }}
-              >
-                <SaveIcon
-                  style={{ fontSize: 40, color: "rgba(255, 255, 255, 0.9)" }}
-                />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </div>
+            </Stack>
+          </Box>
+
+          <Button
+            sx={{ my: 2, py: 2 }}
+            variant="contained"
+            onClick={saveWorker}
+          >
+            שמור
+          </Button>
+        </Stack>
       )}
-    </div>
+    </Box>
   );
 }

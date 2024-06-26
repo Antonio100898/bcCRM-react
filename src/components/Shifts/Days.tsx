@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
+import { Typography, Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useConfirm } from "../../Context/useConfirm";
 import { IDayInfo } from "../../Model";
 import { shiftService } from "../../API/services";
-import styles from "./Shifts.module.css";
 
 export type Props = {
   weekDaysAll: IDayInfo[];
@@ -76,23 +75,23 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   };
 
   return (
-    <div className={styles.days_container}>
+    <Stack direction="row">
       {weekDays &&
         weekDays.map((day: IDayInfo) => (
-          <div className={styles.day_container} key={day.dayValue}>
+          <Box flex={1} key={day.dayValue}>
             <Typography
+              textAlign="center"
               fontSize={18}
-              variant="h5"
-              fontFamily="Rubik"
+              variant="h6"
               fontWeight="bold"
             >
               {day.dayName}&apos;
             </Typography>
-            <Typography fontSize={16} variant="h6" fontFamily="Rubik">
+            <Typography textAlign="center" fontSize={16} variant="h6">
               {day.dayValueEN.replaceAll("00:00", "")}
             </Typography>
-          </div>
+          </Box>
         ))}
-    </div>
+    </Stack>
   );
 }

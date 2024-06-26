@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { IconButton, Tooltip } from '@mui/material';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { useState } from "react";
+import { IconButton, Tooltip } from "@mui/material";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import dayjs, { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 
 export type Props = {
   setDate: (date: Date) => void;
@@ -45,7 +45,7 @@ export default function DateSelect({ setDate }: Props) {
   };
 
   return (
-    <div style={{ display: 'flex', flex: 'row', justifyContent: 'center' }}>
+    <div style={{ display: "flex", flex: "row", justifyContent: "center" }}>
       <Tooltip title="שבוע אחורה">
         <IconButton
           onClick={() => {
@@ -55,13 +55,13 @@ export default function DateSelect({ setDate }: Props) {
         >
           <ArrowLeftIcon
             style={{
-              height: '56px',
-              fontSize: '50px',
-              background: '#FFF5E9',
-              border: '1px solid rgba(0, 0, 0, 0.5)',
-              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-              borderRadius: '8px',
-              transform: 'matrix(-1, 0, 0, 1, 0, 0)',
+              height: "56px",
+              fontSize: "50px",
+              background: "#FFF5E9",
+              border: "1px solid rgba(0, 0, 0, 0.5)",
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+              transform: "matrix(-1, 0, 0, 1, 0, 0)",
             }}
           />
         </IconButton>
@@ -75,16 +75,7 @@ export default function DateSelect({ setDate }: Props) {
             slotProps={{
               textField: {
                 sx: {
-                  fontFamily: 'Rubik',
-                  fontStyle: 'normal',
-                  fontWeight: '300',
-                  fontSize: '26px',
-                  lineHeight: '38px',
-                  textAlign: 'center',
-
-                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-
-                  padding: '8px',
+                  padding: "8px",
                 },
               },
             }}
@@ -101,13 +92,13 @@ export default function DateSelect({ setDate }: Props) {
         >
           <ArrowRightIcon
             style={{
-              height: '56px',
-              fontSize: '50px',
-              background: '#FFF5E9',
-              border: '1px solid rgba(0, 0, 0, 0.5)',
-              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-              borderRadius: '8px',
-              transform: 'matrix(-1, 0, 0, 1, 0, 0)',
+              height: "56px",
+              fontSize: "50px",
+              background: "#FFF5E9",
+              border: "1px solid rgba(0, 0, 0, 0.5)",
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+              transform: "matrix(-1, 0, 0, 1, 0, 0)",
             }}
           />
         </IconButton>

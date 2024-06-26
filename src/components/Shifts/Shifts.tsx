@@ -13,14 +13,13 @@ import {
 import IconButton from "@mui/material/IconButton";
 import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
 import { useSnackbar } from "notistack";
-import { ShiftsContainer } from "../../components/Shifts/ShiftsContainer";
 import Days from "./Days";
 import DateSelect from "../../components/Shifts/DateSelect";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { shiftService } from "../../API/services";
 import { IDayInfo, IshiftWeek } from "../../Model";
-import styles from "./Shifts.module.css";
+import ShiftsContainer from "./ShiftsContainer";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -154,9 +153,12 @@ export default function Shifts() {
   };
 
   return (
-    <div className={styles.shifts_container}>
-      <h2 className={styles.title}>סידור משמרות</h2>
-      <div
+    <div>
+      <Typography textAlign="center" variant="h2" fontWeight="bold">
+        סידור משמרות
+      </Typography>
+      <DateSelect setDate={setStartDate} />
+      {/* <div
         style={{
           display: "flex",
           flex: "row",
@@ -198,77 +200,76 @@ export default function Shifts() {
             />
           </IconButton>
         </Tooltip>
-      </div>
+      </div> */}
 
-      <DateSelect setDate={setStartDate} />
       <Days weekDaysAll={myWeekDays} shiftGroupId={shiftGroupId} />
-      <div className={styles.comment}>
+      <div>
         <Typography fontSize={18} fontWeight="bold">
           הערה של יום:
         </Typography>
         <TextField />
       </div>
-      <ButtonGroup sx={{mt: "22px", fontSize: "20px"}}>
+      <ButtonGroup sx={{ mt: "22px", fontSize: "20px" }}>
         <Button variant="contained">בוקר</Button>
         <Button>צהריים</Button>
         <Button>ערב</Button>
         <Button>לילה</Button>
       </ButtonGroup>
-      {/* <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 20 }}>
         {shifts && (
-              <div>
-                <ShiftsContainer
-                  refreshList={fetchShifts}
-                  shiftsList={shifts}
-                  startOfWeek={startDate}
-                  title="בוקר"
-                  shiftTypeId={1}
-                  showDetails={showShiftDetails}
-                  shiftGroupId={shiftGroupId}
-                />
+          <div>
+            <ShiftsContainer
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="בוקר"
+              shiftTypeId={1}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-                <ShiftsContainer
-                  refreshList={fetchShifts}
-                  shiftsList={shifts}
-                  startOfWeek={startDate}
-                  title="צהריים"
-                  shiftTypeId={2}
-                  showDetails={showShiftDetails}
-                  shiftGroupId={shiftGroupId}
-                />
+            <ShiftsContainer
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="צהריים"
+              shiftTypeId={2}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-                <ShiftsContainer
-                  refreshList={fetchShifts}
-                  shiftsList={shifts}
-                  startOfWeek={startDate}
-                  title="ערב"
-                  shiftTypeId={3}
-                  showDetails={showShiftDetails}
-                  shiftGroupId={shiftGroupId}
-                />
+            <ShiftsContainer
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="ערב"
+              shiftTypeId={3}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-                <ShiftsContainer
-                  refreshList={fetchShifts}
-                  shiftsList={shifts}
-                  startOfWeek={startDate}
-                  title="לילה"
-                  shiftTypeId={4}
-                  showDetails={showShiftDetails}
-                  shiftGroupId={shiftGroupId}
-                />
+            <ShiftsContainer
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="לילה"
+              shiftTypeId={4}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-                <ShiftsContainer
-                  refreshList={fetchShifts}
-                  shiftsList={shifts}
-                  startOfWeek={startDate}
-                  title="בלתמ"
-                  shiftTypeId={5}
-                  showDetails={showShiftDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              </div>
-            )}
-      </div> */}
+            <ShiftsContainer
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="בלתמ"
+              shiftTypeId={5}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
