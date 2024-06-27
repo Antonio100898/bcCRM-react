@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
 import ShiftEdit from "./ShiftEdit";
+import { Box, Typography, Stack } from "@mui/material";
+import { color_blue, color_yellow_light } from "../../Consts/Consts";
 
 export type Props = {
   shiftsList: IshiftWeek[] | null;
@@ -58,42 +60,22 @@ export function ShiftsContainer({
   };
 
   return (
-    <div
-      style={{
-        marginRight: 5,
-        marginTop: "40px",
-        border: "1px solid #000000",
-        borderRadius: "20px",
-        marginLeft: 20,
-        position: "relative",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "-20px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
+    <div>
+      <Box
+        sx={{
+          backgroundColor: color_blue,
+          color: color_yellow_light,
+          borderRadius: "5px",
+          py: 0.5,
+          mt: 2,
         }}
       >
-        <p
-          style={{
-            fontFamily: "Rubik",
-            fontStyle: "normal",
-            fontWeight: "700",
-            fontSize: "26px",
-            lineHeight: "35px",
-            textAlign: "center",
-            width: "300px",
-            background: "#f5f5f5",
-          }}
-        >
+        <Typography fontWeight="bold" fontSize={24} textAlign="center">
           {title}
-        </p>
-      </div>
-      <div style={{ padding: 40 }}>
-        <div
+        </Typography>
+      </Box>
+      <Box mt={1}>
+        {/* <div
           style={{
             display: "flex",
             flex: "row",
@@ -110,7 +92,7 @@ export function ShiftsContainer({
             color: "#000000",
           }}
         >
-          {/* <Tooltip title="הוסף חדש">
+          <Tooltip title="הוסף חדש">
             <IconButton onClick={AddNewShift}>
               <SaveIcon
                 style={{
@@ -119,10 +101,10 @@ export function ShiftsContainer({
                 }}
               />
             </IconButton>
-          </Tooltip> */}
-        </div>
+          </Tooltip>
+        </div> */}
         {shifts && shifts.length > 0 && (
-          <div>
+          <Stack gap={2}>
             {shifts &&
               shifts.map((jobTypes) => {
                 return (
@@ -140,9 +122,9 @@ export function ShiftsContainer({
                   />
                 );
               })}
-          </div>
+          </Stack>
         )}
-      </div>
+      </Box>
 
       <ShiftEdit
         handleClose={handleCloseAddNewShift}

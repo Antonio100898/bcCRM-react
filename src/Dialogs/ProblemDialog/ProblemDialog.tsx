@@ -25,8 +25,8 @@ import {
 } from "../../Model";
 import { useUser } from "../../Context/useUser";
 import { ProblemAlert } from "../../components/Problems/ProblemAlert";
-import ProblemInfo from "../../components/ProblemInfo";
-import ProblemActions from "../../components/ProblemActions";
+import ProblemInfo from "./ProblemDialogInfo";
+import ProblemActions from "./ProblemDialogActions";
 import { fileService, problemService, workerService } from "../../API/services";
 import { validateIp } from "../../helpers/ipValidate";
 import { callService } from "../../API/services/callService";
@@ -577,14 +577,13 @@ export function ProblemDialog({
     >
       {dragActive && <DragActiveLayer />}
       <ProblemDialogHeader
-        callClientPhone={callClientPhone}
-        callDisabled={callDisabled}
         customerName={selfProblem.customerName}
         onClose={onClose}
         openEditPlace={openEditPlace}
         phone={selfProblem.phone}
         placeName={selfProblem.placeName}
         startTimeEN={selfProblem.startTimeEN}
+        workerCreateName={selfProblem.workerCreateName}
       />
       <DialogContent id="content" sx={{ p: 2 }}>
         <TransitionGroup sx={{ position: "relative" }}>
@@ -611,6 +610,7 @@ export function ProblemDialog({
             problemTypes && (
               <>
                 <ProblemInfo
+                  callClientPhone={callClientPhone}
                   onOpenFilesDialog={onOpenFilesDialog}
                   setCallCustomerBack={setCallCustomerBack}
                   isLockEnable={isLockEnable()}
@@ -637,6 +637,7 @@ export function ProblemDialog({
                   files={selfProblem.files}
                   handleUploadFile={handleUploadFile}
                   fileInputRef={fileInputRef}
+                  callDisabled={callDisabled}
                 />
                 <ProblemActions
                   bigScreen={bigScreen}

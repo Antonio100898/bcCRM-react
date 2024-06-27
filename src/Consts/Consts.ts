@@ -21,3 +21,6 @@ export const sickdaysImagePathX =
   "https://beecomm.azurewebsites.net/Pics/sickDays/";
 
 export const sickdaysImagePath = URL + "Pics/sickDays/";
+
+export const color_blue = "#160B57";
+export const color_yellow_light = "#FFDE8B";

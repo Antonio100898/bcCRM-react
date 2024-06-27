@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import FilesContainer from "../FilesContainer/FilesContainer";
+import FilesContainer from "../../components/FilesContainer/FilesContainer";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
   onOpenFilesDialog: () => void;
 };
 
-export default function ProblemFiles({
+export default function ProblemDialogFiles({
   fileInput,
   fileLoading,
   files,

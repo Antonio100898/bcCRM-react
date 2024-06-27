@@ -1,17 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  ButtonGroup,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import SurfingOutlinedIcon from "@mui/icons-material/SurfingOutlined";
+import { Typography, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import Days from "./Days";
 import DateSelect from "../../components/Shifts/DateSelect";
@@ -44,6 +32,9 @@ export default function Shifts() {
   const [shiftGroupId, setShiftGroupId] = useState(
     user?.department === 4 ? 2 : 1
   );
+
+  const theme = useTheme();
+  const ibMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const appendDefultWeekShifts = async () => {
     try {
@@ -153,8 +144,8 @@ export default function Shifts() {
   };
 
   return (
-    <div>
-      <Typography textAlign="center" variant="h2" fontWeight="bold">
+    <Box >
+      <Typography px={2} variant={ibMobile ? "h5" : "h4"} fontWeight="bold" ml="2%">
         סידור משמרות
       </Typography>
       <DateSelect setDate={setStartDate} />
@@ -203,73 +194,71 @@ export default function Shifts() {
       </div> */}
 
       <Days weekDaysAll={myWeekDays} shiftGroupId={shiftGroupId} />
-      <div>
+      {/* <div>
         <Typography fontSize={18} fontWeight="bold">
           הערה של יום:
         </Typography>
         <TextField />
-      </div>
-      <ButtonGroup sx={{ mt: "22px", fontSize: "20px" }}>
+      </div> */}
+      {/* <ButtonGroup sx={{ mt: "22px", fontSize: "20px" }}>
         <Button variant="contained">בוקר</Button>
         <Button>צהריים</Button>
         <Button>ערב</Button>
         <Button>לילה</Button>
-      </ButtonGroup>
-      <div style={{ marginTop: 20 }}>
-        {shifts && (
-          <div>
-            <ShiftsContainer
-              refreshList={fetchShifts}
-              shiftsList={shifts}
-              startOfWeek={startDate}
-              title="בוקר"
-              shiftTypeId={1}
-              showDetails={showShiftDetails}
-              shiftGroupId={shiftGroupId}
-            />
+      </ButtonGroup> */}
+      {shifts && (
+        <Box my={2} px={2}>
+          <ShiftsContainer
+            refreshList={fetchShifts}
+            shiftsList={shifts}
+            startOfWeek={startDate}
+            title="בוקר"
+            shiftTypeId={1}
+            showDetails={showShiftDetails}
+            shiftGroupId={shiftGroupId}
+          />
 
-            <ShiftsContainer
-              refreshList={fetchShifts}
-              shiftsList={shifts}
-              startOfWeek={startDate}
-              title="צהריים"
-              shiftTypeId={2}
-              showDetails={showShiftDetails}
-              shiftGroupId={shiftGroupId}
-            />
+          <ShiftsContainer
+            refreshList={fetchShifts}
+            shiftsList={shifts}
+            startOfWeek={startDate}
+            title="צהריים"
+            shiftTypeId={2}
+            showDetails={showShiftDetails}
+            shiftGroupId={shiftGroupId}
+          />
 
-            <ShiftsContainer
-              refreshList={fetchShifts}
-              shiftsList={shifts}
-              startOfWeek={startDate}
-              title="ערב"
-              shiftTypeId={3}
-              showDetails={showShiftDetails}
-              shiftGroupId={shiftGroupId}
-            />
+          <ShiftsContainer
+            refreshList={fetchShifts}
+            shiftsList={shifts}
+            startOfWeek={startDate}
+            title="ערב"
+            shiftTypeId={3}
+            showDetails={showShiftDetails}
+            shiftGroupId={shiftGroupId}
+          />
 
-            <ShiftsContainer
-              refreshList={fetchShifts}
-              shiftsList={shifts}
-              startOfWeek={startDate}
-              title="לילה"
-              shiftTypeId={4}
-              showDetails={showShiftDetails}
-              shiftGroupId={shiftGroupId}
-            />
+          <ShiftsContainer
+            refreshList={fetchShifts}
+            shiftsList={shifts}
+            startOfWeek={startDate}
+            title="לילה"
+            shiftTypeId={4}
+            showDetails={showShiftDetails}
+            shiftGroupId={shiftGroupId}
+          />
 
-            <ShiftsContainer
-              refreshList={fetchShifts}
-              shiftsList={shifts}
-              startOfWeek={startDate}
-              title="בלתמ"
-              shiftTypeId={5}
-              showDetails={showShiftDetails}
-              shiftGroupId={shiftGroupId}
-            />
-          </div>
-        )}
-      </div>
-    </div>
+          <ShiftsContainer
+            refreshList={fetchShifts}
+            shiftsList={shifts}
+            startOfWeek={startDate}
+            title="בלתמ"
+            shiftTypeId={5}
+            showDetails={showShiftDetails}
+            shiftGroupId={shiftGroupId}
+          />
+        </Box>
+      )}
+    </Box>
   );
 }

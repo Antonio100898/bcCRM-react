@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip, Box } from "@mui/material";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import dayjs, { Dayjs } from "dayjs";
@@ -45,7 +45,15 @@ export default function DateSelect({ setDate }: Props) {
   };
 
   return (
-    <div style={{ display: "flex", flex: "row", justifyContent: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flex: "row",
+        justifyContent: "center",
+        margin: "0.5rem 0",
+        px: 2,
+      }}
+    >
       <Tooltip title="שבוע אחורה">
         <IconButton
           onClick={() => {
@@ -103,6 +111,6 @@ export default function DateSelect({ setDate }: Props) {
           />
         </IconButton>
       </Tooltip>
-    </div>
+    </Box>
   );
 }

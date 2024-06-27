@@ -5,6 +5,9 @@ import {
   OutlinedInput,
   Select,
   Avatar,
+  Stack,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import {
@@ -14,16 +17,15 @@ import {
   IProblemType,
   IMsgLine,
 } from "../../Model";
-import FormInputWrapper from "../BaseCompnents/FormInputWrapper";
-import ProblemFiles from "../ProblemFiles";
-import { NivTextField } from "../BaseCompnents/NivTextField/NivTextField";
-import CustomInput from "../customInput/customInput";
-import ProblemStatuses from "../ProblemStatuses/ProblemStatuses";
-import { WorkersList } from "../WorkersList/WorkersList";
+import FormInputWrapper from "../../components/BaseCompnents/FormInputWrapper";
+import ProblemFiles from "./ProblemDialogFiles";
+import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
+import CustomInput from "../../components/customInput/customInput";
 import { useState, useEffect } from "react";
-import CustomCollapseTrigger from "../CustomCollapseTrigger/CustomCollapse";
+import CustomCollapseTrigger from "../../components/CustomCollapseTrigger/CustomCollapse";
 import { useUser } from "../../Context/useUser";
-import ProblemMessages from "../ProblemMessages/ProblemMessages";
+import ProblemMessages from "./ProblemMessages";
+import CallIcon from "@mui/icons-material/Call";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -54,9 +56,11 @@ type Props = {
   setTakeCare: () => void;
   setCallCustomerBack: () => void;
   onOpenFilesDialog: () => void;
+  callDisabled: boolean;
+  callClientPhone: () => Promise<void>;
 };
 
-export default function ProblemInfo({
+export default function ProblemDialogInfo({
   currentProblemTypesId,
   handleProblemTypesChange,
   isChangeToWorkerEnable,
@@ -83,6 +87,8 @@ export default function ProblemInfo({
   setTakeCare,
   onOpenFilesDialog,
   setCallCustomerBack,
+  callClientPhone,
+  callDisabled,
 }: Props) {
   const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
   const [openFilesCollapse, setOpenFilesCollapse] = useState(false);
@@ -109,6 +115,32 @@ export default function ProblemInfo({
   return (
     <Box sx={{ marginBottom: 6 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
+        <Box>
+          <Box>
+            {selfProblem.phone && (
+              <>
+                <Typography component="span" variant="h6">
+                  {selfProblem.phone}
+                </Typography>
+                <span>
+                  <IconButton disabled={callDisabled} onClick={callClientPhone}>
+                    <CallIcon />
+                  </IconButton>
+                </span>
+              </>
+            )}
+            <Box>
+              <Typography component="span" variant="h6">
+                {selfProblem.ip}
+              </Typography>
+              <span>
+                <IconButton disabled={callDisabled} onClick={callClientPhone}>
+                  <CallIcon />
+                </IconButton>
+              </span>
+            </Box>
+          </Box>
+        </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
           {user?.workerType !== 0 && (
             <FormInputWrapper label="IP">
@@ -137,7 +169,6 @@ export default function ProblemInfo({
               })}
             </Select>
           </FormInputWrapper>
-
           <FormInputWrapper label="עובד מטפל">
             <Select
               fullWidth
@@ -166,6 +197,22 @@ export default function ProblemInfo({
             value={currentProblemTypesId}
             onChange={handleProblemTypesChange}
             input={<OutlinedInput label="Chip" />}
+            sx={{ position: "relative" }}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: "bottom",
+                horizontal: "left",
+              },
+              transformOrigin: {
+                vertical: "top",
+                horizontal: "left",
+              },
+              PaperProps: {
+                sx: {
+                  minWidth: "max-content !important",
+                },
+              },
+            }}
             renderValue={(selected) => (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                 {selected.map((value) => (
@@ -187,9 +234,7 @@ export default function ProblemInfo({
                           marginRight: "5px",
                           border: "1px solid black",
                         }}
-                      >
-                        {" "}
-                      </Avatar>
+                      ></Avatar>
                     }
                   />
                 ))}
@@ -206,12 +251,12 @@ export default function ProblemInfo({
               })}
           </Select>
         </FormInputWrapper>
-        <WorkersList
+        {/* <WorkersList
           workersSelected={selfProblem.toWorkers || []}
           setWorkersSelected={(selected) => onChange("toWorkers", selected)}
-        />
+        /> */}
 
-        <Box
+        <Stack
           sx={{
             display: "flex",
             flexDirection: bigScreen ? "row" : "column",
@@ -220,7 +265,7 @@ export default function ProblemInfo({
             alignItems: "center",
           }}
         >
-          <Box sx={{ width: bigScreen ? "60%" : "100%" }}>
+          <Box sx={{ flex: 1, width: "100%" }}>
             <CustomInput
               labelProps={{
                 fontSize: 22,
@@ -240,6 +285,25 @@ export default function ProblemInfo({
             />
           </Box>
           <Box sx={{ flex: 1, width: "100%" }}>
+            <CustomInput
+              labelProps={{
+                fontSize: 22,
+              }}
+              onChange={(e) => onChange("solution", e.target.value)}
+              label="תיאור פתרון"
+              fullWidth
+              multiline
+              type="text"
+              value={selfProblem?.solution}
+              sx={{
+                "& .MuiInputBase-root": {
+                  minHeight: "200px",
+                  alignItems: "flex-start",
+                },
+              }}
+            />
+          </Box>
+          {/* <Box sx={{ flex: 1, width: "100%" }}>
             <ProblemStatuses
               bigScreen={bigScreen}
               setCallCustomerBack={setCallCustomerBack}
@@ -252,8 +316,8 @@ export default function ProblemInfo({
               setTakeCare={setTakeCare}
               takingCare={selfProblem.takingCare}
             />
-          </Box>
-        </Box>
+          </Box> */}
+        </Stack>
         <CustomCollapseTrigger
           counter={selfProblem.files?.length || 0}
           open={openFilesCollapse}

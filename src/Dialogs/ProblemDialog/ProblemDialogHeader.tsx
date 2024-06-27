@@ -5,38 +5,38 @@ import {
   AppBar,
   IconButton,
   useMediaQuery,
+  Stack,
+  Paper,
 } from "@mui/material";
-import CallIcon from "@mui/icons-material/Call";
+
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 
 type Props = {
   onClose: () => void;
-  callDisabled: boolean;
   openEditPlace: () => void;
   placeName: string;
   customerName: string;
   phone: string;
   startTimeEN: Date | string;
-  callClientPhone: () => Promise<void>;
+  workerCreateName: string;
 };
 
 const ProblemDialogHeader = ({
   onClose,
-  callDisabled,
   openEditPlace,
-  callClientPhone,
   customerName,
-  phone,
   placeName,
   startTimeEN,
+  workerCreateName,
 }: Props) => {
   const bigScreen = useMediaQuery("(min-width: 1200px)");
   return (
     <AppBar sx={{ position: "relative" }}>
-      <Toolbar>
+      <Toolbar sx={{ height: "100px", backgroundColor: "#f5f5f5" }}>
         <IconButton
+        sx={{mr:2}}
           edge="start"
           color="inherit"
           onClick={onClose}
@@ -44,51 +44,36 @@ const ProblemDialogHeader = ({
         >
           <CloseIcon />
         </IconButton>
-        <Box
-          sx={{
-            ml: 2,
-            flex: 1,
-          }}
-        >
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-            <Typography
-              variant="h6"
-              component="div"
-              lineHeight={1}
-              fontWeight="bold"
-            >
-              {placeName}
-            </Typography>
-            <IconButton size="small" onClick={openEditPlace}>
-              <EditIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: bigScreen ? "flex-start" : "space-between",
-              alignItems: "center",
-            }}
+        <Stack direction="row" justifyContent="space-between" width="100%">
+          <Stack
+            textAlign="center"
+            width="max-content"
+            gap={1}
+            justifyContent="center"
           >
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {customerName && (
-                <Typography variant="body1">{customerName}</Typography>
-              )}
-              {startTimeEN && (
-                <Typography variant="body1">
-                  {dayjs(startTimeEN).format("HH:mm DD/MM")}
-                </Typography>
-              )}
-            </Box>
-            <Box sx={{ marginLeft: 5 }}>
-              {phone && <Typography variant="body1">{phone}</Typography>}
-            </Box>
-
-            <IconButton disabled={callDisabled} onClick={callClientPhone}>
-              <CallIcon />
-            </IconButton>
+            <Paper sx={{ px: 2 }}>
+              <Typography variant="h6" fontWeight="bold" component="span">
+                {placeName}
+              </Typography>
+            </Paper>
+            {/* <span style={{ position: "absolute", marginRight: "1rem" }}>
+              <IconButton size="small" onClick={openEditPlace}>
+                <EditIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </span> */}
+            {customerName && (
+              <Paper>
+                <Typography variant="h6">{customerName}</Typography>
+              </Paper>
+            )}
+          </Stack>
+          <Box textAlign="center" width="max-content">
+            <Typography variant="h6">
+              {dayjs(startTimeEN).format("HH:mm DD/MM")}
+            </Typography>
+            <Typography variant="h6"> {workerCreateName}</Typography>
           </Box>
-        </Box>
+        </Stack>
       </Toolbar>
     </AppBar>
   );

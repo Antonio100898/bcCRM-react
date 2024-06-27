@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Typography, Box, Stack } from "@mui/material";
+import { Typography, Box, Stack, useTheme, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useConfirm } from "../../Context/useConfirm";
 import { IDayInfo } from "../../Model";
@@ -14,6 +14,9 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   const { prompt } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
   const [weekDays, setweekDays] = useState<IDayInfo[]>();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   function GetDateTimeFormatEN(d: string) {
     const day = d.substring(0, 2);
@@ -75,19 +78,25 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   };
 
   return (
-    <Stack direction="row">
+    <Stack
+      direction="row"
+      sx={{
+        position: "sticky",
+        top: "56px",
+        backgroundColor: "white",
+        zIndex: 1000,
+        px: 2,
+        pt: 2,
+        pb: 1
+      }}
+    >
       {weekDays &&
-        weekDays.map((day: IDayInfo) => (
-          <Box flex={1} key={day.dayValue}>
-            <Typography
-              textAlign="center"
-              fontSize={18}
-              variant="h6"
-              fontWeight="bold"
-            >
+        (isMobile ? weekDays.slice(0, 3) : weekDays).map((day: IDayInfo) => (
+          <Box flex={1} width="200px" key={day.dayValue}>
+            <Typography textAlign="center" variant="body1" fontWeight="bold">
               {day.dayName}&apos;
             </Typography>
-            <Typography textAlign="center" fontSize={16} variant="h6">
+            <Typography textAlign="center" variant="body1">
               {day.dayValueEN.replaceAll("00:00", "")}
             </Typography>
           </Box>

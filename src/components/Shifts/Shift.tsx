@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { IshiftDetail } from "../../Model";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Box, IconButton, Tooltip } from "@mui/material";
-import "./Shift.styles.css";
-import InfoIcon from "@mui/icons-material/Info";
+import { Box, IconButton, Typography } from "@mui/material";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -63,9 +61,6 @@ export default function Shift({
       finishTimeEN: defDate.toString(),
     };
 
-    // 12/26/2022 12:01:39
-
-    // console.log([d, defDate]);
     setCurrentShift(d);
     setShowEditShift(true);
   };
@@ -101,79 +96,50 @@ export default function Shift({
     UpdateShiftStartDate(id);
   };
 
-  function getDayName(dayNum: number) {
-    switch (dayNum) {
-      case 0:
-        return "א";
-      case 1:
-        return "ב";
-      case 2:
-        return "ג";
-      case 3:
-        return "ד";
-      case 4:
-        return "ה";
-      case 5:
-        return "ו";
-      case 6:
-        return "ש";
-      default:
-        return "X";
-    }
-  }
-
   return (
-    <div className="shift" onDragOver={enableDropping} onDrop={handleDrop}>
+    <div onDragOver={enableDropping} onDrop={handleDrop}>
       {currentShift && currentShift!.id! > 0 && (
         <Box
           id={`shift${currentShift.id}`}
           draggable="true"
           onDragStart={handleDragStart}
           onClick={() => setShowEditShift(true)}
-          style={{ overflow: "hidden" }}
+          sx={{
+            overflow: "hidden",
+            borderRadius: "8px",
+            border: "grey thin solid",
+          }}
         >
-          <div
-            className="shiftDivTop text"
-            style={{
+          <Box
+            sx={{
               textOverflow: "ellipsis",
               overflow: "hidden",
               whiteSpace: "nowrap",
               color: currentShift!.workerName === "עובד כללי" ? "red" : "black",
               position: "relative",
+              backgroundColor: "#E9E9E9",
+              py: "2px",
             }}
           >
-            {currentShift!.workerName}
-            <div
-              style={{
-                position: "absolute",
-                right: "0px",
-                fontSize: "16px",
-                opacity: "0.2",
-                margin: "3px",
-                color: "black",
-              }}
-            >
-              {getDayName(defDate.getDay())}
-            </div>
-          </div>
-
+            <Typography component="span" fontSize={14}>
+              {currentShift!.workerName}
+            </Typography>
+          </Box>
           {currentShift!.placeName && (
-            <div
-              className="shiftDivMiddle textSmall"
-              style={{ position: "relative" }}
-            >
-              <div
-                style={{
+            <div>
+              <Box
+                sx={{
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  width: `calc(100% - ${FONST_SIZE + 8}px)`,
-                  textAlign: "right",
+                  maxWidth: "114px",
                 }}
               >
-                {currentShift!.placeName}
-              </div>
-              {currentShift!.remark && currentShift!.remark?.length > 1 && (
+                <Typography component="span" fontSize={14}>
+                  {currentShift!.placeName}
+                </Typography>
+              </Box>
+              {/* {currentShift!.remark && currentShift!.remark?.length > 1 && (
                 <Tooltip
                   title={
                     <h3
@@ -196,7 +162,7 @@ export default function Shift({
                     }}
                   />
                 </Tooltip>
-              )}
+              )} */}
             </div>
           )}
 
@@ -226,9 +192,16 @@ export default function Shift({
             </div>
           )}
 
-          <div className="shiftDivBottom text">
-            {`${currentShift!.finishHour}  -  ${currentShift!.startHour}`}
-          </div>
+          <Box
+            sx={{
+              backgroundColor: "#F8F8F8",
+              py: "2px",
+            }}
+          >
+            <Typography component="span" fontSize={14}>
+              {`${currentShift!.finishHour}  -  ${currentShift!.startHour}`}
+            </Typography>
+          </Box>
         </Box>
       )}
 

@@ -24,7 +24,7 @@ type Props = {
   bigScreen: boolean;
 };
 
-export default function ProblemActions({
+export default function ProblemDialogActions({
   problem,
   currentProblemTypesId,
   problemTypes,

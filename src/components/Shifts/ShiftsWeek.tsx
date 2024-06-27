@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { IshiftDetail, IshiftWeek } from "../../Model";
+import { IshiftWeek } from "../../Model";
 import Shift from "./Shift";
-import "./ShiftWeek.styles.css";
 import { useUser } from "../../Context/useUser";
+import { Box, Typography, Stack, CircularProgress } from "@mui/material";
+import { color_blue, color_yellow_light } from "../../Consts/Consts";
+import ShiftsStack from "./ShiftsStack";
 
 export type Props = {
   shiftsList: IshiftWeek[] | null;
@@ -21,7 +23,6 @@ export function ShiftsWeek({
   shiftsList,
   jobTypeName,
   jobTypeId,
-  color,
   shiftTypeId,
   startOfWeek,
   refreshList,
@@ -30,21 +31,6 @@ export function ShiftsWeek({
 }: Props) {
   const [week, setWeeks] = useState<IshiftWeek[]>([]);
   const { user } = useUser();
-
-  const emptyShift: Partial<IshiftDetail> = {
-    id: 0,
-    workerId: 199,
-    jobTypeId,
-    shiftTypeId,
-    placeName: "",
-    phone: "",
-    remark: "",
-    contactName: "",
-    startDate: new Date().toString(),
-    finishTime: new Date().toString(),
-    startDateEN: new Date().toString(),
-    finishTimeEN: new Date().toString(),
-  };
 
   useEffect(() => {
     // console.log(shiftsList);
@@ -65,264 +51,172 @@ export function ShiftsWeek({
     return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);
   }
 
+  if (!week || week.length === 0 || !user) return <CircularProgress />;
+
   return (
-    <div
-      style={{
-        borderLeft: "0px",
-        borderRadius: "49px",
-        marginBottom: "15px",
-        textAlign: "center",
-        background: "white",
-      }}
-    >
-      {jobTypeName && jobTypeName.length > 0 && (
-        <div>
-          <div style={{ display: "flex", flex: "row" }}>
-            <div style={{ width: "150px" }}>
-              <div
-                style={{
-                  width: "150px",
-                  background: color,
-                }}
-                className="jobTypeDiv"
-              >
-                {jobTypeName}
-              </div>
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "25px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].sunday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 0)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
+    <Box mb={2}>
+      <Box
+        sx={{
+          backgroundColor: color_yellow_light,
+          color: color_blue,
+          borderRadius: "5px",
+        }}
+      >
+        <Typography fontWeight="bold" fontSize={18} textAlign="center">
+          {jobTypeName}
+        </Typography>
+      </Box>
+      <Stack direction="row" gap={1} mt={1}>
+        <ShiftsStack
+          defDate={addDays(startOfWeek, 0)}
+          shifts={week[0].sunday}
+          jobTypeId={jobTypeId}
+          refreshList={refreshList}
+          shiftGroupId={shiftGroupId}
+          shiftTypeId={shiftTypeId}
+          showDetails={showDetails}
+          userType={user!.userType}
+        />
+        <ShiftsStack
+          defDate={addDays(startOfWeek, 1)}
+          shifts={week[0].monday}
+          jobTypeId={jobTypeId}
+          refreshList={refreshList}
+          shiftGroupId={shiftGroupId}
+          shiftTypeId={shiftTypeId}
+          showDetails={showDetails}
+          userType={user!.userType}
+        />
+        <ShiftsStack
+          defDate={addDays(startOfWeek, 2)}
+          shifts={week[0].tuesday}
+          jobTypeId={jobTypeId}
+          refreshList={refreshList}
+          shiftGroupId={shiftGroupId}
+          shiftTypeId={shiftTypeId}
+          showDetails={showDetails}
+          userType={user!.userType}
+        />
 
-              {user && user.userType === 1 && (
-                <Shift
-                  key={Math.random()}
-                  shift={emptyShift}
-                  jobTypeId={jobTypeId}
-                  shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 0)}
-                  refreshList={refreshList}
-                  showDetails={showDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              )}
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "10px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].monday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 1)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
-              {user && user.userType === 1 && (
-                <Shift
-                  key={Math.random()}
-                  shift={emptyShift}
-                  jobTypeId={jobTypeId}
-                  shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 1)}
-                  refreshList={refreshList}
-                  showDetails={showDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              )}
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "25px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].tuesday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 2)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
-              {user && user.userType === 1 && (
-                <Shift
-                  key={Math.random()}
-                  shift={emptyShift}
-                  jobTypeId={jobTypeId}
-                  shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 2)}
-                  refreshList={refreshList}
-                  showDetails={showDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              )}
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "25px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].wendsday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 3)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
-              {user && user.userType === 1 && (
-                <Shift
-                  key={Math.random()}
-                  shift={emptyShift}
-                  jobTypeId={jobTypeId}
-                  shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 3)}
-                  refreshList={refreshList}
-                  showDetails={showDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              )}
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "25px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].thursday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 4)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
+        {/* <Stack width="200px">
+                {week &&
+                  week.length > 0 &&
+                  week[0].wendsday.map((shift) => {
+                    return (
+                      <Shift
+                        key={shift.id}
+                        shift={shift}
+                        jobTypeId={jobTypeId}
+                        shiftTypeId={shiftTypeId}
+                        defDate={addDays(startOfWeek, 3)}
+                        refreshList={refreshList}
+                        showDetails={showDetails}
+                        shiftGroupId={shiftGroupId}
+                      />
+                    );
+                  })}
+                {user && user.userType === 1 && (
+                  <Shift
+                    key={Math.random()}
+                    shift={emptyShift}
+                    jobTypeId={jobTypeId}
+                    shiftTypeId={shiftTypeId}
+                    defDate={addDays(startOfWeek, 3)}
+                    refreshList={refreshList}
+                    showDetails={showDetails}
+                    shiftGroupId={shiftGroupId}
+                  />
+                )}
+              </Stack>
+              <Stack width="200px">
+                {week &&
+                  week.length > 0 &&
+                  week[0].thursday.map((shift) => {
+                    return (
+                      <Shift
+                        key={shift.id}
+                        shift={shift}
+                        jobTypeId={jobTypeId}
+                        shiftTypeId={shiftTypeId}
+                        defDate={addDays(startOfWeek, 4)}
+                        refreshList={refreshList}
+                        showDetails={showDetails}
+                        shiftGroupId={shiftGroupId}
+                      />
+                    );
+                  })}
 
-              {user && user.userType === 1 && (
+                {user && user.userType === 1 && (
+                  <Shift
+                    shift={emptyShift}
+                    jobTypeId={jobTypeId}
+                    shiftTypeId={shiftTypeId}
+                    defDate={addDays(startOfWeek, 4)}
+                    refreshList={refreshList}
+                    showDetails={showDetails}
+                    shiftGroupId={shiftGroupId}
+                  />
+                )}
+              </Stack>
+              <Stack width="200px">
+                {week &&
+                  week.length > 0 &&
+                  week[0].friday.map((shift) => {
+                    return (
+                      <Shift
+                        key={shift.id}
+                        shift={shift}
+                        jobTypeId={jobTypeId}
+                        shiftTypeId={shiftTypeId}
+                        defDate={addDays(startOfWeek, 5)}
+                        refreshList={refreshList}
+                        showDetails={showDetails}
+                        shiftGroupId={shiftGroupId}
+                      />
+                    );
+                  })}
+
                 <Shift
-                  key={Math.random()}
                   shift={emptyShift}
                   jobTypeId={jobTypeId}
                   shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 4)}
+                  defDate={addDays(startOfWeek, 5)}
                   refreshList={refreshList}
                   showDetails={showDetails}
                   shiftGroupId={shiftGroupId}
                 />
-              )}
-            </div>
-            <div
-              style={{ width: "175px", marginRight: "25px", marginTop: "20px" }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].friday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 5)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
-
-              <Shift
-                key={Math.random()}
-                shift={emptyShift}
-                jobTypeId={jobTypeId}
-                shiftTypeId={shiftTypeId}
-                defDate={addDays(startOfWeek, 5)}
-                refreshList={refreshList}
-                showDetails={showDetails}
-                shiftGroupId={shiftGroupId}
-              />
-            </div>
-            <div
-              style={{
-                width: "175px",
-                marginRight: "25px",
-                marginTop: "20px",
-              }}
-            >
-              {week &&
-                week.length > 0 &&
-                week[0].saturday.map((shift) => {
-                  return (
-                    <Shift
-                      key={shift.id}
-                      shift={shift}
-                      jobTypeId={jobTypeId}
-                      shiftTypeId={shiftTypeId}
-                      defDate={addDays(startOfWeek, 6)}
-                      refreshList={refreshList}
-                      showDetails={showDetails}
-                      shiftGroupId={shiftGroupId}
-                    />
-                  );
-                })}
-
-              {user && user.userType === 1 && (
-                <Shift
-                  key={Math.random()}
-                  shift={emptyShift as Partial<IshiftDetail>}
-                  jobTypeId={jobTypeId}
-                  shiftTypeId={shiftTypeId}
-                  defDate={addDays(startOfWeek, 6)}
-                  refreshList={refreshList}
-                  showDetails={showDetails}
-                  shiftGroupId={shiftGroupId}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+              </Stack>
+              <Stack width="200px">
+                {week &&
+                  week.length > 0 &&
+                  week[0].saturday.map((shift) => {
+                    return (
+                      <Shift
+                        key={shift.id}
+                        shift={shift}
+                        jobTypeId={jobTypeId}
+                        shiftTypeId={shiftTypeId}
+                        defDate={addDays(startOfWeek, 6)}
+                        refreshList={refreshList}
+                        showDetails={showDetails}
+                        shiftGroupId={shiftGroupId}
+                      />
+                    );
+                  })}
+                {user && user.userType === 1 && (
+                  <Shift
+                    shift={emptyShift as Partial<IshiftDetail>}
+                    jobTypeId={jobTypeId}
+                    shiftTypeId={shiftTypeId}
+                    defDate={addDays(startOfWeek, 6)}
+                    refreshList={refreshList}
+                    showDetails={showDetails}
+                    shiftGroupId={shiftGroupId}
+                  />
+                )}
+              </Stack> */}
+      </Stack>
+    </Box>
   );
 }
 
