@@ -1,11 +1,18 @@
 import { createTheme } from "@mui/material";
+import {
+  color_blue,
+  color_dark_blue,
+  color_light_blue,
+  color_main,
+  color_main_light,
+} from "../Consts/Consts";
 
 const baseTheme = createTheme({});
 
 export const theme = createTheme({
   direction: "rtl",
   typography: {
-    fontFamily: ["Rubik", "sans-serif"].join(","),
+    fontFamily: ["Assistant", "sans-serif"].join(","),
     body2: {
       color: "#EEA900",
       fontSize: 18,
@@ -13,17 +20,21 @@ export const theme = createTheme({
   },
   palette: {
     secondary: baseTheme.palette.augmentColor({
-      color: { main: "#eae6e3" },
-      name: "green",
+      color: { main: color_dark_blue, light: color_light_blue },
+      name: "seondary",
     }),
     primary: baseTheme.palette.augmentColor({
-      color: { main: "#EEA900" },
-      name: "green",
+      color: { main: color_main, light: color_main_light },
+      name: "primary",
     }),
     warning: baseTheme.palette.augmentColor({
       color: { main: "#EEA900" },
-      name: "green",
+      name: "warning",
     }),
+    text: {
+      secondary: color_blue,
+      primary: "#0D0633",
+    },
   },
   components: {
     MuiFormLabel: {
@@ -40,6 +51,12 @@ export const theme = createTheme({
         },
       },
     },
-    
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: "40px",
+        },
+      },
+    },
   },
 });

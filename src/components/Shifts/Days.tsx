@@ -16,7 +16,7 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   const [weekDays, setweekDays] = useState<IDayInfo[]>();
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   function GetDateTimeFormatEN(d: string) {
     const day = d.substring(0, 2);
@@ -80,6 +80,8 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
   return (
     <Stack
       direction="row"
+      gap="8px"
+      justifyContent="center"
       sx={{
         position: "sticky",
         top: "56px",
@@ -87,12 +89,12 @@ export default function Days({ weekDaysAll, shiftGroupId }: Props) {
         zIndex: 1000,
         px: 2,
         pt: 2,
-        pb: 1
+        pb: 1,
       }}
     >
       {weekDays &&
-        (isMobile ? weekDays.slice(0, 3) : weekDays).map((day: IDayInfo) => (
-          <Box flex={1} width="200px" key={day.dayValue}>
+        (isTablet ? weekDays.slice(0, 3) : weekDays).map((day: IDayInfo) => (
+          <Box width="200px" key={day.dayValue}>
             <Typography textAlign="center" variant="body1" fontWeight="bold">
               {day.dayName}&apos;
             </Typography>

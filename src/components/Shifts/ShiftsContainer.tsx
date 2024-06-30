@@ -4,7 +4,7 @@ import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
 import ShiftEdit from "./ShiftEdit";
 import { Box, Typography, Stack } from "@mui/material";
-import { color_blue, color_yellow_light } from "../../Consts/Consts";
+import { color_dark_blue, color_main_light } from "../../Consts/Consts";
 
 export type Props = {
   shiftsList: IshiftWeek[] | null;
@@ -63,8 +63,8 @@ export function ShiftsContainer({
     <div>
       <Box
         sx={{
-          backgroundColor: color_blue,
-          color: color_yellow_light,
+          backgroundColor: "secondary.main",
+          color: "primary.light",
           borderRadius: "5px",
           py: 0.5,
           mt: 2,
@@ -104,7 +104,7 @@ export function ShiftsContainer({
           </Tooltip>
         </div> */}
         {shifts && shifts.length > 0 && (
-          <Stack gap={2}>
+          <Stack>
             {shifts &&
               shifts.map((jobTypes) => {
                 return (
@@ -125,7 +125,6 @@ export function ShiftsContainer({
           </Stack>
         )}
       </Box>
-
       <ShiftEdit
         handleClose={handleCloseAddNewShift}
         shift={emptyShift}

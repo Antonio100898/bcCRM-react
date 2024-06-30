@@ -22,5 +22,9 @@ export const sickdaysImagePathX =
 
 export const sickdaysImagePath = URL + "Pics/sickDays/";
 
-export const color_blue = "#160B57";
-export const color_yellow_light = "#FFDE8B";
+export const color_dark_blue = "#160B57";
+export const color_main_light = "#FFE7A8";
+export const color_grey = "#F3F3F3";
+export const color_blue = "#1C3FBB";
+export const color_main = "#FBB965";
+export const color_light_blue = "#D4E3FF";

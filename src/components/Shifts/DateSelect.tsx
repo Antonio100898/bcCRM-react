@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { IconButton, Tooltip, Box } from "@mui/material";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import { Box, Typography, IconButton } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 
 export type Props = {
   setDate: (date: Date) => void;
@@ -33,6 +28,7 @@ function getLastSundayOption(date: Date, orOtherDay: number) {
 
 export default function DateSelect({ setDate }: Props) {
   const [startDate, setStartDate] = useState(getLastSunday(7));
+  const [finishDate, setFinishDate] = useState(getLastSunday(1));
 
   function addDays(theDate: Date, days: number) {
     return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);
@@ -49,68 +45,51 @@ export default function DateSelect({ setDate }: Props) {
       sx={{
         display: "flex",
         flex: "row",
-        justifyContent: "center",
-        margin: "0.5rem 0",
-        px: 2,
+        px: 1,
+        boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.13)",
+        border: "0.7px solid #DCDCDC",
+        borderRadius: "50px",
+        width: "max-content",
+        alignItems: "center",
+        height: "40px",
+        mx: "auto",
+        mt: 4
       }}
     >
-      <Tooltip title="שבוע אחורה">
-        <IconButton
-          onClick={() => {
-            setStartDate(addDays(startDate, -7));
-            setDate(addDays(startDate, -7));
-          }}
-        >
-          <ArrowLeftIcon
-            style={{
-              height: "56px",
-              fontSize: "50px",
-              background: "#FFF5E9",
-              border: "1px solid rgba(0, 0, 0, 0.5)",
-              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.05)",
-              borderRadius: "8px",
-              transform: "matrix(-1, 0, 0, 1, 0, 0)",
-            }}
-          />
-        </IconButton>
-      </Tooltip>
-      <div>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DesktopDatePicker
+      <IconButton
+        onClick={() => {
+          setStartDate(addDays(startDate, -7));
+          setFinishDate(addDays(finishDate, -7));
+          setDate(addDays(startDate, -7));
+        }}
+        size="small"
+      >
+        <img src="/rightArrow.svg" />
+      </IconButton>
+      <Box sx={{ mx: 2 }}>
+        <Typography component="span">
+          {" "}
+          {dayjs(startDate).format("DD/MM/YYYY")} -{" "}
+          {dayjs(finishDate).format("DD/MM/YYYY")}
+        </Typography>
+        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileDatePicker
             format="DD/MM/YYYY"
             value={dayjs(startDate)}
             onChange={handleChange}
-            slotProps={{
-              textField: {
-                sx: {
-                  padding: "8px",
-                },
-              },
-            }}
           />
-        </LocalizationProvider>
-      </div>
-
-      <Tooltip title="שבוע קדימה">
-        <IconButton
-          onClick={() => {
-            setStartDate(addDays(startDate, 7));
-            setDate(addDays(startDate, 7));
-          }}
-        >
-          <ArrowRightIcon
-            style={{
-              height: "56px",
-              fontSize: "50px",
-              background: "#FFF5E9",
-              border: "1px solid rgba(0, 0, 0, 0.5)",
-              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.05)",
-              borderRadius: "8px",
-              transform: "matrix(-1, 0, 0, 1, 0, 0)",
-            }}
-          />
-        </IconButton>
-      </Tooltip>
+        </LocalizationProvider> */}
+      </Box>
+      <IconButton
+        size="small"
+        onClick={() => {
+          setStartDate(addDays(startDate, 7));
+          setFinishDate(addDays(finishDate, 7));
+          setDate(addDays(startDate, 7));
+        }}
+      >
+        <img src="/leftArrow.svg" />
+      </IconButton>
     </Box>
   );
 }

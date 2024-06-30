@@ -153,8 +153,8 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
       )}
       <AppBar
         position="fixed"
+        color="inherit"
         open={open}
-        color="secondary"
         elevation={mainElevetion}
       >
         <Toolbar

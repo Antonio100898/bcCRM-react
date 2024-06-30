@@ -144,8 +144,13 @@ export default function Shifts() {
   };
 
   return (
-    <Box >
-      <Typography px={2} variant={ibMobile ? "h5" : "h4"} fontWeight="bold" ml="2%">
+    <Box>
+      <Typography
+        px={2}
+        variant={ibMobile ? "h5" : "h4"}
+        fontWeight="bold"
+        ml="2%"
+      >
         סידור משמרות
       </Typography>
       <DateSelect setDate={setStartDate} />
@@ -192,8 +197,8 @@ export default function Shifts() {
           </IconButton>
         </Tooltip>
       </div> */}
-
       <Days weekDaysAll={myWeekDays} shiftGroupId={shiftGroupId} />
+
       {/* <div>
         <Typography fontSize={18} fontWeight="bold">
           הערה של יום:

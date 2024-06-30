@@ -6,10 +6,8 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
-import ShiftEdit from "./ShiftEdit";
 import { shiftService } from "../../API/services";
-
-const FONST_SIZE = 24;
+import EscortAndInstallationDialog from "../../Dialogs/EscortAndInstallationDialog";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -33,11 +31,11 @@ export default function Shift({
   const { enqueueSnackbar } = useSnackbar();
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
-  const [showEditShift, setShowEditShift] = useState<boolean>(false);
+  const [showEditShift, setShowEditShift] = useState(false);
+  const [showEscortDetails, setShowEscortDetails] = useState(false);
 
   useEffect(() => {
     setCurrentShift(shift);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
 
   const handleCloseEdit = () => {
@@ -121,21 +119,34 @@ export default function Shift({
               py: "2px",
             }}
           >
-            <Typography component="span" fontSize={14}>
+            <Typography component="span" fontWeight={500} fontSize={14}>
               {currentShift!.workerName}
             </Typography>
           </Box>
           {currentShift!.placeName && (
-            <div>
+            <Box
+              onClick={() => {
+                jobTypeId === 1 && setShowEscortDetails(true);
+              }}
+              sx={{ backgroundColor: "secondary.light" }}
+            >
               <Box
                 sx={{
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
                   maxWidth: "114px",
+                  py: "2px",
+                  m: "auto",
+                  cursor: "pointer",
                 }}
               >
-                <Typography component="span" fontSize={14}>
+                <Typography
+                  fontWeight={500}
+                  component="span"
+                  color="text.secondary"
+                  fontSize={14}
+                >
                   {currentShift!.placeName}
                 </Typography>
               </Box>
@@ -163,7 +174,7 @@ export default function Shift({
                   />
                 </Tooltip>
               )} */}
-            </div>
+            </Box>
           )}
 
           {showDetails && (
@@ -198,7 +209,7 @@ export default function Shift({
               py: "2px",
             }}
           >
-            <Typography component="span" fontSize={14}>
+            <Typography fontWeight={500} component="span" fontSize={14}>
               {`${currentShift!.finishHour}  -  ${currentShift!.startHour}`}
             </Typography>
           </Box>
@@ -221,12 +232,24 @@ export default function Shift({
         </div>
       )}
 
-      <ShiftEdit
+      {currentShift.jobTypeId === 1 && (
+        <EscortAndInstallationDialog
+          customer={currentShift.contactName!}
+          phone={currentShift.phone!}
+          wifi="wifi"
+          remark={currentShift.remark}
+          adress={currentShift.address!}
+          placeName={currentShift.placeName!}
+          open={showEscortDetails}
+          onClose={() => setShowEscortDetails(false)}
+        />
+      )}
+      {/* <ShiftEdit
         open={showEditShift}
         shift={currentShift}
         handleClose={handleCloseEdit}
         shiftGroupId={shiftGroupId}
-      />
+      /> */}
     </div>
   );
 }

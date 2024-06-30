@@ -36,7 +36,7 @@ const ProblemDialogHeader = ({
     <AppBar sx={{ position: "relative" }}>
       <Toolbar sx={{ height: "100px", backgroundColor: "#f5f5f5" }}>
         <IconButton
-        sx={{mr:2}}
+          sx={{ mr: 2 }}
           edge="start"
           color="inherit"
           onClick={onClose}

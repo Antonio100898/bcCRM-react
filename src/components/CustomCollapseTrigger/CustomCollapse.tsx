@@ -21,7 +21,7 @@ const CustomCollapseTrigger = ({
     <>
       <Box sx={{ display: "flex" }}>
         <Button variant="text" onClick={onHandleValueClick}>
-          <Typography color="black" variant="h6">
+          <Typography variant="h6">
             {label} ({counter})
           </Typography>
           {open ? (

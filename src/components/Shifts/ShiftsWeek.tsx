@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 
 import { IshiftWeek } from "../../Model";
-import Shift from "./Shift";
 import { useUser } from "../../Context/useUser";
-import { Box, Typography, Stack, CircularProgress } from "@mui/material";
-import { color_blue, color_yellow_light } from "../../Consts/Consts";
+import {
+  Box,
+  Typography,
+  Stack,
+  CircularProgress,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { color_dark_blue, color_main_light } from "../../Consts/Consts";
 import ShiftsStack from "./ShiftsStack";
 
 export type Props = {
@@ -32,15 +38,16 @@ export function ShiftsWeek({
   const [week, setWeeks] = useState<IshiftWeek[]>([]);
   const { user } = useUser();
 
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+
   useEffect(() => {
-    // console.log(shiftsList);
     const wsData1: IshiftWeek[] | null =
       shiftsList &&
       shiftsList.filter((name: IshiftWeek) => {
         return name.jobType === jobTypeId;
       });
 
-    // console.log({ wsData1, shiftsList });
     if (wsData1) {
       setWeeks(wsData1);
     }
@@ -57,8 +64,8 @@ export function ShiftsWeek({
     <Box mb={2}>
       <Box
         sx={{
-          backgroundColor: color_yellow_light,
-          color: color_blue,
+          backgroundColor: "primary.light",
+          color: "secondary.main",
           borderRadius: "5px",
         }}
       >
@@ -66,7 +73,7 @@ export function ShiftsWeek({
           {jobTypeName}
         </Typography>
       </Box>
-      <Stack direction="row" gap={1} mt={1}>
+      <Stack direction="row" justifyContent="center" gap={1} mt={1}>
         <ShiftsStack
           defDate={addDays(startOfWeek, 0)}
           shifts={week[0].sunday}
@@ -97,6 +104,50 @@ export function ShiftsWeek({
           showDetails={showDetails}
           userType={user!.userType}
         />
+        {!isTablet && (
+          <>
+            <ShiftsStack
+              defDate={addDays(startOfWeek, 3)}
+              shifts={week[0].wendsday}
+              jobTypeId={jobTypeId}
+              refreshList={refreshList}
+              shiftGroupId={shiftGroupId}
+              shiftTypeId={shiftTypeId}
+              showDetails={showDetails}
+              userType={user!.userType}
+            />
+            <ShiftsStack
+              defDate={addDays(startOfWeek, 4)}
+              shifts={week[0].thursday}
+              jobTypeId={jobTypeId}
+              refreshList={refreshList}
+              shiftGroupId={shiftGroupId}
+              shiftTypeId={shiftTypeId}
+              showDetails={showDetails}
+              userType={user!.userType}
+            />
+            <ShiftsStack
+              defDate={addDays(startOfWeek, 5)}
+              shifts={week[0].friday}
+              jobTypeId={jobTypeId}
+              refreshList={refreshList}
+              shiftGroupId={shiftGroupId}
+              shiftTypeId={shiftTypeId}
+              showDetails={showDetails}
+              userType={user!.userType}
+            />
+            <ShiftsStack
+              defDate={addDays(startOfWeek, 6)}
+              shifts={week[0].saturday}
+              jobTypeId={jobTypeId}
+              refreshList={refreshList}
+              shiftGroupId={shiftGroupId}
+              shiftTypeId={shiftTypeId}
+              showDetails={showDetails}
+              userType={user!.userType}
+            />
+          </>
+        )}
 
         {/* <Stack width="200px">
                 {week &&
