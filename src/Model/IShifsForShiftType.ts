@@ -38,6 +38,16 @@ export interface IshiftWeek {
   saturday: IshiftDetail[];
 }
 
+export interface IDays {
+  sunday: IshiftDetail[];
+  monday: IshiftDetail[];
+  tuesday: IshiftDetail[];
+  wendsday: IshiftDetail[];
+  thursday: IshiftDetail[];
+  friday: IshiftDetail[];
+  saturday: IshiftDetail[];
+}
+
 export interface IshiftWeekReportExcel {
   workerName: string;
 

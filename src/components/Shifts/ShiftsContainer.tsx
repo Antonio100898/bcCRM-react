@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 
 import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
-import ShiftEdit from "./ShiftEdit";
+import ShiftEdit from "../../Dialogs/ShiftEditDialog";
 import { Box, Typography, Stack } from "@mui/material";
-import { color_dark_blue, color_main_light } from "../../Consts/Consts";
 
 export type Props = {
   shiftsList: IshiftWeek[] | null;
@@ -14,6 +13,7 @@ export type Props = {
   refreshList: () => void;
   showDetails: boolean;
   shiftGroupId: number;
+  part: number;
 };
 
 export function ShiftsContainer({
@@ -24,6 +24,7 @@ export function ShiftsContainer({
   refreshList,
   showDetails,
   shiftGroupId,
+  part,
 }: Props) {
   const [shifts, setShifts] = useState<IshiftWeek[]>([]);
   const [showAddNew, setShowAddNew] = useState<boolean>(false);
@@ -109,6 +110,7 @@ export function ShiftsContainer({
               shifts.map((jobTypes) => {
                 return (
                   <ShiftsWeek
+                    part={part}
                     key={jobTypes.jobType}
                     startOfWeek={startOfWeek}
                     shiftsList={shifts}

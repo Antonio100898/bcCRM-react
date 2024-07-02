@@ -35,6 +35,10 @@ export const theme = createTheme({
       secondary: color_blue,
       primary: "#0D0633",
     },
+    grey: {
+      "400": "#F3F3F3",
+    },
+    divider: color_main,
   },
   components: {
     MuiFormLabel: {

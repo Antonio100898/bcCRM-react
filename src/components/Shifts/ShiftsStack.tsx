@@ -38,10 +38,11 @@ const ShiftsStack = ({
     finishTimeEN: new Date().toString(),
   };
   return (
-    <Stack width="200px" textAlign="center" gap={1}>
+    <Stack width="200px" maxWidth={250} flex={1} textAlign="center" gap={1}>
       {shifts.map((shift) => {
         return (
           <Shift
+            isAdmin={true}
             key={shift.id}
             shift={shift}
             jobTypeId={jobTypeId}
@@ -53,17 +54,18 @@ const ShiftsStack = ({
           />
         );
       })}
-      {userType === 1 && (
-        <Shift
-          shift={emptyShift}
-          jobTypeId={jobTypeId}
-          shiftTypeId={shiftTypeId}
-          defDate={defDate}
-          refreshList={refreshList}
-          showDetails={showDetails}
-          shiftGroupId={shiftGroupId}
-        />
-      )}
+      {/* {userType === 1 && ( */}
+
+      <Shift
+        isAdmin={userType === 1}
+        shift={emptyShift}
+        jobTypeId={jobTypeId}
+        shiftTypeId={shiftTypeId}
+        defDate={defDate}
+        refreshList={refreshList}
+        showDetails={showDetails}
+        shiftGroupId={shiftGroupId}
+      />
     </Stack>
   );
 };

@@ -190,7 +190,7 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
           </Box>
           {!isMobile && <Search />}
           <img
-            src="beecommLogo.svg"
+            src="new-logo.svg"
             alt="logo"
             height={36}
             style={{ objectFit: "contain" }}

@@ -1,15 +1,11 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Box,
   MenuList,
   ListItem,
   ListItemIcon,
   ListItemText,
+  TextField,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import CustomDialog from "./CustomDialog";
 
 type Props = {
   open: boolean;
@@ -20,6 +16,7 @@ type Props = {
   phone: string;
   wifi: string;
   remark?: string | undefined;
+  isAdmin: boolean;
 };
 const EscortAndInstallationDialog = ({
   open,
@@ -30,75 +27,93 @@ const EscortAndInstallationDialog = ({
   phone,
   wifi,
   remark,
+  isAdmin,
 }: Props) => {
+  const list = [
+    {
+      icon: "/location.svg",
+      value: placeName,
+      label: "שם העסק",
+    },
+    {
+      icon: "/navigation.svg",
+      value: adress,
+      label: "כתובת",
+    },
+    {
+      icon: "/user.svg",
+      value: customer,
+      label: "איש קשר",
+    },
+    {
+      icon: "/phone.svg",
+      value: phone,
+      label: "טלפון",
+    },
+    {
+      icon: "/wifi.svg",
+      value: wifi,
+      label: "חברת תקשורת",
+    },
+    {
+      icon: "/note.svg",
+      value: remark,
+      label: "הערות",
+    },
+  ];
   return (
-    <Dialog
-      PaperProps={{
-        sx: {
-          borderRadius: "20px",
-        },
-      }}
-      dir="rtl"
-      fullWidth
+    <CustomDialog
+      fullScreen={isAdmin}
       onClose={onClose}
       open={open}
+      title="ליווי התחילת עבודה"
     >
-      <Box textAlign="end" p={1}>
-        <IconButton onClick={onClose} aria-label="close">
-          <CloseIcon />
-        </IconButton>
-      </Box>
-      <DialogTitle
-        sx={{ pt: 0 }}
-        component="span"
-        fontSize={22}
-        fontWeight="bold"
-        color="text.primary"
-      >
-        ליווי תחילת עבודה
-      </DialogTitle>
-
-      <DialogContent>
-        <MenuList>
-          <ListItem>
-            <ListItemIcon>
-              <img src="/location.svg" />
-            </ListItemIcon>
-            <ListItemText>{placeName}</ListItemText>
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <img src="/navigation.svg" />
-            </ListItemIcon>
-            <ListItemText>{adress}</ListItemText>
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <img src="/user.svg" />
-            </ListItemIcon>
-            <ListItemText>{customer}</ListItemText>
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <img src="/phone.svg" />
-            </ListItemIcon>
-            <ListItemText>{phone}</ListItemText>
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <img src="/wifi.svg" />
-            </ListItemIcon>
-            <ListItemText>{wifi}</ListItemText>
-          </ListItem>
-          <ListItem sx={{ alignItems: "flex-start" }}>
-            <ListItemIcon>
-              <img src="/note.svg" />
-            </ListItemIcon>
-            <ListItemText>{remark}</ListItemText>
-          </ListItem>
-        </MenuList>
-      </DialogContent>
-    </Dialog>
+      <MenuList>
+        {isAdmin
+          ? list.map((item) => (
+              <ListItem sx={{ alignItems: "flex-start", px: 0, my: 2 }}>
+                <ListItemIcon sx={{ my: "4px" }}>
+                  <img src={item.icon} />
+                </ListItemIcon>
+                {item.label === "הערות" ? (
+                  <TextField
+                    multiline
+                    fullWidth
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        padding: "5px 14px",
+                      },
+                    }}
+                    inputProps={{
+                      style: {
+                        minHeight: "80px",
+                      },
+                    }}
+                    placeholder={item.label}
+                  />
+                ) : (
+                  <TextField
+                    fullWidth
+                    inputProps={{
+                      style: {
+                        padding: "5px 10px",
+                      },
+                    }}
+                    placeholder={item.label}
+                  />
+                )}
+              </ListItem>
+            ))
+          : list.map((item) => (
+              <ListItem sx={{ alignItems: "flex-start", my: 2 }}>
+                <ListItemIcon sx={{ my: "4px" }}>
+                  <img src={item.icon} />
+                </ListItemIcon>
+                <ListItemText>{item.value}</ListItemText>
+              </ListItem>
+            ))}
+      </MenuList>
+    </CustomDialog>
   );
 };
 

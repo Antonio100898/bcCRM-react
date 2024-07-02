@@ -6,11 +6,19 @@ export type Props = {
   setDate: (date: Date) => void;
 };
 
-function getLastSunday(orOtherDay: number) {
+function getDate(arg: "start" | "finish") {
   const date = new Date();
   const today = date.getDate();
   const currentDay = date.getDay();
-  const newDate = date.setDate(today - (currentDay || orOtherDay));
+  let newDate;
+
+  switch (arg) {
+    case "start":
+      newDate = date.setDate(today - currentDay);
+      break;
+    case "finish":
+      newDate = date.setDate(today + (6 - currentDay));
+  }
 
   return new Date(newDate);
 }
@@ -27,8 +35,8 @@ function getLastSundayOption(date: Date, orOtherDay: number) {
 }
 
 export default function DateSelect({ setDate }: Props) {
-  const [startDate, setStartDate] = useState(getLastSunday(7));
-  const [finishDate, setFinishDate] = useState(getLastSunday(1));
+  const [startDate, setStartDate] = useState(getDate("start"));
+  const [finishDate, setFinishDate] = useState(getDate("finish"));
 
   function addDays(theDate: Date, days: number) {
     return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);
@@ -53,7 +61,7 @@ export default function DateSelect({ setDate }: Props) {
         alignItems: "center",
         height: "40px",
         mx: "auto",
-        mt: 4
+        mt: 4,
       }}
     >
       <IconButton

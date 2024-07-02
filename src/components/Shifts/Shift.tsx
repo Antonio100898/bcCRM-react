@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { IshiftDetail } from "../../Model";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
 import { shiftService } from "../../API/services";
 import EscortAndInstallationDialog from "../../Dialogs/EscortAndInstallationDialog";
+import EmptyShift from "./EmptyShift";
+import ShiftEdit from "../../Dialogs/ShiftEditDialog";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -17,6 +18,7 @@ export type Props = {
   refreshList: () => void;
   showDetails: boolean;
   shiftGroupId: number;
+  isAdmin: boolean;
 };
 
 export default function Shift({
@@ -27,6 +29,7 @@ export default function Shift({
   refreshList,
   showDetails,
   shiftGroupId,
+  isAdmin,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const [currentShift, setCurrentShift] =
@@ -125,7 +128,8 @@ export default function Shift({
           </Box>
           {currentShift!.placeName && (
             <Box
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 jobTypeId === 1 && setShowEscortDetails(true);
               }}
               sx={{ backgroundColor: "secondary.light" }}
@@ -216,24 +220,11 @@ export default function Shift({
         </Box>
       )}
 
-      {currentShift.id === 0 && (
-        <div
-          style={{
-            width: "100%",
-            justifyContent: "center",
-            borderRadius: "10px",
-            border: "1px dotted black",
-            borderStyle: "dotted",
-          }}
-        >
-          <IconButton onClick={showEmptyShift}>
-            <AddCircleIcon fontSize="large" />
-          </IconButton>
-        </div>
-      )}
+      {currentShift.id === 0 && <EmptyShift showEmptyShift={showEmptyShift} />}
 
       {currentShift.jobTypeId === 1 && (
         <EscortAndInstallationDialog
+          isAdmin={isAdmin}
           customer={currentShift.contactName!}
           phone={currentShift.phone!}
           wifi="wifi"
@@ -244,12 +235,12 @@ export default function Shift({
           onClose={() => setShowEscortDetails(false)}
         />
       )}
-      {/* <ShiftEdit
+      <ShiftEdit
         open={showEditShift}
         shift={currentShift}
         handleClose={handleCloseEdit}
         shiftGroupId={shiftGroupId}
-      /> */}
+      />
     </div>
   );
 }

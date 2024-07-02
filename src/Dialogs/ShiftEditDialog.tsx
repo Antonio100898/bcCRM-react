@@ -16,10 +16,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSnackbar } from "notistack";
-import { IWorker, IshiftDetail } from "../../Model";
-import { useConfirm } from "../../Context/useConfirm";
-import { useUser } from "../../Context/useUser";
-import { shiftService } from "../../API/services";
+import { IWorker, IshiftDetail } from "../Model";
+import { useConfirm } from "../Context/useConfirm";
+import { useUser } from "../Context/useUser";
+import { shiftService } from "../API/services";
 
 export type Props = {
   open: boolean;

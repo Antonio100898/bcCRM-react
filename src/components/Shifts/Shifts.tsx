@@ -24,7 +24,7 @@ export default function Shifts() {
   const { updateShowLoader, user } = useUser();
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
-
+  const [part, setPart] = useState<number>(1);
   const [startDate, setStartDate] = useState(
     getLastSunday(new Date().getDay())
   );
@@ -35,6 +35,17 @@ export default function Shifts() {
 
   const theme = useTheme();
   const ibMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handlePartChange = (action: "next" | "prev") => {
+    switch (action) {
+      case "next":
+        if (part < 3) setPart((prev) => prev + 1);
+        break;
+      case "prev":
+        if (part > 1) setPart((prev) => prev - 1);
+        break;
+    }
+  };
 
   const appendDefultWeekShifts = async () => {
     try {
@@ -144,7 +155,7 @@ export default function Shifts() {
   };
 
   return (
-    <Box>
+    <Box maxWidth={1200} mx={"auto"}>
       <Typography
         px={2}
         variant={ibMobile ? "h5" : "h4"}
@@ -197,23 +208,16 @@ export default function Shifts() {
           </IconButton>
         </Tooltip>
       </div> */}
-      <Days weekDaysAll={myWeekDays} shiftGroupId={shiftGroupId} />
-
-      {/* <div>
-        <Typography fontSize={18} fontWeight="bold">
-          הערה של יום:
-        </Typography>
-        <TextField />
-      </div> */}
-      {/* <ButtonGroup sx={{ mt: "22px", fontSize: "20px" }}>
-        <Button variant="contained">בוקר</Button>
-        <Button>צהריים</Button>
-        <Button>ערב</Button>
-        <Button>לילה</Button>
-      </ButtonGroup> */}
+      <Days
+        part={part}
+        handlePartChange={handlePartChange}
+        weekDaysAll={myWeekDays}
+        shiftGroupId={shiftGroupId}
+      />
       {shifts && (
         <Box my={2} px={2}>
           <ShiftsContainer
+            part={part}
             refreshList={fetchShifts}
             shiftsList={shifts}
             startOfWeek={startDate}
@@ -224,6 +228,7 @@ export default function Shifts() {
           />
 
           <ShiftsContainer
+            part={part}
             refreshList={fetchShifts}
             shiftsList={shifts}
             startOfWeek={startDate}
@@ -234,6 +239,7 @@ export default function Shifts() {
           />
 
           <ShiftsContainer
+            part={part}
             refreshList={fetchShifts}
             shiftsList={shifts}
             startOfWeek={startDate}
@@ -244,6 +250,7 @@ export default function Shifts() {
           />
 
           <ShiftsContainer
+            part={part}
             refreshList={fetchShifts}
             shiftsList={shifts}
             startOfWeek={startDate}
@@ -254,6 +261,7 @@ export default function Shifts() {
           />
 
           <ShiftsContainer
+            part={part}
             refreshList={fetchShifts}
             shiftsList={shifts}
             startOfWeek={startDate}
