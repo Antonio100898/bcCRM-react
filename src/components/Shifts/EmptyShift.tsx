@@ -12,6 +12,9 @@ const EmptyShift = ({ showEmptyShift }: Props) => {
         justifyContent: "center",
         border: "2px dashed #A1A1A1",
         borderRadius: "8px",
+        height: "58px",
+        alignItems: "center",
+        display: "flex",
       }}
     >
       <IconButton onClick={showEmptyShift}>

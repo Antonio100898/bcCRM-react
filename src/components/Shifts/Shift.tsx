@@ -6,9 +6,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
 import { shiftService } from "../../API/services";
-import EscortAndInstallationDialog from "../../Dialogs/EscortAndInstallationDialog";
 import EmptyShift from "./EmptyShift";
-import ShiftEdit from "../../Dialogs/ShiftEditDialog";
+import ShiftEdit from "../../Dialogs/ShiftDialogs/ShiftEditDialog";
+import InstallationShiftDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDialog";
+import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDetailsDialog";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -35,7 +36,12 @@ export default function Shift({
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
   const [showEditShift, setShowEditShift] = useState(false);
-  const [showEscortDetails, setShowEscortDetails] = useState(false);
+  const [showInstallationShiftDialog, setShowInstallationShiftDialog] =
+    useState(false);
+  const [
+    showInstallationShiftDetailsDialog,
+    setShowInstallationShiftDetailsDialog,
+  ] = useState(false);
 
   useEffect(() => {
     setCurrentShift(shift);
@@ -63,7 +69,24 @@ export default function Shift({
     };
 
     setCurrentShift(d);
-    setShowEditShift(true);
+
+    if (jobTypeId === 1) setShowInstallationShiftDialog(true);
+    else setShowEditShift(true);
+  };
+
+  const handleShiftClicked = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    if (jobTypeId === 1) setShowInstallationShiftDialog(true);
+    else setShowEditShift(true);
+  };
+
+  const setShowInstallationShiftDetailsDialogClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    setShowInstallationShiftDetailsDialog(true);
   };
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
@@ -104,7 +127,7 @@ export default function Shift({
           id={`shift${currentShift.id}`}
           draggable="true"
           onDragStart={handleDragStart}
-          onClick={() => setShowEditShift(true)}
+          onClick={handleShiftClicked}
           sx={{
             overflow: "hidden",
             borderRadius: "8px",
@@ -128,10 +151,7 @@ export default function Shift({
           </Box>
           {currentShift!.placeName && (
             <Box
-              onClick={(e) => {
-                e.stopPropagation();
-                jobTypeId === 1 && setShowEscortDetails(true);
-              }}
+              onClick={setShowInstallationShiftDetailsDialogClick}
               sx={{ backgroundColor: "secondary.light" }}
             >
               <Box
@@ -223,16 +243,25 @@ export default function Shift({
       {currentShift.id === 0 && <EmptyShift showEmptyShift={showEmptyShift} />}
 
       {currentShift.jobTypeId === 1 && (
-        <EscortAndInstallationDialog
-          isAdmin={isAdmin}
+        <InstallationShiftDialog
+          onShiftDetailsOpen={() => setShowInstallationShiftDetailsDialog(true)}
+          shift={currentShift}
+          shiftGroupId={shiftGroupId}
+          open={showInstallationShiftDialog}
+          onClose={() => setShowInstallationShiftDialog(false)}
+        />
+      )}
+      {currentShift.jobTypeId === 1 && (
+        <InstallationShiftDetailsDialog
+          adress={currentShift.address!}
           customer={currentShift.contactName!}
+          isAdmin={isAdmin}
           phone={currentShift.phone!}
+          placeName={currentShift.placeName!}
           wifi="wifi"
           remark={currentShift.remark}
-          adress={currentShift.address!}
-          placeName={currentShift.placeName!}
-          open={showEscortDetails}
-          onClose={() => setShowEscortDetails(false)}
+          open={showInstallationShiftDetailsDialog}
+          onClose={() => setShowInstallationShiftDetailsDialog(false)}
         />
       )}
       <ShiftEdit

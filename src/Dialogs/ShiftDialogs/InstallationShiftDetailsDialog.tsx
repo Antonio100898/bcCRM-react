@@ -5,7 +5,7 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import CustomDialog from "./CustomDialog";
+import CustomDialog from "../CustomDialog";
 
 type Props = {
   open: boolean;
@@ -18,7 +18,7 @@ type Props = {
   remark?: string | undefined;
   isAdmin: boolean;
 };
-const EscortAndInstallationDialog = ({
+const InstallationShiftDetailsDialog = ({
   open,
   onClose,
   placeName,
@@ -71,7 +71,10 @@ const EscortAndInstallationDialog = ({
       <MenuList>
         {isAdmin
           ? list.map((item) => (
-              <ListItem sx={{ alignItems: "flex-start", px: 0, my: 2 }}>
+              <ListItem
+                key={item.icon}
+                sx={{ alignItems: "flex-start", px: 0, my: 2 }}
+              >
                 <ListItemIcon sx={{ my: "4px" }}>
                   <img src={item.icon} />
                 </ListItemIcon>
@@ -105,7 +108,7 @@ const EscortAndInstallationDialog = ({
               </ListItem>
             ))
           : list.map((item) => (
-              <ListItem sx={{ alignItems: "flex-start", my: 2 }}>
+              <ListItem key={item.icon} sx={{ alignItems: "flex-start", my: 2 }}>
                 <ListItemIcon sx={{ my: "4px" }}>
                   <img src={item.icon} />
                 </ListItemIcon>
@@ -117,4 +120,4 @@ const EscortAndInstallationDialog = ({
   );
 };
 
-export default EscortAndInstallationDialog;
+export default InstallationShiftDetailsDialog;

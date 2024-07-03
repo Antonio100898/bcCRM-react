@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
-import ShiftEdit from "../../Dialogs/ShiftEditDialog";
+import ShiftEdit from "../../Dialogs/ShiftDialogs/ShiftEditDialog";
 import { Box, Typography, Stack } from "@mui/material";
 
 export type Props = {
