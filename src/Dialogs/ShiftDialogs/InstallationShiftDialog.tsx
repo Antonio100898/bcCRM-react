@@ -7,7 +7,7 @@ import { useUser } from "../../Context/useUser";
 import { getTimeString } from "../../helpers/getTimeString";
 import { Dayjs } from "dayjs";
 import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
-import { Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 import { installationShiftDesc } from "../../Temp/InstallationShiftDesc";
 import TimePicker from "../../components/TimePicker/TimePicker";
 
@@ -223,7 +223,9 @@ const InstallationShiftDialog = ({
         </Stack>
         <Stack gap={1.5}>
           <Typography fontWeight="bold">שעות המשמרת</Typography>
-          <TimePicker value="00:00" />
+          <Box height={120}>
+            <TimePicker value="00:00" />
+          </Box>
         </Stack>
       </Stack>
     </CustomDialog>
