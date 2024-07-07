@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { IshiftDetail } from "../../Model";
 import { Box, Typography } from "@mui/material";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
@@ -6,10 +5,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
 import { shiftService } from "../../API/services";
-import EmptyShift from "./EmptyShift";
-import ShiftEdit from "../../Dialogs/ShiftDialogs/ShiftEditDialog";
-import InstallationShiftDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDialog";
-import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDetailsDialog";
+import { useUser } from "../../Context/useUser";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -19,73 +15,43 @@ export type Props = {
   refreshList: () => void;
   showDetails: boolean;
   shiftGroupId: number;
-  isAdmin: boolean;
+  setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowInstallationShiftDetailsDialog: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  setCurrentShift: React.Dispatch<
+    React.SetStateAction<Partial<IshiftDetail> | null>
+  >;
 };
 
 export default function Shift({
   shift,
-  jobTypeId,
-  shiftTypeId,
   defDate,
   refreshList,
   showDetails,
   shiftGroupId,
-  isAdmin,
+  setShowInstallationShiftDetailsDialog,
+  setShowShiftDialog,
+  setCurrentShift,
+  jobTypeId,
+  shiftTypeId,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
-  const [currentShift, setCurrentShift] =
-    useState<Partial<IshiftDetail>>(shift);
-  const [showEditShift, setShowEditShift] = useState(false);
-  const [showInstallationShiftDialog, setShowInstallationShiftDialog] =
-    useState(false);
-  const [
-    showInstallationShiftDetailsDialog,
-    setShowInstallationShiftDetailsDialog,
-  ] = useState(false);
-
-  useEffect(() => {
-    setCurrentShift(shift);
-  }, [shift]);
-
-  const handleCloseEdit = () => {
-    setShowEditShift(false);
-    refreshList();
-  };
-
-  const showEmptyShift = () => {
-    const d: Partial<IshiftDetail> = {
-      id: 0,
-      workerId: 199,
-      jobTypeId,
-      shiftTypeId,
-      placeName: "",
-      phone: "",
-      remark: "",
-      contactName: "",
-      startDate: defDate.toString(),
-      finishTime: defDate.toString(),
-      startDateEN: defDate.toString(),
-      finishTimeEN: defDate.toString(),
-    };
-
-    setCurrentShift(d);
-
-    if (jobTypeId === 1) setShowInstallationShiftDialog(true);
-    else setShowEditShift(true);
-  };
+  const { isAdmin } = useUser();
 
   const handleShiftClicked = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     e.stopPropagation();
-    if (jobTypeId === 1) setShowInstallationShiftDialog(true);
-    else setShowEditShift(true);
+    setCurrentShift(shift);
+    setShowShiftDialog(true);
   };
 
   const setShowInstallationShiftDetailsDialogClick = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     e.stopPropagation();
+    setCurrentShift(shift);
     setShowInstallationShiftDetailsDialog(true);
   };
 
@@ -122,59 +88,58 @@ export default function Shift({
 
   return (
     <div onDragOver={enableDropping} onDrop={handleDrop}>
-      {currentShift && currentShift!.id! > 0 && (
+      <Box
+        id={`shift${shift.id}`}
+        draggable="true"
+        onDragStart={handleDragStart}
+        onClick={isAdmin ? handleShiftClicked : undefined}
+        sx={{
+          overflow: "hidden",
+          borderRadius: "8px",
+          border: "grey thin solid",
+        }}
+      >
         <Box
-          id={`shift${currentShift.id}`}
-          draggable="true"
-          onDragStart={handleDragStart}
-          onClick={handleShiftClicked}
           sx={{
+            textOverflow: "ellipsis",
             overflow: "hidden",
-            borderRadius: "8px",
-            border: "grey thin solid",
+            whiteSpace: "nowrap",
+            color: shift.workerName === "עובד כללי" ? "red" : "black",
+            position: "relative",
+            backgroundColor: "#E9E9E9",
+            py: "2px",
           }}
         >
+          <Typography component="span" fontWeight={500} fontSize={14}>
+            {shift.workerName}
+          </Typography>
+        </Box>
+        {shift.placeName && (
           <Box
-            sx={{
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              color: currentShift!.workerName === "עובד כללי" ? "red" : "black",
-              position: "relative",
-              backgroundColor: "#E9E9E9",
-              py: "2px",
-            }}
+            onClick={setShowInstallationShiftDetailsDialogClick}
+            sx={{ backgroundColor: "secondary.light" }}
           >
-            <Typography component="span" fontWeight={500} fontSize={14}>
-              {currentShift!.workerName}
-            </Typography>
-          </Box>
-          {currentShift!.placeName && (
             <Box
-              onClick={setShowInstallationShiftDetailsDialogClick}
-              sx={{ backgroundColor: "secondary.light" }}
+              sx={{
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                maxWidth: "114px",
+                py: "2px",
+                m: "auto",
+                cursor: "pointer",
+              }}
             >
-              <Box
-                sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  maxWidth: "114px",
-                  py: "2px",
-                  m: "auto",
-                  cursor: "pointer",
-                }}
+              <Typography
+                fontWeight={500}
+                component="span"
+                color="text.secondary"
+                fontSize={14}
               >
-                <Typography
-                  fontWeight={500}
-                  component="span"
-                  color="text.secondary"
-                  fontSize={14}
-                >
-                  {currentShift!.placeName}
-                </Typography>
-              </Box>
-              {/* {currentShift!.remark && currentShift!.remark?.length > 1 && (
+                {shift.placeName}
+              </Typography>
+            </Box>
+            {/* {currentShift!.remark && currentShift!.remark?.length > 1 && (
                 <Tooltip
                   title={
                     <h3
@@ -198,78 +163,44 @@ export default function Shift({
                   />
                 </Tooltip>
               )} */}
-            </Box>
-          )}
-
-          {showDetails && (
-            <div>
-              {currentShift!.contactName && (
-                <div className="shiftDivMiddleSimple textSmall">
-                  <PersonIcon />
-                  {currentShift!.contactName}
-                </div>
-              )}
-              {currentShift!.phone && (
-                <div className="shiftDivMiddleSimple textSmall">
-                  <PhoneEnabledIcon />
-                  {currentShift!.phone}
-                </div>
-              )}
-              {currentShift!.address && currentShift!.address.length > 2 && (
-                <div className="shiftDivMiddleSimple textSmall">
-                  <LocationOnIcon />
-                  {currentShift!.address}
-                </div>
-              )}
-              <div className="shiftDivMiddleSimple textSmall">
-                {currentShift!.remark}
-              </div>
-            </div>
-          )}
-
-          <Box
-            sx={{
-              backgroundColor: "#F8F8F8",
-              py: "2px",
-            }}
-          >
-            <Typography fontWeight={500} component="span" fontSize={14}>
-              {`${currentShift!.finishHour}  -  ${currentShift!.startHour}`}
-            </Typography>
           </Box>
+        )}
+
+        {showDetails && (
+          <div>
+            {shift.contactName && (
+              <div className="shiftDivMiddleSimple textSmall">
+                <PersonIcon />
+                {shift.contactName}
+              </div>
+            )}
+            {shift.phone && (
+              <div className="shiftDivMiddleSimple textSmall">
+                <PhoneEnabledIcon />
+                {shift.phone}
+              </div>
+            )}
+            {shift.address && shift.address.length > 2 && (
+              <div className="shiftDivMiddleSimple textSmall">
+                <LocationOnIcon />
+                {shift.address}
+              </div>
+            )}
+            <div className="shiftDivMiddleSimple textSmall">{shift.remark}</div>
+          </div>
+        )}
+
+        <Box
+          sx={{
+            backgroundColor: "#F8F8F8",
+            py: "2px",
+          }}
+        >
+          <Typography fontWeight={500} component="span" fontSize={14}>
+            {`${shift.finishHour}  -  ${shift.startHour}`}
+          </Typography>
         </Box>
-      )}
-
-      {currentShift.id === 0 && <EmptyShift showEmptyShift={showEmptyShift} />}
-
-      {currentShift.jobTypeId === 1 && (
-        <InstallationShiftDialog
-          onShiftDetailsOpen={() => setShowInstallationShiftDetailsDialog(true)}
-          shift={currentShift}
-          shiftGroupId={shiftGroupId}
-          open={showInstallationShiftDialog}
-          onClose={() => setShowInstallationShiftDialog(false)}
-        />
-      )}
-      {currentShift.jobTypeId === 1 && (
-        <InstallationShiftDetailsDialog
-          adress={currentShift.address!}
-          customer={currentShift.contactName!}
-          isAdmin={isAdmin}
-          phone={currentShift.phone!}
-          placeName={currentShift.placeName!}
-          wifi="wifi"
-          remark={currentShift.remark}
-          open={showInstallationShiftDetailsDialog}
-          onClose={() => setShowInstallationShiftDetailsDialog(false)}
-        />
-      )}
-      <ShiftEdit
-        open={showEditShift}
-        shift={currentShift}
-        handleClose={handleCloseEdit}
-        shiftGroupId={shiftGroupId}
-      />
+      </Box>
     </div>
   );
 }

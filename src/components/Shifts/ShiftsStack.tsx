@@ -1,6 +1,8 @@
 import { Stack } from "@mui/material";
 import { IshiftDetail } from "../../Model";
 import Shift from "./Shift";
+import EmptyShift from "./EmptyShift";
+import { useUser } from "../../Context/useUser";
 
 type Props = {
   shifts: IshiftDetail[];
@@ -11,6 +13,14 @@ type Props = {
   shiftGroupId: number;
   defDate: Date;
   userType: number;
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number) => void;
+  setShowInstallationShiftDetailsDialog: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentShift: React.Dispatch<
+    React.SetStateAction<Partial<IshiftDetail> | null>
+  >;
 };
 
 const ShiftsStack = ({
@@ -22,27 +32,22 @@ const ShiftsStack = ({
   showDetails,
   defDate,
   userType,
+  showEmptyShift,
+  setShowInstallationShiftDetailsDialog,
+  setShowShiftDialog,
+  setCurrentShift,
 }: Props) => {
-  const emptyShift: Partial<IshiftDetail> = {
-    id: 0,
-    workerId: 199,
-    jobTypeId,
-    shiftTypeId,
-    placeName: "",
-    phone: "",
-    remark: "",
-    contactName: "",
-    startDate: new Date().toString(),
-    finishTime: new Date().toString(),
-    startDateEN: new Date().toString(),
-    finishTimeEN: new Date().toString(),
-  };
+  const { isAdmin } = useUser();
   return (
     <Stack width="200px" maxWidth={250} flex={1} textAlign="center" gap={1}>
       {shifts.map((shift) => {
         return (
           <Shift
-            isAdmin={true}
+            setCurrentShift={setCurrentShift}
+            setShowInstallationShiftDetailsDialog={
+              setShowInstallationShiftDetailsDialog
+            }
+            setShowShiftDialog={setShowShiftDialog}
             key={shift.id}
             shift={shift}
             jobTypeId={jobTypeId}
@@ -54,18 +59,11 @@ const ShiftsStack = ({
           />
         );
       })}
-      {/* {userType === 1 && ( */}
-
-      <Shift
-        isAdmin={userType === 1}
-        shift={emptyShift}
-        jobTypeId={jobTypeId}
-        shiftTypeId={shiftTypeId}
-        defDate={defDate}
-        refreshList={refreshList}
-        showDetails={showDetails}
-        shiftGroupId={shiftGroupId}
-      />
+      {isAdmin && (
+        <EmptyShift
+          showEmptyShift={() => showEmptyShift(jobTypeId, shiftTypeId)}
+        />
+      )}
     </Stack>
   );
 };

@@ -7,9 +7,10 @@ import { useUser } from "../../Context/useUser";
 import { getTimeString } from "../../helpers/getTimeString";
 import { Dayjs } from "dayjs";
 import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { installationShiftDesc } from "../../Temp/InstallationShiftDesc";
 import TimePicker from "../../components/TimePicker/TimePicker";
+import SelectChip from "../../components/SelectChip/SelectChip";
 
 type Props = {
   open: boolean;
@@ -17,27 +18,31 @@ type Props = {
   shift: Partial<IshiftDetail>;
   shiftGroupId: number;
   onShiftDetailsOpen: () => void;
+  installation?: boolean;
 };
 
-const InstallationShiftDialog = ({
+const ShiftDialog = ({
   open,
   onClose,
   shift,
   shiftGroupId,
   onShiftDetailsOpen,
+  installation,
 }: Props) => {
   const [currentShift, setCurrentShift] = useState(shift);
   const [currentJobWorkers, setCurrentJobWorkers] = useState<IWorker[]>([]);
   const [startTime, setStartTime] = useState("00:00");
   const [finishTime, setFinishTime] = useState("00:00");
   const [selectedWorker, setSelectedWorker] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const [selectedInstallationDesc, setSelectedInstallationDesc] = useState<
     string | null
   >(null);
 
-  const { workers, user } = useUser();
+  const { workers, user, isAdmin } = useUser();
 
   const fetchShiftPlans = async () => {
+    setLoading(true);
     try {
       const data = await shiftService.getShiftPlansDetails(
         new Date(currentShift.startDateEN!).toDateString()
@@ -66,6 +71,7 @@ const InstallationShiftDialog = ({
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
 
   const onChange = <K extends keyof IshiftDetail>(
@@ -135,7 +141,7 @@ const InstallationShiftDialog = ({
   };
 
   const cancelShift = async () => {
-    if (currentShift.workerId === user?.workerId || user?.userType === 1) {
+    if (currentShift.workerId === user?.workerId || isAdmin) {
       if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
       if (!currentShift?.id) {
         enqueueSnackbar({
@@ -176,60 +182,68 @@ const InstallationShiftDialog = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
 
+  const handleClose = () => {
+    setSelectedWorker(null);
+    onClose();
+  };
+
   return (
     <CustomDialog fullScreen onClose={onClose} open={open}>
-      <Stack gap={7}>
-        <Stack gap={1.5}>
-          <Typography fontWeight="bold">עובד</Typography>
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {currentJobWorkers.map((worker) => (
-              <Chip
-                key={worker.Id}
-                onClick={() => setSelectedWorker(worker.Id)}
-                sx={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  backgroundColor:
-                    selectedWorker === worker.Id ? "primary.main" : "",
-                  "&:hover": {
-                    backgroundColor: "primary.main",
-                  },
-                }}
-                label={`${worker.firstName} ${worker.lastName}`}
-              />
-            ))}
+      {loading ? (
+        <Box width="100%" height="100%" textAlign="center">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <Stack gap={7}>
+            <Stack gap={1.5}>
+              <Typography fontWeight="bold">עובד</Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {currentJobWorkers.map((worker) => (
+                  <SelectChip
+                    key={worker.Id}
+                    onClick={() => setSelectedWorker(worker.Id)}
+                    selected={selectedWorker === worker.Id}
+                    label={`${worker.firstName} ${worker.lastName}`}
+                  />
+                ))}
+              </Stack>
+            </Stack>
+            {installation && (
+              <Stack gap={1.5}>
+                <Typography fontWeight="bold">תיאור משמרת</Typography>
+                <Stack direction="row" flexWrap="wrap" gap={1}>
+                  {installationShiftDesc.map((desc) => (
+                    <SelectChip
+                      selected={selectedInstallationDesc === desc}
+                      onClick={() => handleShiftDetailsClicked(desc)}
+                      key={desc}
+                      label={desc}
+                    />
+                  ))}
+                </Stack>
+              </Stack>
+            )}
+            <Stack gap={1.5}>
+              <Typography fontWeight="bold">שעות המשמרת</Typography>
+              <Stack direction="row" justifyContent="space-between" gap={2}>
+                <TimePicker
+                  onChange={(v) => console.log(v)}
+                  value={currentShift.startHour || "00:00"}
+                  label="שעת התחלה"
+                />
+                <TimePicker
+                  onChange={(v) => console.log(v)}
+                  value={currentShift.finishHour || "00:00"}
+                  label="שעת סיום"
+                />
+              </Stack>
+            </Stack>
           </Stack>
-        </Stack>
-        <Stack gap={1.5}>
-          <Typography fontWeight="bold">תיאור משמרת</Typography>
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {installationShiftDesc.map((desc) => (
-              <Chip
-                onClick={() => handleShiftDetailsClicked(desc)}
-                key={desc}
-                sx={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  backgroundColor:
-                    selectedInstallationDesc === desc ? "primary.main" : "",
-                  "&:hover": {
-                    backgroundColor: "primary.main",
-                  },
-                }}
-                label={desc}
-              />
-            ))}
-          </Stack>
-        </Stack>
-        <Stack gap={1.5}>
-          <Typography fontWeight="bold">שעות המשמרת</Typography>
-          <Box height={120}>
-            <TimePicker value="00:00" />
-          </Box>
-        </Stack>
-      </Stack>
+        </>
+      )}
     </CustomDialog>
   );
 };
 
-export default InstallationShiftDialog;
+export default ShiftDialog;

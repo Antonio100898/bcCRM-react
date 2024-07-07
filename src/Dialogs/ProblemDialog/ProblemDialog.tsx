@@ -105,6 +105,7 @@ export function ProblemDialog({
     workers,
     problemTypes,
     updateDepartments,
+    isAdmin
   } = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -388,7 +389,7 @@ export function ProblemDialog({
   };
 
   function isLockEnable(): boolean {
-    if (user?.userType === 1) return true;
+    if (isAdmin) return true;
 
     if (
       !selfProblem.isLocked &&
@@ -461,7 +462,7 @@ export function ProblemDialog({
   const isChangeToWorkerEnable = (): boolean => {
     if (!selfProblem) return false;
 
-    if (user?.userType === 1) return true;
+    if (isAdmin) return true;
 
     if (!selfProblem.isLocked) return true;
 

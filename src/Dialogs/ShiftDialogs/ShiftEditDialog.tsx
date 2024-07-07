@@ -37,7 +37,7 @@ export default function ShiftEdit({
 }: Props) {
   const { confirm } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
-  const { workers, user } = useUser();
+  const { workers, user, isAdmin } = useUser();
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
   const [myWorkers, setMyWorkers] = useState<IWorker[]>([]);
@@ -197,7 +197,7 @@ export default function ShiftEdit({
   };
 
   const cancelShift = async () => {
-    if (currentShift.workerId === user?.workerId || user?.userType === 1) {
+    if (currentShift.workerId === user?.workerId || isAdmin) {
       if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
       if (!currentShift?.id) {
         enqueueSnackbar({
@@ -411,7 +411,7 @@ export default function ShiftEdit({
                 marginTop: "5px",
               }}
             >
-              {user?.userType === 1 &&
+              {isAdmin &&
                 currentShift &&
                 currentShift.id !== undefined &&
                 currentShift.id > 0 && (

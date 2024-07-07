@@ -8,6 +8,7 @@ import { problemService } from "../../API/services";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import LockIcon from "@mui/icons-material/Lock";
 import HistoryIcon from "@mui/icons-material/History";
+import { useUser } from "../../Context/useUser";
 
 type Props = {
   problem: IProblem;
@@ -40,6 +41,8 @@ export default function ProblemDialogActions({
   const [selfProblem, setSelfProblem] = useState<IProblem>({ ...problem });
   const [pendingClose, setPendingClose] = useState(false);
   const [pendingUpdate, setPendingUpdate] = useState(false);
+
+  const { isAdmin } = useUser();
 
   const theme = useTheme();
   const { confirm } = useConfirm();
@@ -176,7 +179,7 @@ export default function ProblemDialogActions({
           }}
         >
           {(!selfProblem.isLocked ||
-            user?.userType === 1 ||
+            isAdmin ||
             (selfProblem.isLocked &&
               (selfProblem.toWorker === user?.workerId ||
                 selfProblem.workerCreateId === user?.workerId))) && (

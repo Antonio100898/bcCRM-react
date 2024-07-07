@@ -59,6 +59,7 @@ export interface IUserContext {
   setOrderBy: React.Dispatch<React.SetStateAction<keyof IProblem>>;
   fileLoading: boolean;
   updateDepartment: (department: string) => Promise<void>;
+  isAdmin: boolean;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -93,6 +94,7 @@ export const UserContext = createContext<IUserContext>({
   setOrderBy: () => {},
   fileLoading: false,
   updateDepartment: () => new Promise(() => {}),
+  isAdmin: false,
 });
 
 export function UserContextProvider(props: Props) {
@@ -105,9 +107,11 @@ export function UserContextProvider(props: Props) {
   };
 
   const [user, setUser] = useState<IUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const updateUser = (u: IUser | null) => {
     setUser(u);
+    setIsAdmin(u?.userType === 1);
   };
 
   const [showProblemDialog, setShowProblemDialog] = useState<boolean>(false);
@@ -297,6 +301,7 @@ export function UserContextProvider(props: Props) {
         orderBy,
         setOrderBy,
         fileLoading,
+        isAdmin: true,
       }}
       {...props}
     />

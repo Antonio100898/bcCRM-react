@@ -23,6 +23,14 @@ export type Props = {
   showDetails: boolean;
   shiftGroupId: number;
   part: number;
+  setShowInstallationShiftDetailsDialog: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number) => void
+  setCurrentShift: React.Dispatch<
+    React.SetStateAction<Partial<IshiftDetail> | null>
+  >;
 };
 
 export function ShiftsWeek({
@@ -35,6 +43,11 @@ export function ShiftsWeek({
   showDetails,
   shiftGroupId,
   part,
+  color,
+  setShowInstallationShiftDetailsDialog,
+  setShowShiftDialog,
+  showEmptyShift,
+  setCurrentShift,
 }: Props) {
   const [week, setWeeks] = useState<IshiftWeek[]>([]);
   const { user } = useUser();
@@ -117,6 +130,12 @@ export function ShiftsWeek({
             .slice(0, 3)
             .map((shift) => (
               <ShiftsStack
+                setCurrentShift={setCurrentShift}
+                setShowInstallationShiftDetailsDialog={
+                  setShowInstallationShiftDetailsDialog
+                }
+                setShowShiftDialog={setShowShiftDialog}
+                showEmptyShift={showEmptyShift}
                 key={shift.day}
                 defDate={addDays(startOfWeek, shift.day)}
                 shifts={shift.shifts}
@@ -134,6 +153,12 @@ export function ShiftsWeek({
             .slice(3, 6)
             .map((shift) => (
               <ShiftsStack
+                setCurrentShift={setCurrentShift}
+                setShowInstallationShiftDetailsDialog={
+                  setShowInstallationShiftDetailsDialog
+                }
+                setShowShiftDialog={setShowShiftDialog}
+                showEmptyShift={showEmptyShift}
                 key={shift.day}
                 defDate={addDays(startOfWeek, shift.day)}
                 shifts={shift.shifts}
@@ -147,6 +172,12 @@ export function ShiftsWeek({
             ))}
         {isTablet && part === 3 && (
           <ShiftsStack
+            setCurrentShift={setCurrentShift}
+            setShowInstallationShiftDetailsDialog={
+              setShowInstallationShiftDetailsDialog
+            }
+            setShowShiftDialog={setShowShiftDialog}
+            showEmptyShift={showEmptyShift}
             defDate={addDays(startOfWeek, 6)}
             shifts={week[0].saturday}
             jobTypeId={jobTypeId}
@@ -160,6 +191,12 @@ export function ShiftsWeek({
         {!isTablet &&
           shifts.map((shift) => (
             <ShiftsStack
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
               key={shift.day}
               defDate={addDays(startOfWeek, shift.day)}
               shifts={shift.shifts}

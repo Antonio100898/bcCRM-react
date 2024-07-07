@@ -6,6 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import CustomDialog from "../CustomDialog";
+import { IshiftDetail } from "../../Model";
 
 type Props = {
   open: boolean;
@@ -17,6 +18,10 @@ type Props = {
   wifi: string;
   remark?: string | undefined;
   isAdmin: boolean;
+  onChange: <K extends keyof IshiftDetail>(
+    key: K,
+    val: IshiftDetail[K]
+  ) => void;
 };
 const InstallationShiftDetailsDialog = ({
   open,
@@ -28,42 +33,49 @@ const InstallationShiftDetailsDialog = ({
   wifi,
   remark,
   isAdmin,
+  onChange,
 }: Props) => {
   const list = [
     {
       icon: "/location.svg",
       value: placeName,
       label: "שם העסק",
+      onChange: (val: string) => onChange("placeName", val),
     },
     {
       icon: "/navigation.svg",
       value: adress,
       label: "כתובת",
+      onChange: (val: string) => onChange("address", val),
     },
     {
       icon: "/user.svg",
       value: customer,
       label: "איש קשר",
+      onChange: (val: string) => onChange("contactName", val),
     },
     {
       icon: "/phone.svg",
       value: phone,
       label: "טלפון",
+      onChange: (val: string) => onChange("phone", val),
     },
     {
       icon: "/wifi.svg",
       value: wifi,
       label: "חברת תקשורת",
+      onChange: (val: string) => console.log(val),
     },
     {
       icon: "/note.svg",
       value: remark,
       label: "הערות",
+      onChange: (val: string) => onChange("remark", val),
     },
   ];
   return (
     <CustomDialog
-      fullScreen={isAdmin}
+      //fullScreen={isAdmin}
       onClose={onClose}
       open={open}
       title="ליווי התחילת עבודה"
@@ -80,6 +92,8 @@ const InstallationShiftDetailsDialog = ({
                 </ListItemIcon>
                 {item.label === "הערות" ? (
                   <TextField
+                    onChange={(e) => item.onChange(e.currentTarget.value)}
+                    value={item.value}
                     multiline
                     fullWidth
                     sx={{
@@ -96,6 +110,8 @@ const InstallationShiftDetailsDialog = ({
                   />
                 ) : (
                   <TextField
+                    onChange={(e) => item.onChange(e.currentTarget.value)}
+                    value={item.value}
                     fullWidth
                     inputProps={{
                       style: {
@@ -108,7 +124,7 @@ const InstallationShiftDetailsDialog = ({
               </ListItem>
             ))
           : list.map((item) => (
-              <ListItem key={item.icon} sx={{ alignItems: "flex-start", my: 2 }}>
+              <ListItem key={item.icon} sx={{ alignItems: "flex-start" }}>
                 <ListItemIcon sx={{ my: "4px" }}>
                   <img src={item.icon} />
                 </ListItemIcon>

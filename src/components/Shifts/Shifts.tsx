@@ -6,8 +6,10 @@ import DateSelect from "../../components/Shifts/DateSelect";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { shiftService } from "../../API/services";
-import { IDayInfo, IshiftWeek } from "../../Model";
+import { IDayInfo, IshiftDetail, IshiftWeek } from "../../Model";
 import ShiftsContainer from "./ShiftsContainer";
+import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDetailsDialog";
+import ShiftDialog from "../../Dialogs/ShiftDialogs/ShiftDialog";
 
 function getLastSunday(orOtherDay: number) {
   const date = new Date();
@@ -21,7 +23,7 @@ function getLastSunday(orOtherDay: number) {
 export default function Shifts() {
   const { enqueueSnackbar } = useSnackbar();
   const { confirm } = useConfirm();
-  const { updateShowLoader, user } = useUser();
+  const { updateShowLoader, user, isAdmin } = useUser();
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
   const [part, setPart] = useState<number>(1);
@@ -32,9 +34,43 @@ export default function Shifts() {
   const [shiftGroupId, setShiftGroupId] = useState(
     user?.department === 4 ? 2 : 1
   );
+  const [currentShift, setCurrentShift] =
+    useState<Partial<IshiftDetail> | null>(null);
+  const [showShiftDialog, setShowShiftDialog] = useState(false);
+  const [
+    showInstallationShiftDetailsDialog,
+    setShowInstallationShiftDetailsDialog,
+  ] = useState(false);
 
   const theme = useTheme();
   const ibMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const showEmptyShift = (jobTypeId: number, shiftTypeId: number) => {
+    let emptyShift: Partial<IshiftDetail> = {
+      id: 0,
+      workerId: 199,
+      jobTypeId: jobTypeId,
+      shiftTypeId: shiftTypeId,
+      placeName: "",
+      phone: "",
+      remark: "",
+      contactName: "",
+      startDate: new Date().toString(),
+      finishTime: new Date().toString(),
+      startDateEN: new Date().toString(),
+      finishTimeEN: new Date().toString(),
+    };
+
+    setCurrentShift(emptyShift);
+    setShowShiftDialog(true);
+  };
+
+  const onChange = <K extends keyof IshiftDetail>(
+    key: K,
+    val: IshiftDetail[K]
+  ) => {
+    setCurrentShift({ ...currentShift, [key]: val });
+  };
 
   const handlePartChange = (action: "next" | "prev") => {
     switch (action) {
@@ -155,17 +191,18 @@ export default function Shifts() {
   };
 
   return (
-    <Box maxWidth={1200} mx={"auto"}>
-      <Typography
-        px={2}
-        variant={ibMobile ? "h5" : "h4"}
-        fontWeight="bold"
-        ml="2%"
-      >
-        סידור משמרות
-      </Typography>
-      <DateSelect setDate={setStartDate} />
-      {/* <div
+    <>
+      <Box maxWidth={1200} mx={"auto"}>
+        <Typography
+          px={2}
+          variant={ibMobile ? "h5" : "h4"}
+          fontWeight="bold"
+          ml="2%"
+        >
+          סידור משמרות
+        </Typography>
+        <DateSelect setDate={setStartDate} />
+        {/* <div
         style={{
           display: "flex",
           flex: "row",
@@ -208,70 +245,126 @@ export default function Shifts() {
           </IconButton>
         </Tooltip>
       </div> */}
-      <Days
-        part={part}
-        handlePartChange={handlePartChange}
-        weekDaysAll={myWeekDays}
-        shiftGroupId={shiftGroupId}
-      />
-      {shifts && (
-        <Box my={2} px={2}>
-          <ShiftsContainer
-            part={part}
-            refreshList={fetchShifts}
-            shiftsList={shifts}
-            startOfWeek={startDate}
-            title="בוקר"
-            shiftTypeId={1}
-            showDetails={showShiftDetails}
-            shiftGroupId={shiftGroupId}
-          />
+        <Days
+          part={part}
+          handlePartChange={handlePartChange}
+          weekDaysAll={myWeekDays}
+          shiftGroupId={shiftGroupId}
+        />
+        {shifts && (
+          <Box my={2} px={2}>
+            <ShiftsContainer
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
+              part={part}
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="בוקר"
+              shiftTypeId={1}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-          <ShiftsContainer
-            part={part}
-            refreshList={fetchShifts}
-            shiftsList={shifts}
-            startOfWeek={startDate}
-            title="צהריים"
-            shiftTypeId={2}
-            showDetails={showShiftDetails}
-            shiftGroupId={shiftGroupId}
-          />
+            <ShiftsContainer
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
+              part={part}
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="צהריים"
+              shiftTypeId={2}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-          <ShiftsContainer
-            part={part}
-            refreshList={fetchShifts}
-            shiftsList={shifts}
-            startOfWeek={startDate}
-            title="ערב"
-            shiftTypeId={3}
-            showDetails={showShiftDetails}
-            shiftGroupId={shiftGroupId}
-          />
+            <ShiftsContainer
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
+              part={part}
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="ערב"
+              shiftTypeId={3}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-          <ShiftsContainer
-            part={part}
-            refreshList={fetchShifts}
-            shiftsList={shifts}
-            startOfWeek={startDate}
-            title="לילה"
-            shiftTypeId={4}
-            showDetails={showShiftDetails}
-            shiftGroupId={shiftGroupId}
-          />
+            <ShiftsContainer
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
+              part={part}
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="לילה"
+              shiftTypeId={4}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
 
-          <ShiftsContainer
-            part={part}
-            refreshList={fetchShifts}
-            shiftsList={shifts}
-            startOfWeek={startDate}
-            title="בלתמ"
-            shiftTypeId={5}
-            showDetails={showShiftDetails}
-            shiftGroupId={shiftGroupId}
-          />
-        </Box>
+            <ShiftsContainer
+              setCurrentShift={setCurrentShift}
+              setShowInstallationShiftDetailsDialog={
+                setShowInstallationShiftDetailsDialog
+              }
+              setShowShiftDialog={setShowShiftDialog}
+              showEmptyShift={showEmptyShift}
+              part={part}
+              refreshList={fetchShifts}
+              shiftsList={shifts}
+              startOfWeek={startDate}
+              title="בלתמ"
+              shiftTypeId={5}
+              showDetails={showShiftDetails}
+              shiftGroupId={shiftGroupId}
+            />
+          </Box>
+        )}
+      </Box>
+      {currentShift && (
+        <ShiftDialog
+          onShiftDetailsOpen={() => setShowInstallationShiftDetailsDialog(true)}
+          installation={currentShift?.jobTypeId === 1}
+          shift={currentShift}
+          shiftGroupId={shiftGroupId}
+          open={showShiftDialog}
+          onClose={() => setShowShiftDialog(false)}
+        />
       )}
-    </Box>
+
+      {currentShift && currentShift?.jobTypeId === 1 && (
+        <InstallationShiftDetailsDialog
+          onChange={onChange}
+          adress={currentShift.address!}
+          customer={currentShift.contactName!}
+          isAdmin={isAdmin}
+          phone={currentShift.phone!}
+          placeName={currentShift.placeName!}
+          wifi="wifi"
+          remark={currentShift.remark}
+          open={showInstallationShiftDetailsDialog}
+          onClose={() => setShowInstallationShiftDetailsDialog(false)}
+        />
+      )}
+    </>
   );
 }

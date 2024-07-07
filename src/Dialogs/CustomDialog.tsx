@@ -54,7 +54,7 @@ const CustomDialog = ({
         </DialogTitle>
       )}
 
-      <DialogContent sx={{ px: 4 }}>{children}</DialogContent>
+      <DialogContent sx={{ px: 4, width: "100%" }}>{children}</DialogContent>
       <DialogActions>
         <CustomButton fullWidth sx={{ mb: 4, mx: 2 }}>
           שמירה

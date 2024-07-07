@@ -32,7 +32,7 @@ export default function ProblemMessages({
   const [defaultTextUpdateMessage, setDefaultTextUpdateMessage] = useState("");
   const [updateMsgId, setUpdateMsgId] = useState<undefined | number>(undefined);
 
-  const { user } = useUser();
+  const { user, isAdmin } = useUser();
   const { confirm } = useConfirm();
 
   const handleOpenNewCloseDialog = (value: boolean) => {
@@ -196,7 +196,7 @@ export default function ProblemMessages({
                 },
               }}
             />
-            {(m.workerId === user?.workerId || user?.userType === 1) && (
+            {(m.workerId === user?.workerId || isAdmin) && (
               <>
                 <IconButton
                   onClick={() => handleOpenUpdateCloseDialog(true, m.msg, m.id)}

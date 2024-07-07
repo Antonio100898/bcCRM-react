@@ -33,7 +33,7 @@ export default function WorkerExpenses() {
     (new Date().getMonth() + 1).toString()
   );
 
-  const { updateShowLoader, user } = useUser();
+  const { updateShowLoader, user, isAdmin } = useUser();
   const [totalSum, setTotalSum] = useState(0);
 
   const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
@@ -142,27 +142,26 @@ export default function WorkerExpenses() {
           >
             <ToggleButton value="1">הוצאות עבודה</ToggleButton>
 
-            {(user?.userType === 1 || user?.department === 9) && (
+            {(isAdmin || user?.department === 9) && (
               <ToggleButton value="2">בונוסים</ToggleButton>
             )}
 
-            {(user?.userType === 1 || user?.department === 4) && (
+            {(isAdmin || user?.department === 4) && (
               <ToggleButton value="3">הדרכות</ToggleButton>
             )}
 
-            {(user?.userType === 1 ||
-              [16, 4].includes(user?.department || 0)) && (
+            {(isAdmin || [16, 4].includes(user?.department || 0)) && (
               <ToggleButton value="4">קילומטר</ToggleButton>
             )}
 
-            {(user?.userType === 1 || user?.department === 9) && (
+            {(isAdmin || user?.department === 9) && (
               <ToggleButton value="5">אחוז מענה</ToggleButton>
             )}
 
-            {user && (user.department === 16 || user.userType === 1) && (
+            {user && (user.department === 16 || isAdmin) && (
               <ToggleButton value="6">בונוסים ענן</ToggleButton>
             )}
-            {user && (user.department === 2 || user.userType === 1) && (
+            {user && (user.department === 2 || isAdmin) && (
               <ToggleButton value="7">בונוסים טכנאים</ToggleButton>
             )}
           </ToggleButtonGroup>

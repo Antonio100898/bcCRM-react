@@ -34,7 +34,7 @@ import { enqueueSnackbar } from "notistack";
 
 export default function WorkersFreeday() {
   const { confirm } = useConfirm();
-  const { updateShowLoader, user } = useUser();
+  const { updateShowLoader, isAdmin } = useUser();
 
   const [currentWorkerFreeday, setCurrentWorkerFreeday] =
     useState<IWorkerFreeday>();
@@ -189,7 +189,7 @@ export default function WorkersFreeday() {
           </Select>
         </div>
         <div className="col-xs-12 col-sm-6 col-md-2 col-lg-2 right">
-          {user?.userType === 1 && (
+          {isAdmin && (
             <Tooltip title={showAllWorkers ? "הצג את כולם" : "הצג פירוט"}>
               <Switch onChange={() => setShowAllWorkers(!showAllWorkers)} />
             </Tooltip>
