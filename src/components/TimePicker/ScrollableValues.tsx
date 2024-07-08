@@ -101,8 +101,7 @@ const ScrollableValues = ({
     }
   };
 
-  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.stopPropagation();
+  const centralize = () => {
     const step = valueBoxHeight + 16;
     const calculatedY = Math.round((centerY - top) / step);
 
@@ -113,7 +112,27 @@ const ScrollableValues = ({
 
     setTouchStartY(0);
     setBeingTouched(false);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    centralize();
     //setIntervalId(window.setInterval(animateSlidingToZero.bind(this), 33));
+  };
+
+  const handleOnWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (beingTouched) return;
+
+    const scrollDown = e.deltaY > 0;
+
+    if (
+      (!scrollDown && top < centerY) ||
+      (scrollDown && top > -scrollableHeight + centerY + valueBoxHeight)
+    )
+      setTop(
+        (prev) =>
+          prev + (e.deltaY < 0 ? valueBoxHeight + 16 : -(valueBoxHeight + 16))
+      );
   };
 
   const handleItemClicked = (
@@ -132,7 +151,7 @@ const ScrollableValues = ({
         (((top - centerY) * step) / height) * (top - centerY < 0 ? -1 : 1);
       onChange((value < 10 ? `0${value}` : value).toString());
     }
-  }, [top, onChange]);
+  }, [top]);
 
   //   const animateSlidingToZero = () => {
   //     let vel = velocity;
@@ -175,7 +194,10 @@ const ScrollableValues = ({
       sx={{
         width: "100%",
         position: "relative",
+        cursor: "pointer",
+        overflowY: "sroll",
       }}
+      onWheel={handleOnWheel}
     >
       <Box
         ref={scrollableRef}

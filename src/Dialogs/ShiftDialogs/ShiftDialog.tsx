@@ -7,10 +7,19 @@ import { useUser } from "../../Context/useUser";
 import { getTimeString } from "../../helpers/getTimeString";
 import { Dayjs } from "dayjs";
 import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
-import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Stack,
+  Typography,
+  Divider,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { installationShiftDesc } from "../../Temp/InstallationShiftDesc";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import SelectChip from "../../components/SelectChip/SelectChip";
+import InstallationDetails from "./InstallationDetails";
 
 type Props = {
   open: boolean;
@@ -40,6 +49,9 @@ const ShiftDialog = ({
   >(null);
 
   const { workers, user, isAdmin } = useUser();
+
+  const theme = useTheme();
+  const isBigScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   const fetchShiftPlans = async () => {
     setLoading(true);
@@ -81,14 +93,18 @@ const ShiftDialog = ({
     setCurrentShift({ ...currentShift, [key]: val });
   };
 
-  const handleChange = (newValue: Dayjs | null) => {
-    onChange("startDateEN", newValue?.format() || "01/01/2000");
-  };
+  // const handleChange = (newValue: Dayjs | null) => {
+  //   onChange("startDateEN", newValue?.format() || "01/01/2000");
+  // };
 
   const handleShiftDetailsClicked = (desc: string) => {
-    if (selectedInstallationDesc === desc) onShiftDetailsOpen();
+    if (!isBigScreen && selectedInstallationDesc === desc) onShiftDetailsOpen();
     else setSelectedInstallationDesc(desc);
   };
+
+  useEffect(() => {
+    console.log(currentShift);
+  }, [currentShift]);
 
   const updateShift = async () => {
     if (
@@ -188,22 +204,28 @@ const ShiftDialog = ({
   };
 
   return (
-    <CustomDialog fullScreen onClose={onClose} open={open}>
+    <CustomDialog
+      onSubmit={updateShift}
+      sx={{ maxWidth: "1200px", px: isBigScreen ? 4 : 0 }}
+      fullScreen={!isBigScreen}
+      onClose={onClose}
+      open={open}
+    >
       {loading ? (
-        <Box width="100%" height="100%" textAlign="center">
+        <Box width="100%" textAlign="center">
           <CircularProgress />
         </Box>
       ) : (
-        <>
-          <Stack gap={7}>
+        <Stack direction="row">
+          <Stack gap={7} flex={1}>
             <Stack gap={1.5}>
               <Typography fontWeight="bold">עובד</Typography>
               <Stack direction="row" flexWrap="wrap" gap={1}>
                 {currentJobWorkers.map((worker) => (
                   <SelectChip
                     key={worker.Id}
-                    onClick={() => setSelectedWorker(worker.Id)}
-                    selected={selectedWorker === worker.Id}
+                    onClick={() => onChange("workerId", worker.Id)}
+                    selected={currentShift.workerId === worker.Id}
                     label={`${worker.firstName} ${worker.lastName}`}
                   />
                 ))}
@@ -228,19 +250,43 @@ const ShiftDialog = ({
               <Typography fontWeight="bold">שעות המשמרת</Typography>
               <Stack direction="row" justifyContent="space-between" gap={2}>
                 <TimePicker
-                  onChange={(v) => console.log(v)}
+                  onChange={(v) => onChange("startHour", v as string)}
                   value={currentShift.startHour || "00:00"}
                   label="שעת התחלה"
                 />
                 <TimePicker
-                  onChange={(v) => console.log(v)}
+                  onChange={(v) => onChange("finishHour", v as string)}
                   value={currentShift.finishHour || "00:00"}
                   label="שעת סיום"
                 />
               </Stack>
             </Stack>
           </Stack>
-        </>
+          {isBigScreen && installation && (
+            <>
+              <Divider
+                orientation="vertical"
+                sx={{
+                  height: "inherit",
+                  borderColor: "common.black",
+                  mx: 6,
+                }}
+              />
+              <Box width="300px">
+                <InstallationDetails
+                  adress={currentShift.address!}
+                  customer={currentShift.contactName!}
+                  isAdmin={isAdmin}
+                  onChange={onChange}
+                  phone={currentShift.phone!}
+                  placeName={currentShift.placeName!}
+                  wifi="wifi"
+                  remark={currentShift.remark}
+                />
+              </Box>
+            </>
+          )}
+        </Stack>
       )}
     </CustomDialog>
   );

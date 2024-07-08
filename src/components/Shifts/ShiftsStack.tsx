@@ -39,7 +39,7 @@ const ShiftsStack = ({
 }: Props) => {
   const { isAdmin } = useUser();
   return (
-    <Stack width="200px" maxWidth={250} flex={1} textAlign="center" gap={1}>
+    <Stack sx={{ maxWidth: "250px" }} flex={1} textAlign="center" gap={1}>
       {shifts.map((shift) => {
         return (
           <Shift

@@ -135,11 +135,11 @@ export default function Days({
         zIndex: 1000,
         pt: 2,
         mt: 1,
+        overflowX: "hidden",
       }}
     >
       {isTablet && (
         <>
-          {" "}
           <IconButton
             sx={{
               position: "absolute",
@@ -162,11 +162,10 @@ export default function Days({
           </IconButton>
         </>
       )}
-
       <Stack px={2} pb={1} direction="row" gap="8px" justifyContent="center">
         {weekDays &&
           (isTablet ? getSlicedDays() : weekDays).map((day: IDayInfo) => (
-            <Box width="200px" flex={1} key={day.dayValue}>
+            <Box sx={{ maxWidth: "200px" }} flex={1} key={day.dayValue}>
               <Typography textAlign="center" variant="body1" fontWeight="bold">
                 {day.dayName}&apos;
               </Typography>
@@ -176,7 +175,11 @@ export default function Days({
             </Box>
           ))}
       </Stack>
-      <Divider sx={{ visibility: isOnTop ? "" : "hidden" }} />
+      <Divider
+        sx={{
+          visibility: isOnTop ? "" : "hidden",
+        }}
+      />
     </Box>
   );
 }

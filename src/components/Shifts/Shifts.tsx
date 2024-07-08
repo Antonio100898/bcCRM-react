@@ -10,15 +10,8 @@ import { IDayInfo, IshiftDetail, IshiftWeek } from "../../Model";
 import ShiftsContainer from "./ShiftsContainer";
 import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDetailsDialog";
 import ShiftDialog from "../../Dialogs/ShiftDialogs/ShiftDialog";
-
-function getLastSunday(orOtherDay: number) {
-  const date = new Date();
-  const today = date.getDate();
-  const currentDay = date.getDay();
-  const newDate = date.setDate(today - (currentDay || orOtherDay));
-
-  return new Date(newDate);
-}
+import { getWeekDate } from "../../helpers/getWeekDate";
+import { addDays } from "../../helpers/addDays";
 
 export default function Shifts() {
   const { enqueueSnackbar } = useSnackbar();
@@ -27,9 +20,6 @@ export default function Shifts() {
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
   const [part, setPart] = useState<number>(1);
-  const [startDate, setStartDate] = useState(
-    getLastSunday(new Date().getDay())
-  );
   const [showShiftDetails, setShowShiftDetails] = useState(false);
   const [shiftGroupId, setShiftGroupId] = useState(
     user?.department === 4 ? 2 : 1
@@ -41,9 +31,21 @@ export default function Shifts() {
     showInstallationShiftDetailsDialog,
     setShowInstallationShiftDetailsDialog,
   ] = useState(false);
+  const [startDate, setStartDate] = useState(getWeekDate("start"));
+  const [finishDate, setFinishDate] = useState(getWeekDate("finish"));
 
   const theme = useTheme();
-  const ibMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleWeekChange = (move: "next" | "prev") => {
+    if (move === "next") {
+      setStartDate(addDays(startDate, 7));
+      setFinishDate(addDays(finishDate, 7));
+    } else {
+      setStartDate(addDays(startDate, -7));
+      setFinishDate(addDays(finishDate, -7));
+    }
+  };
 
   const showEmptyShift = (jobTypeId: number, shiftTypeId: number) => {
     let emptyShift: Partial<IshiftDetail> = {
@@ -161,47 +163,46 @@ export default function Shifts() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, setShowShiftDetails, shiftGroupId]);
 
-  const showWorkersMissingShiftPlans = async () => {
-    try {
-      const data = await shiftService.getWorkersMissingShiftsPlan(
-        new Date(startDate).toDateString()
-      );
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: data?.d.msg,
-          variant: "error",
-        });
-        if (data?.d.msg === "נכשל לעדכן תקלה. חסר פרטי משתמש") {
-          enqueueSnackbar({
-            message: "Log Out",
-            variant: "error",
-          });
-        }
-        return;
-      }
-    } catch (error) {
-      if (error instanceof Error)
-        enqueueSnackbar({
-          message: error.message,
-          variant: "error",
-        });
-      console.error(error);
-    }
-    updateShowLoader(false);
-  };
+  // const showWorkersMissingShiftPlans = async () => {
+  //   try {
+  //     const data = await shiftService.getWorkersMissingShiftsPlan(
+  //       new Date(startDate).toDateString()
+  //     );
+  //     if (!data?.d.success) {
+  //       enqueueSnackbar({
+  //         message: data?.d.msg,
+  //         variant: "error",
+  //       });
+  //       if (data?.d.msg === "נכשל לעדכן תקלה. חסר פרטי משתמש") {
+  //         enqueueSnackbar({
+  //           message: "Log Out",
+  //           variant: "error",
+  //         });
+  //       }
+  //       return;
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error)
+  //       enqueueSnackbar({
+  //         message: error.message,
+  //         variant: "error",
+  //       });
+  //     console.error(error);
+  //   }
+  //   updateShowLoader(false);
+  // };
 
   return (
     <>
-      <Box maxWidth={1200} mx={"auto"}>
-        <Typography
-          px={2}
-          variant={ibMobile ? "h5" : "h4"}
-          fontWeight="bold"
-          ml="2%"
-        >
+      <Box maxWidth={1400} mx={"auto"}>
+        <Typography px={2} variant={isMobile ? "h5" : "h4"} fontWeight="bold">
           סידור משמרות
         </Typography>
-        <DateSelect setDate={setStartDate} />
+        <DateSelect
+          handleWeekChange={handleWeekChange}
+          finishDate={finishDate}
+          startDate={startDate}
+        />
         {/* <div
         style={{
           display: "flex",
@@ -346,13 +347,13 @@ export default function Shifts() {
           installation={currentShift?.jobTypeId === 1}
           shift={currentShift}
           shiftGroupId={shiftGroupId}
-          open={showShiftDialog}
+          open={showShiftDialog && !showInstallationShiftDetailsDialog}
           onClose={() => setShowShiftDialog(false)}
         />
       )}
-
       {currentShift && currentShift?.jobTypeId === 1 && (
         <InstallationShiftDetailsDialog
+          fullScreen={isAdmin && isMobile}
           onChange={onChange}
           adress={currentShift.address!}
           customer={currentShift.contactName!}
@@ -361,7 +362,7 @@ export default function Shifts() {
           placeName={currentShift.placeName!}
           wifi="wifi"
           remark={currentShift.remark}
-          open={showInstallationShiftDetailsDialog}
+          open={showInstallationShiftDetailsDialog && !showShiftDialog}
           onClose={() => setShowInstallationShiftDetailsDialog(false)}
         />
       )}

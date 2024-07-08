@@ -97,6 +97,7 @@ export default function Shift({
           overflow: "hidden",
           borderRadius: "8px",
           border: "grey thin solid",
+          cursor: "pointer"
         }}
       >
         <Box

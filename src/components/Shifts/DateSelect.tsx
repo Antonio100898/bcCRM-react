@@ -1,53 +1,17 @@
-import { useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 export type Props = {
-  setDate: (date: Date) => void;
+  handleWeekChange: (move: "next" | "prev") => void;
+  startDate: Date;
+  finishDate: Date;
 };
 
-function getDate(arg: "start" | "finish") {
-  const date = new Date();
-  const today = date.getDate();
-  const currentDay = date.getDay();
-  let newDate;
-
-  switch (arg) {
-    case "start":
-      newDate = date.setDate(today - currentDay);
-      break;
-    case "finish":
-      newDate = date.setDate(today + (6 - currentDay));
-  }
-
-  return new Date(newDate);
-}
-
-function getLastSundayOption(date: Date, orOtherDay: number) {
-  const today = date.getDate();
-  const currentDay = date.getDay();
-  if (currentDay === orOtherDay) {
-    return date;
-  }
-  const newDate = date.setDate(today - (currentDay || orOtherDay));
-
-  return new Date(newDate);
-}
-
-export default function DateSelect({ setDate }: Props) {
-  const [startDate, setStartDate] = useState(getDate("start"));
-  const [finishDate, setFinishDate] = useState(getDate("finish"));
-
-  function addDays(theDate: Date, days: number) {
-    return new Date(theDate.getTime() + days * 24 * 60 * 60 * 1000);
-  }
-
-  const handleChange = (newValue: Dayjs | null) => {
-    const d: Date = getLastSundayOption(newValue!.toDate(), 7);
-    setStartDate(d);
-    setDate(d);
-  };
-
+export default function DateSelect({
+  handleWeekChange,
+  finishDate,
+  startDate,
+}: Props) {
   return (
     <Box
       sx={{
@@ -64,19 +28,11 @@ export default function DateSelect({ setDate }: Props) {
         mt: 4,
       }}
     >
-      <IconButton
-        onClick={() => {
-          setStartDate(addDays(startDate, -7));
-          setFinishDate(addDays(finishDate, -7));
-          setDate(addDays(startDate, -7));
-        }}
-        size="small"
-      >
+      <IconButton onClick={() => handleWeekChange("prev")} size="small">
         <img src="/rightArrow.svg" />
       </IconButton>
       <Box sx={{ mx: 2 }}>
         <Typography component="span">
-          {" "}
           {dayjs(startDate).format("DD/MM/YYYY")} -{" "}
           {dayjs(finishDate).format("DD/MM/YYYY")}
         </Typography>
@@ -88,14 +44,7 @@ export default function DateSelect({ setDate }: Props) {
           />
         </LocalizationProvider> */}
       </Box>
-      <IconButton
-        size="small"
-        onClick={() => {
-          setStartDate(addDays(startDate, 7));
-          setFinishDate(addDays(finishDate, 7));
-          setDate(addDays(startDate, 7));
-        }}
-      >
+      <IconButton size="small" onClick={() => handleWeekChange("next")}>
         <img src="/leftArrow.svg" />
       </IconButton>
     </Box>

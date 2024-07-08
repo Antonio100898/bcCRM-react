@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, BoxProps } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ScrollableValues from "./ScrollableValues";
 
@@ -14,7 +14,13 @@ type TimePickerProps = {
   value: string;
 };
 
-const TimePicker = ({ label, onChange, value, width }: TimePickerProps) => {
+const TimePicker = ({
+  label,
+  onChange,
+  value,
+  width,
+  ...props
+}: TimePickerProps & BoxProps) => {
   const hours = value.split(":")[0];
   const minutes = value.split(":")[1];
 
@@ -29,16 +35,16 @@ const TimePicker = ({ label, onChange, value, width }: TimePickerProps) => {
     setValueBoxHeight(height);
   };
 
-  const handleHoursValueChange = (value: string) => {
-    setHoursValue(value);
+  const handleHoursValueChange = (v: string) => {
+    setHoursValue(v);
   };
-  const handleMinutesValueChange = (value: string) => {
-    setMinutesValue(value);
+  const handleMinutesValueChange = (v: string) => {
+    setMinutesValue(v);
   };
 
   useEffect(() => {
     onChange && onChange(`${hoursValue}:${minutesValue}`);
-  }, [hoursValue, minutesValue, onChange]);
+  }, [hoursValue, minutesValue]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -47,7 +53,7 @@ const TimePicker = ({ label, onChange, value, width }: TimePickerProps) => {
   }, [containerRef.current]);
 
   return (
-    <Box flex={1}>
+    <Box {...props} flex={1}>
       {label && <Typography textAlign="center">{label}</Typography>}
       <Stack
         ref={containerRef}

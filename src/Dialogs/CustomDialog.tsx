@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import { PropsWithChildren } from "react";
 import CustomButton from "../components/Buttons/CustomButton";
@@ -15,6 +17,8 @@ type Props = {
   onClose: () => void;
   fullScreen?: boolean;
   title?: string;
+  sx?: SxProps<Theme> | undefined;
+  onSubmit?: () => void;
 };
 
 const CustomDialog = ({
@@ -23,6 +27,8 @@ const CustomDialog = ({
   fullScreen,
   children,
   title,
+  sx,
+  onSubmit,
 }: Props & PropsWithChildren) => {
   return (
     <Dialog
@@ -30,6 +36,7 @@ const CustomDialog = ({
       PaperProps={{
         sx: {
           borderRadius: fullScreen ? "" : "20px",
+          ...sx,
         },
       }}
       dir="rtl"
@@ -54,9 +61,11 @@ const CustomDialog = ({
         </DialogTitle>
       )}
 
-      <DialogContent sx={{ px: 4, width: "100%" }}>{children}</DialogContent>
+      <DialogContent sx={{ px: 4, width: "100%", height: "600px" }}>
+        {children}
+      </DialogContent>
       <DialogActions>
-        <CustomButton fullWidth sx={{ mb: 4, mx: 2 }}>
+        <CustomButton onClick={onSubmit} fullWidth sx={{ mb: 4, mx: 2 }}>
           שמירה
         </CustomButton>
       </DialogActions>
