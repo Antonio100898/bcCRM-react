@@ -47,6 +47,7 @@ export default function AddWorkerExpenseToolBar({
   const fetchWorkExpensesTypesForWorker = async () => {
     try {
       const data = await workerService.getWorkExpensesTypesForWorker();
+      console.log(data)
       if (!data?.d) {
         updateShowLoader(false);
         enqueueSnackbar({

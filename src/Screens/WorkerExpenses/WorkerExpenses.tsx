@@ -1,18 +1,8 @@
-import "./WorkerExpenses.styles.css";
-import {
-  MenuItem,
-  Select,
-  IconButton,
-  Tooltip,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material";
-
+import { Typography, IconButton, Tooltip, Box } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
-import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { IWorkExpensesType } from "../../Model";
 import AddWorkerExpenseToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBar";
 import AddWorkerExpenseBonusesToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseBonusesToolBar";
@@ -22,6 +12,7 @@ import AddWorkerExpenseToolBarReplayPrecentge from "../../components/WorkExpense
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { workerService } from "../../API/services";
+import DateSelect from "../../components/DateSelect/DateSelect";
 
 export default function WorkerExpenses() {
   const { confirm } = useConfirm();
@@ -33,6 +24,46 @@ export default function WorkerExpenses() {
     (new Date().getMonth() + 1).toString()
   );
 
+  const handleMonthChange = (move: "next" | "prev") => {
+    if (move === "next") {
+      Number(filterMonth) < 12 &&
+        setFilterMonth((prev) => (Number(prev) + 1).toString());
+    } else {
+      Number(filterMonth) > 1 &&
+        setFilterMonth((prev) => (Number(prev) - 1).toString());
+    }
+  };
+  const getMonthNameByNumber = (num: number) => {
+    switch (num) {
+      case 1:
+        return "ינואר";
+      case 2:
+        return "פברואר";
+      case 3:
+        return "מרץ";
+      case 4:
+        return "אפריל";
+      case 5:
+        return "מאי";
+      case 6:
+        return "יוני";
+      case 7:
+        return "יולי";
+      case 8:
+        return "אוגוסט";
+      case 9:
+        return "ספטמבר";
+      case 10:
+        return "אוקטובר";
+      case 11:
+        return "נובמבר";
+      case 12:
+        return "דצמבר";
+      default:
+        return "ינואר";
+    }
+  };
+
   const { updateShowLoader, user, isAdmin } = useUser();
   const [totalSum, setTotalSum] = useState(0);
 
@@ -41,11 +72,12 @@ export default function WorkerExpenses() {
   const [selectedCategoryId, setSelectedCategoryId] = useState("1");
 
   const getWorkerExpenses = async () => {
+    if (!user) return;
     try {
       const data = await workerService.getWorkersExpenses(
         filterYear,
         filterMonth,
-        "0"
+        user?.workerId.toString()
       );
       if (!data?.d) {
         updateShowLoader(false);
@@ -129,11 +161,14 @@ export default function WorkerExpenses() {
   }, [filterMonth, filterYear]);
 
   return (
-    <div className="row" style={{ margin: 10 }}>
-      <WorkersHeader />
-      <div id="addWorExpense" className="row">
-        <div className="col-9 right">
-          <ToggleButtonGroup
+    <Box sx={{ px: 2 }}>
+      <Typography variant="subtitle1">הוצאות</Typography>
+      <DateSelect
+        displayValue={getMonthNameByNumber(Number(filterMonth))}
+        onNext={() => handleMonthChange("next")}
+        onPrev={() => handleMonthChange("prev")}
+      />
+      {/* <ToggleButtonGroup
             color="primary"
             value={selectedCategoryId}
             exclusive
@@ -164,42 +199,7 @@ export default function WorkerExpenses() {
             {user && (user.department === 2 || isAdmin) && (
               <ToggleButton value="7">בונוסים טכנאים</ToggleButton>
             )}
-          </ToggleButtonGroup>
-        </div>
-        <div className="col-3 left">
-          <Select
-            variant="outlined"
-            value={filterMonth}
-            className="cboDateMonth"
-            onChange={(e) => setFilterMonth(e.target.value)}
-          >
-            <MenuItem value="1">01</MenuItem>
-            <MenuItem value="2">02</MenuItem>
-            <MenuItem value="3">03</MenuItem>
-            <MenuItem value="4">04</MenuItem>
-            <MenuItem value="5">05</MenuItem>
-            <MenuItem value="6">06</MenuItem>
-            <MenuItem value="7">07</MenuItem>
-            <MenuItem value="8">08</MenuItem>
-            <MenuItem value="9">09</MenuItem>
-            <MenuItem value="10">10</MenuItem>
-            <MenuItem value="11">11</MenuItem>
-            <MenuItem value="12">12</MenuItem>
-          </Select>
-          <Select
-            variant="outlined"
-            value={filterYear}
-            className="cboDateMonth"
-            onChange={(e) => setFilterYear(e.target.value)}
-          >
-            <MenuItem value="2022">2022</MenuItem>
-            <MenuItem value="2023">2023</MenuItem>
-            <MenuItem value="2024">2024</MenuItem>
-            <MenuItem value="2025">2025</MenuItem>
-            <MenuItem value="2026">2026</MenuItem>
-          </Select>
-        </div>
-      </div>
+          </ToggleButtonGroup> */}
 
       {selectedCategoryId === "1" && (
         <AddWorkerExpenseToolBar
@@ -249,24 +249,6 @@ export default function WorkerExpenses() {
       )}
 
       <div id="tblWorkerExpenses" style={{ marginTop: 30 }}>
-        <div id="lblsWorExpense" className="row">
-          <div className="col-2 tableLblHeader right">
-            <p>תאריך</p>
-          </div>
-          <div className="col-2 tableLblHeader right">
-            <p>פירוט</p>
-          </div>
-
-          <div className="col-5 tableLblHeader right">
-            <p>הערה</p>
-          </div>
-          <div className="col-2 tableLblHeader">
-            <p>סכום</p>
-          </div>
-          <div className="col-2 tableLblHeader">
-            <p />
-          </div>
-        </div>
         <div>
           {workerExpenses &&
             workerExpenses.map((expense: IWorkExpensesType) => {
@@ -376,6 +358,6 @@ export default function WorkerExpenses() {
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   );
 }

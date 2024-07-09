@@ -48,9 +48,7 @@ export default function ShiftPlan({
         shiftTypeId,
         remark: "",
         startDate: defDate.toString(),
-        finishTime: defDate.toString(),
         startDateEN: defDate.toString(),
-        finishTimeEN: defDate.toString(),
       };
       try {
         const data = await shiftService.updateShiftPlan(d);

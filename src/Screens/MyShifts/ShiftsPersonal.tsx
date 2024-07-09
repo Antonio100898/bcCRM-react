@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { IshiftDetail } from "../../Model";
-import DateSelect from "../../components/Shifts/DateSelect";
+import DateSelect from "../../components/DateSelect/DateSelect";
 import WorkerShift from "../../components/ShiftsPersonal/WorkerShift";
 import { useUser } from "../../Context/useUser";
 import { shiftService } from "../../API/services";

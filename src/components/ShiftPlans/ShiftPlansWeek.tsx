@@ -29,8 +29,11 @@ export function ShiftPlansWeek({
 
     // console.log("start Shift Type. Count: " + wsData1?.length);
 
-    if (wsData1) setWeeks(wsData1);
-
+    if (wsData1) {
+      console.log(wsData1)
+      setWeeks(wsData1);
+    }
+      
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shiftsList]);
 

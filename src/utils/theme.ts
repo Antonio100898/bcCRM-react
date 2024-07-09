@@ -17,6 +17,10 @@ export const theme = createTheme({
       color: "#EEA900",
       fontSize: 18,
     },
+    subtitle1: {
+      fontSize: 26,
+      fontWeight: "bold",
+    },
   },
   palette: {
     secondary: baseTheme.palette.augmentColor({

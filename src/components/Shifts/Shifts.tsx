@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Typography, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import Days from "./Days";
-import DateSelect from "../../components/Shifts/DateSelect";
+import DateSelect from "../DateSelect/DateSelect";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { shiftService } from "../../API/services";
@@ -12,6 +12,7 @@ import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/Installat
 import ShiftDialog from "../../Dialogs/ShiftDialogs/ShiftDialog";
 import { getWeekDate } from "../../helpers/getWeekDate";
 import { addDays } from "../../helpers/addDays";
+import dayjs from "dayjs";
 
 export default function Shifts() {
   const { enqueueSnackbar } = useSnackbar();
@@ -195,13 +196,14 @@ export default function Shifts() {
   return (
     <>
       <Box maxWidth={1400} mx={"auto"}>
-        <Typography px={2} variant={isMobile ? "h5" : "h4"} fontWeight="bold">
+        <Typography px={2} variant="subtitle1">
           סידור משמרות
         </Typography>
         <DateSelect
-          handleWeekChange={handleWeekChange}
-          finishDate={finishDate}
-          startDate={startDate}
+          onNext={() => handleWeekChange("next")}
+          onPrev={() => handleWeekChange("prev")}
+          displayValue={`${dayjs(startDate).format("DD/MM/YYYY")} -
+          ${dayjs(finishDate).format("DD/MM/YYYY")}`}
         />
         {/* <div
         style={{
