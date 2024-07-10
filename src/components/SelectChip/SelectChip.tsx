@@ -2,7 +2,7 @@ import { Chip } from "@mui/material";
 
 type Props = {
   selected?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   label?: string;
 };
 
@@ -17,6 +17,7 @@ const SelectChip = ({ selected, onClick, label }: Props) => {
         "&:hover": {
           backgroundColor: "primary.main",
         },
+        cursor: "pointer",
       }}
       label={label}
     />

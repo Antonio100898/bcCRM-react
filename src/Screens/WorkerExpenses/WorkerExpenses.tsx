@@ -1,4 +1,13 @@
-import { Typography, IconButton, Tooltip, Box } from "@mui/material";
+import {
+  Typography,
+  IconButton,
+  Tooltip,
+  Box,
+  Stack,
+  Fab,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
@@ -13,16 +22,27 @@ import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { workerService } from "../../API/services";
 import DateSelect from "../../components/DateSelect/DateSelect";
+import dayjs from "dayjs";
+import DataField from "../../components/DataField/DataField";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import WorkerExpenseDialog from "../../Dialogs/WorkerExpenseDialog/WorkerExpenseDialog";
 
 export default function WorkerExpenses() {
-  const { confirm } = useConfirm();
-  const { enqueueSnackbar } = useSnackbar();
+  const [openNewExpenceDialog, setOpenNewExpenceDialog] = useState(false);
+  const { updateShowLoader, user, isAdmin } = useUser();
+  const [totalSum, setTotalSum] = useState(0);
+  const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("1");
   const [filterYear, setFilterYear] = useState(
     new Date().getFullYear().toString()
   );
   const [filterMonth, setFilterMonth] = useState(
     (new Date().getMonth() + 1).toString()
   );
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { confirm } = useConfirm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleMonthChange = (move: "next" | "prev") => {
     if (move === "next") {
@@ -63,13 +83,6 @@ export default function WorkerExpenses() {
         return "ינואר";
     }
   };
-
-  const { updateShowLoader, user, isAdmin } = useUser();
-  const [totalSum, setTotalSum] = useState(0);
-
-  const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
-
-  const [selectedCategoryId, setSelectedCategoryId] = useState("1");
 
   const getWorkerExpenses = async () => {
     if (!user) return;
@@ -161,14 +174,47 @@ export default function WorkerExpenses() {
   }, [filterMonth, filterYear]);
 
   return (
-    <Box sx={{ px: 2 }}>
-      <Typography variant="subtitle1">הוצאות</Typography>
-      <DateSelect
-        displayValue={getMonthNameByNumber(Number(filterMonth))}
-        onNext={() => handleMonthChange("next")}
-        onPrev={() => handleMonthChange("prev")}
-      />
-      {/* <ToggleButtonGroup
+    <>
+      <Box sx={{ px: 2 }}>
+        <Typography variant="subtitle1">הוצאות</Typography>
+        <DateSelect
+          displayValue={getMonthNameByNumber(Number(filterMonth))}
+          onNext={() => handleMonthChange("next")}
+          onPrev={() => handleMonthChange("prev")}
+        />
+        <Stack gap={2} mt={4}>
+          {workerExpenses.length > 0 && (
+            <Stack direction="row" justifyContent="space-between" px={1}>
+              <Typography fontSize={20} fontWeight={600}>
+                הוצאות
+              </Typography>
+              <Typography fontSize={20} fontWeight={600}>
+                {totalSum} ₪
+              </Typography>
+            </Stack>
+          )}
+          <Stack gap={1}>
+            {workerExpenses.map((expense) => (
+              <DataField key={expense.id}>
+                <Stack
+                  sx={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Stack direction="row" gap={8}>
+                    <Typography fontWeight={600}>
+                      {dayjs(expense.startExpenseDateEN).format("DD/MM/YYYY")}
+                    </Typography>
+                    <Typography>{expense.workExpensName}</Typography>
+                  </Stack>
+                  <Typography>{expense.expenseValue} ₪</Typography>
+                </Stack>
+              </DataField>
+            ))}
+          </Stack>
+        </Stack>
+        {/* <ToggleButtonGroup
             color="primary"
             value={selectedCategoryId}
             exclusive
@@ -201,7 +247,7 @@ export default function WorkerExpenses() {
             )}
           </ToggleButtonGroup> */}
 
-      {selectedCategoryId === "1" && (
+        {/* {selectedCategoryId === "1" && (
         <AddWorkerExpenseToolBar
           refreshlist={refreshlist}
           setFilterMonth={setFilterMonth}
@@ -246,118 +292,21 @@ export default function WorkerExpenses() {
           refreshlist={refreshlist}
           setFilterMonth={setFilterMonth}
         />
-      )}
-
-      <div id="tblWorkerExpenses" style={{ marginTop: 30 }}>
-        <div>
-          {workerExpenses &&
-            workerExpenses.map((expense: IWorkExpensesType) => {
-              return (
-                <div
-                  key={expense.id}
-                  className="row"
-                  style={{ border: "1px solid rgba(0, 0, 0, 0.25)" }}
-                >
-                  <div className="col-2 tableLblHeader right">
-                    {expense.startExpenseDate.toString().split(" ")[0]}
-                  </div>
-                  <div className="col-2 tableLblHeader right">
-                    {expense.workExpensName}
-                    {expense.freePass ? (
-                      <Tooltip title="חופשי חודשי">
-                        <AirlineSeatReclineExtraIcon
-                          style={{
-                            transform: "scaleX(-1)",
-                          }}
-                        />
-                      </Tooltip>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-
-                  <div className="col-5 tableLblHeader right">
-                    {expense.remark}
-                  </div>
-                  <div className="col-2 tableLblHeader">
-                    {`₪${expense.expenseValue}`}
-                  </div>
-                  <div
-                    className="col-1 tableLblHeader"
-                    style={{
-                      textAlign: "left",
-                    }}
-                  >
-                    <IconButton
-                      style={{
-                        textAlign: "left",
-                        background: "#FFFFFF",
-                        border: "1px solid rgba(0, 0, 0, 0.25)",
-                        boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.05)",
-                        borderRadius: "40px",
-                        marginLeft: "5px",
-                      }}
-                    >
-                      <Tooltip
-                        title="מחק"
-                        onClick={() => {
-                          deleteExpense(expense.id);
-                        }}
-                      >
-                        <DeleteIcon style={{ fontSize: 25, color: "red" }} />
-                      </Tooltip>
-                    </IconButton>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-        <div>
-          <div className="row">
-            <div className="col-9 " />
-            <div className="col-3">
-              <div>
-                <p
-                  style={{
-                    fontFamily: "Rubik",
-                    fontStyle: "normal",
-                    fontWeight: 400,
-                    fontSize: "24px",
-                    lineHeight: "33px",
-                    textAlign: "right",
-                  }}
-                />
-              </div>
-              <div
-                style={{
-                  margin: "20",
-                  boxSizing: "border-box",
-                  width: "263.25px",
-                  height: "46px",
-                  background: "#FFFFFF",
-                  border: "1px solid rgba(0, 0, 0, 0.25)",
-                  boxShadow: "inset 0px 5px 10px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "8px",
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "Heebo",
-                    fontStyle: "normal",
-                    fontWeight: "400",
-                    fontSize: "24px",
-                    lineHeight: "35px",
-                    textAlign: "center",
-                    color: "rgba(0, 0, 0, 0.85)",
-                  }}
-                >
-                  {`₪${totalSum}`}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Box>
+      )} */}
+      </Box>
+      <Fab
+        onClick={() => setOpenNewExpenceDialog(true)}
+        sx={{ position: "absolute", right: 20, bottom: 30 }}
+        size="large"
+        color="warning"
+      >
+        <SpeedDialIcon />
+      </Fab>
+      <WorkerExpenseDialog
+        open={openNewExpenceDialog}
+        onClose={() => setOpenNewExpenceDialog(false)}
+        fullScreen={isMobile}
+      />
+    </>
   );
 }

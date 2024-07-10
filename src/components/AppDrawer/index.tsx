@@ -13,6 +13,7 @@ import {
   alpha,
   useTheme,
   styled,
+  Box,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React from "react";
@@ -35,6 +36,8 @@ import { MenuCategory } from "../../AppLayout";
 import { IMAGES_PATH_WORKERS } from "../../Consts/Consts";
 import { IUser, ProblemSummery } from "../../Model";
 import MultiMenu from "./multi-menu";
+import SpeedDialAddNumber from "../SpeedDialMenu/SpeedDialAddNumber";
+import SpeedDialAnswerPhone from "../SpeedDialMenu/SpeedDialAnswerPhone";
 
 const drawerWidth = 240;
 
@@ -249,6 +252,20 @@ export default function AppDrawer({
         ))}
       </List>
       <Divider />
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          display: "flex",
+          gap: 3,
+          padding: isMobile ? 1 : 2,
+          width: "100%",
+          justifyContent: isMobile ? "flex-start" : "center",
+        }}
+      >
+        <SpeedDialAddNumber />
+        <SpeedDialAnswerPhone />
+      </Box>
     </Drawer>
   );
 }

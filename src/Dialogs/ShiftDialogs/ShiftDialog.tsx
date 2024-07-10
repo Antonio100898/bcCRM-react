@@ -20,6 +20,7 @@ import { installationShiftDesc } from "../../Temp/InstallationShiftDesc";
 import TimePicker from "../../components/TimePicker/TimePicker";
 import SelectChip from "../../components/SelectChip/SelectChip";
 import InstallationDetails from "./InstallationDetails";
+import SelectsChipGroup from "../../components/SelectChipGroup/SelectsChipGroup";
 
 type Props = {
   open: boolean;
@@ -101,10 +102,6 @@ const ShiftDialog = ({
     if (!isBigScreen && selectedInstallationDesc === desc) onShiftDetailsOpen();
     else setSelectedInstallationDesc(desc);
   };
-
-  useEffect(() => {
-    console.log(currentShift);
-  }, [currentShift]);
 
   const updateShift = async () => {
     if (
@@ -218,33 +215,27 @@ const ShiftDialog = ({
       ) : (
         <Stack direction="row">
           <Stack gap={7} flex={1}>
-            <Stack gap={1.5}>
-              <Typography fontWeight="bold">עובד</Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1}>
-                {currentJobWorkers.map((worker) => (
+            <SelectsChipGroup label="עובד">
+              {currentJobWorkers.map((worker) => (
+                <SelectChip
+                  key={worker.Id}
+                  onClick={() => onChange("workerId", worker.Id)}
+                  selected={currentShift.workerId === worker.Id}
+                  label={`${worker.firstName} ${worker.lastName}`}
+                />
+              ))}
+            </SelectsChipGroup>
+            {installation && (
+              <SelectsChipGroup label="תיאור משמרת">
+                {installationShiftDesc.map((desc) => (
                   <SelectChip
-                    key={worker.Id}
-                    onClick={() => onChange("workerId", worker.Id)}
-                    selected={currentShift.workerId === worker.Id}
-                    label={`${worker.firstName} ${worker.lastName}`}
+                    selected={selectedInstallationDesc === desc}
+                    onClick={() => handleShiftDetailsClicked(desc)}
+                    key={desc}
+                    label={desc}
                   />
                 ))}
-              </Stack>
-            </Stack>
-            {installation && (
-              <Stack gap={1.5}>
-                <Typography fontWeight="bold">תיאור משמרת</Typography>
-                <Stack direction="row" flexWrap="wrap" gap={1}>
-                  {installationShiftDesc.map((desc) => (
-                    <SelectChip
-                      selected={selectedInstallationDesc === desc}
-                      onClick={() => handleShiftDetailsClicked(desc)}
-                      key={desc}
-                      label={desc}
-                    />
-                  ))}
-                </Stack>
-              </Stack>
+              </SelectsChipGroup>
             )}
             <Stack gap={1.5}>
               <Typography fontWeight="bold">שעות המשמרת</Typography>

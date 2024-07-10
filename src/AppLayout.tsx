@@ -17,8 +17,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import AppDrawer from "./components/AppDrawer";
-import SpeedDialAddNumber from "./components/SpeedDialMenu/SpeedDialAddNumber";
-import SpeedDialAnswerPhone from "./components/SpeedDialMenu/SpeedDialAnswerPhone";
 import Search from "./components/Search/Search";
 import { useUser } from "./Context/useUser";
 import { ProblemDialog } from "./Dialogs/ProblemDialog/ProblemDialog";
@@ -219,20 +217,7 @@ export default function AppLayout({ loading, children }: AppLayoutProps) {
       </Slide>
 
       <Main open={open}>
-        <Box sx={{ pt: "64px" }}>
-          {children}
-          <Box
-            sx={{
-              position: "fixed",
-              bottom: 0,
-              m: 2,
-              display: "flex",
-            }}
-          >
-            <SpeedDialAddNumber />
-            <SpeedDialAnswerPhone />
-          </Box>
-        </Box>
+        <Box sx={{ pt: "64px" }}>{children}</Box>
       </Main>
       <AppDrawer
         anchorEl={anchorEl}

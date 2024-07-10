@@ -3,6 +3,7 @@ import {
   ConvertedShiftsTypes,
   HEBREW_WEEK_DAY,
 } from "../../helpers/convertShifts";
+import DataField from "../DataField/DataField";
 
 type Props = {
   weekDay: string;
@@ -17,37 +18,29 @@ const boxContainerStyle = {
 };
 
 const ShiftsOfDay = ({ shifts, weekDay }: Props) => {
-
   return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      bgcolor="grey.400"
-      alignItems="center"
-      p={1}
-      sx={{
-        borderRadius: "6px"
-      }}
-    >
-      <Typography sx={boxContainerStyle} fontWeight="bold">
-        {
-          //@ts-ignore
-          HEBREW_WEEK_DAY[weekDay]
-        }
-      </Typography>
+    <DataField>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography sx={boxContainerStyle} fontWeight="bold">
+          {
+            //@ts-ignore
+            HEBREW_WEEK_DAY[weekDay]
+          }
+        </Typography>
 
-      <Box sx={boxContainerStyle}>
-        <img src="/comment.svg" />
-      </Box>
-      {Object.keys(shifts).map((key) => {
-        const shift = shifts[Number(key) as keyof ConvertedShiftsTypes][0];
-        return (
-          <Box sx={boxContainerStyle} key={key}>
-            <img style={{ cursor: "pointer" }} src="/shiftNotSelected.svg" />
-          </Box>
-        );
-      })}
-    </Stack>
+        <Box sx={boxContainerStyle}>
+          <img src="/comment.svg" />
+        </Box>
+        {Object.keys(shifts).map((key) => {
+          const shift = shifts[Number(key) as keyof ConvertedShiftsTypes][0];
+          return (
+            <Box sx={boxContainerStyle} key={key}>
+              <img style={{ cursor: "pointer" }} src="/shiftNotSelected.svg" />
+            </Box>
+          );
+        })}
+      </Stack>
+    </DataField>
   );
 };
 

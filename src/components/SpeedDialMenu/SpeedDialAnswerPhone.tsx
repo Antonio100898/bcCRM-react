@@ -213,7 +213,7 @@ export default function SpeedDialAnswerPhone() {
   }
 
   return (
-    <div style={{ marginRight: "20px" }}>
+    <div>
       <Tooltip title="לענות לטלפון">
         <Fab onClick={answerThePhone} color="primary">
           <LocalPhoneIcon />

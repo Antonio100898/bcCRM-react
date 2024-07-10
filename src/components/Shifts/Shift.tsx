@@ -6,6 +6,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
 import { shiftService } from "../../API/services";
 import { useUser } from "../../Context/useUser";
+import { useEffect } from "react";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -38,11 +39,12 @@ export default function Shift({
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const { isAdmin } = useUser();
-
+  useEffect(() => {
+    console.log(isAdmin);
+  }, [isAdmin]);
   const handleShiftClicked = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
-    e.stopPropagation();
     setCurrentShift(shift);
     setShowShiftDialog(true);
   };
@@ -51,6 +53,7 @@ export default function Shift({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     e.stopPropagation();
+    if (shift.jobTypeId !== 1) return;
     setCurrentShift(shift);
     setShowInstallationShiftDetailsDialog(true);
   };
@@ -97,7 +100,7 @@ export default function Shift({
           overflow: "hidden",
           borderRadius: "8px",
           border: "grey thin solid",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         <Box
@@ -117,7 +120,11 @@ export default function Shift({
         </Box>
         {shift.placeName && (
           <Box
-            onClick={setShowInstallationShiftDetailsDialogClick}
+            onClick={
+              shift.jobTypeId === 1
+                ? setShowInstallationShiftDetailsDialogClick
+                : undefined
+            }
             sx={{ backgroundColor: "secondary.light" }}
           >
             <Box

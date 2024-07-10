@@ -162,7 +162,7 @@ export default function Shifts() {
     // console.log(shiftGroupId);
     fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, setShowShiftDetails, shiftGroupId]);
+  }, [startDate, shiftGroupId]);
 
   // const showWorkersMissingShiftPlans = async () => {
   //   try {
