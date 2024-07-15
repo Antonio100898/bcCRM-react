@@ -168,7 +168,7 @@ export default function WorkerExpenses() {
     }
   };
 
-  const refreshlist = useCallback(() => {
+  const refreshList = useCallback(() => {
     getWorkerExpenses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterMonth, filterYear]);
@@ -303,6 +303,7 @@ export default function WorkerExpenses() {
         <SpeedDialIcon />
       </Fab>
       <WorkerExpenseDialog
+        refreshList={refreshList}
         open={openNewExpenceDialog}
         onClose={() => setOpenNewExpenceDialog(false)}
         fullScreen={isMobile}

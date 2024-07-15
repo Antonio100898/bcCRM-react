@@ -282,13 +282,13 @@ export const workerService = {
     }
   },
 
-  async getWorkExpensesTypesForWorker(): Promise<
-    IWorkerExpensesTypeResponse | undefined
-  > {
+  async getWorkExpensesTypesForWorker(
+    workerId?: number
+  ): Promise<IWorkerExpensesTypeResponse | undefined> {
     try {
       const { data } = await instance.post("/GetWorkExpensesTypesForWorker", {
         workerKey: localStorage.getItem(TOKEN_KEY),
-        filterWorkerId: 0,
+        filterWorkerId: workerId ? workerId : 0,
       });
       return data;
     } catch (error) {

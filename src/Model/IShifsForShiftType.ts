@@ -22,6 +22,16 @@ export interface IshiftDetail {
   phone: string;
 }
 
+export interface IShiftPlan {
+  id: number;
+  shiftTypeId: number;
+  workerId: number;
+  startDate: string;
+  startDateEN: string;
+  remark: string;
+  cancel: boolean;
+}
+
 export interface IshiftWeek {
   jobType: number;
   jobTypeName: string;

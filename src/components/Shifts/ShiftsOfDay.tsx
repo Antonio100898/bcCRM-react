@@ -1,13 +1,18 @@
-import { Box, Stack, Typography, IconButton } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import {
   ConvertedShiftsTypes,
   HEBREW_WEEK_DAY,
 } from "../../helpers/convertShifts";
 import DataField from "../DataField/DataField";
+import { IDays, IShiftPlan } from "../../Model";
+import { getShiftStartDate } from "../../helpers/getShiftStartDate";
 
 type Props = {
-  weekDay: string;
+  weekDay: keyof IDays;
   shifts: ConvertedShiftsTypes;
+  onClick: (shiftTypeId: number, day: keyof IDays) => void;
+  selectedShiftPlans: IShiftPlan[];
+  startDate: Date;
 };
 
 const boxContainerStyle = {
@@ -17,7 +22,13 @@ const boxContainerStyle = {
   justifyContent: "center",
 };
 
-const ShiftsOfDay = ({ shifts, weekDay }: Props) => {
+const ShiftsOfDay = ({
+  shifts,
+  weekDay,
+  onClick,
+  selectedShiftPlans,
+  startDate,
+}: Props) => {
   return (
     <DataField>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -32,10 +43,22 @@ const ShiftsOfDay = ({ shifts, weekDay }: Props) => {
           <img src="/comment.svg" />
         </Box>
         {Object.keys(shifts).map((key) => {
-          const shift = shifts[Number(key) as keyof ConvertedShiftsTypes][0];
+          const shiftTypeId = Number(key) as keyof ConvertedShiftsTypes;
+
+          const selected = selectedShiftPlans.find(
+            (s) =>
+              s.startDate === getShiftStartDate(startDate, shiftTypeId, weekDay)
+          );
           return (
-            <Box sx={boxContainerStyle} key={key}>
-              <img style={{ cursor: "pointer" }} src="/shiftNotSelected.svg" />
+            <Box
+              onClick={() => onClick(shiftTypeId, weekDay)}
+              sx={boxContainerStyle}
+              key={key}
+            >
+              <img
+                style={{ cursor: "pointer" }}
+                src={`/shift${selected ? "" : "Not"}Selected.svg`}
+              />
             </Box>
           );
         })}
