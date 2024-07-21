@@ -38,7 +38,6 @@ const ShiftsOfDay = ({
             HEBREW_WEEK_DAY[weekDay]
           }
         </Typography>
-
         <Box sx={boxContainerStyle}>
           <img src="/comment.svg" />
         </Box>

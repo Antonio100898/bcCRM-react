@@ -128,6 +128,7 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
       });
       return;
     }
+    //@ts-ignore
     const t: IWorkExpensesType[] = workerExpensesTypes.filter((e) => {
       return e.workExpensType === parseInt(selectedExpenseType, 10);
     });

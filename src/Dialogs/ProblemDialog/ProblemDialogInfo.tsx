@@ -81,12 +81,7 @@ export default function ProblemDialogInfo({
   handleUploadFile,
   fileInputRef,
   bigScreen,
-  isLockEnable,
-  setEmergency,
-  setIsLocked,
-  setTakeCare,
   onOpenFilesDialog,
-  setCallCustomerBack,
   callClientPhone,
   callDisabled,
 }: Props) {

@@ -12,7 +12,7 @@ type Props = {
   wifi: string;
   remark?: string | undefined;
   isAdmin: boolean;
-  onChange: <K extends keyof IshiftDetail>(
+  onChange?: <K extends keyof IshiftDetail>(
     key: K,
     val: IshiftDetail[K]
   ) => void;

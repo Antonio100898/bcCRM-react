@@ -25,7 +25,7 @@ export const theme = createTheme({
   palette: {
     secondary: baseTheme.palette.augmentColor({
       color: { main: color_dark_blue, light: color_light_blue },
-      name: "seondary",
+      name: "secondary",
     }),
     primary: baseTheme.palette.augmentColor({
       color: { main: color_main, light: color_main_light },

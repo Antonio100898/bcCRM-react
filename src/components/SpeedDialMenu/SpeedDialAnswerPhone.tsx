@@ -36,6 +36,7 @@ import { IPhonePlace } from "../../Model/IPhonePlace";
 export default function SpeedDialAnswerPhone() {
   const { prompt } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
+  //@ts-ignore
   const { user, updateShowProblemDialog, updateCurrentProblem } = useUser();
   const [placesOptions, setPlacesOptions] = React.useState<IPhonePlace[]>();
   const [showSelectPlace, setShowSelectPlace] = React.useState(false);
@@ -115,7 +116,7 @@ export default function SpeedDialAnswerPhone() {
       problem.id = data.d.problemId!;
       problem.toWorker = data.d.workerId;
 
-      updateCurrentProblem(problem);
+      //updateCurrentProblem(problem);
       updateShowProblemDialog(true);
 
       if (!window.location.href.endsWith("/Problems")) {

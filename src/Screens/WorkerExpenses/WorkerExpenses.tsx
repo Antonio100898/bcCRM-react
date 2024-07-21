@@ -1,7 +1,5 @@
 import {
   Typography,
-  IconButton,
-  Tooltip,
   Box,
   Stack,
   Fab,
@@ -9,15 +7,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AirlineSeatReclineExtraIcon from "@mui/icons-material/AirlineSeatReclineExtra";
 import { useSnackbar } from "notistack";
 import { IWorkExpensesType } from "../../Model";
-import AddWorkerExpenseToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBar";
-import AddWorkerExpenseBonusesToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseBonusesToolBar";
-import AddWorkerExpenseGuideToolBar from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseGuideToolBar";
-import AddWorkerExpenseToolBarKilomoter from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBarKilomoter";
-import AddWorkerExpenseToolBarReplayPrecentge from "../../components/WorkExpenses/AddToolBars/AddWorkerExpenseToolBarReplayPrecentge";
 import { useUser } from "../../Context/useUser";
 import { useConfirm } from "../../Context/useConfirm";
 import { workerService } from "../../API/services";
@@ -29,10 +20,12 @@ import WorkerExpenseDialog from "../../Dialogs/WorkerExpenseDialog/WorkerExpense
 
 export default function WorkerExpenses() {
   const [openNewExpenceDialog, setOpenNewExpenceDialog] = useState(false);
-  const { updateShowLoader, user, isAdmin } = useUser();
+  const { updateShowLoader, user } = useUser();
   const [totalSum, setTotalSum] = useState(0);
   const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
+  //@ts-ignore
   const [selectedCategoryId, setSelectedCategoryId] = useState("1");
+  //@ts-ignore
   const [filterYear, setFilterYear] = useState(
     new Date().getFullYear().toString()
   );
@@ -123,7 +116,7 @@ export default function WorkerExpenses() {
   useEffect(() => {
     getWorkerExpenses();
   }, [filterYear, filterMonth]);
-
+  //@ts-ignore
   const workerExpensTypeCategoryChanged = (
     _event: React.MouseEvent<HTMLElement>,
     newCategoryId: string
@@ -134,7 +127,7 @@ export default function WorkerExpenses() {
 
     setSelectedCategoryId(newCategoryId);
   };
-
+  //@ts-ignore
   const deleteExpense = async (expenseId: string) => {
     if (await confirm("האם אתה בטוח שברצונך למחוק?")) {
       try {

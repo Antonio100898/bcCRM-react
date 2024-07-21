@@ -6,7 +6,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { MenuCategory } from "../../AppLayout";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./drawer.module.css";
 

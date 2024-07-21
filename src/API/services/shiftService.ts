@@ -4,6 +4,7 @@ import {
   IProblemsResponse,
   IShiftAndDaysInfoResponse,
   IShiftDetailsResponse,
+  IShiftPlan,
   IShiftPlanReportResponse,
   IshiftDetail,
 } from "../../Model";
@@ -12,12 +13,12 @@ import { instance } from "../axoisConfig";
 
 export const shiftService = {
   async updateShiftPlan(
-    shiftDetails: Partial<IshiftDetail>
+    shiftPlans: IShiftPlan[]
   ): Promise<ICustomResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdateShiftPlan", {
         workerKey: localStorage.getItem(TOKEN_KEY),
-        shiftDetails,
+        shiftPlans,
       });
       return data;
     } catch (error) {
@@ -152,8 +153,9 @@ export const shiftService = {
   ): Promise<IShiftDetailsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftsForWorker", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
+        //workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
+        workerId: 197
       });
       return data;
     } catch (error) {

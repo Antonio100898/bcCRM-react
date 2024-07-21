@@ -21,7 +21,9 @@ export default function Shifts() {
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
   const [part, setPart] = useState<number>(1);
+  //@ts-ignore
   const [showShiftDetails, setShowShiftDetails] = useState(false);
+   //@ts-ignore
   const [shiftGroupId, setShiftGroupId] = useState(
     user?.department === 4 ? 2 : 1
   );
@@ -159,10 +161,9 @@ export default function Shifts() {
   };
 
   useEffect(() => {
-    // console.log(shiftGroupId);
     fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, shiftGroupId]);
+  }, [startDate]);
 
   // const showWorkersMissingShiftPlans = async () => {
   //   try {

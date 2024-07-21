@@ -17,7 +17,7 @@ type Props = {
   wifi: string;
   remark?: string | undefined;
   isAdmin: boolean;
-  onChange: <K extends keyof IshiftDetail>(
+  onChange?: <K extends keyof IshiftDetail>(
     key: K,
     val: IshiftDetail[K]
   ) => void;
@@ -38,37 +38,43 @@ const InstallationDetails = ({
       icon: "/location.svg",
       value: placeName,
       label: "שם העסק",
-      onChange: (val: string) => onChange("placeName", val),
+      onChange: onChange
+        ? (val: string) => onChange("placeName", val)
+        : undefined,
     },
     {
       icon: "/navigation.svg",
       value: adress,
       label: "כתובת",
-      onChange: (val: string) => onChange("address", val),
+      onChange: onChange
+        ? (val: string) => onChange("address", val)
+        : undefined,
     },
     {
       icon: "/user.svg",
       value: customer,
       label: "איש קשר",
-      onChange: (val: string) => onChange("contactName", val),
+      onChange: onChange
+        ? (val: string) => onChange("contactName", val)
+        : undefined,
     },
     {
       icon: "/phone.svg",
       value: phone,
       label: "טלפון",
-      onChange: (val: string) => onChange("phone", val),
+      onChange: onChange ? (val: string) => onChange("phone", val) : undefined,
     },
     {
       icon: "/wifi.svg",
       value: wifi,
       label: "חברת תקשורת",
-      onChange: (val: string) => console.log(val),
+      onChange: onChange ? (val: string) => console.log(val) : undefined,
     },
     {
       icon: "/note.svg",
       value: remark,
       label: "הערות",
-      onChange: (val: string) => onChange("remark", val),
+      onChange: onChange ? (val: string) => onChange("remark", val) : undefined,
     },
   ];
   return (
@@ -88,7 +94,11 @@ const InstallationDetails = ({
                 </ListItemIcon>
                 {item.label === "הערות" ? (
                   <TextField
-                    onChange={(e) => item.onChange(e.currentTarget.value)}
+                    onChange={
+                      item.onChange
+                        ? (e) => item.onChange!(e.currentTarget.value)
+                        : undefined
+                    }
                     value={item.value}
                     multiline
                     fullWidth
@@ -106,7 +116,6 @@ const InstallationDetails = ({
                   />
                 ) : (
                   <TextField
-                    onChange={(e) => item.onChange(e.currentTarget.value)}
                     value={item.value}
                     fullWidth
                     inputProps={{

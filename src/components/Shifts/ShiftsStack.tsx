@@ -31,7 +31,6 @@ const ShiftsStack = ({
   shiftGroupId,
   showDetails,
   defDate,
-  userType,
   showEmptyShift,
   setShowInstallationShiftDetailsDialog,
   setShowShiftDialog,

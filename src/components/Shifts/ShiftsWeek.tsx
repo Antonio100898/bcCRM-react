@@ -43,7 +43,6 @@ export function ShiftsWeek({
   showDetails,
   shiftGroupId,
   part,
-  color,
   setShowInstallationShiftDetailsDialog,
   setShowShiftDialog,
   showEmptyShift,

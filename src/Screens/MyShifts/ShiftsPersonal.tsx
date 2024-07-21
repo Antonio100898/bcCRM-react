@@ -5,21 +5,29 @@ import DateSelect from "../../components/DateSelect/DateSelect";
 import WorkerShift from "../../components/ShiftsPersonal/WorkerShift";
 import { useUser } from "../../Context/useUser";
 import { shiftService } from "../../API/services";
-
-function getLastSunday(orOtherDay: number) {
-  const date = new Date();
-  const today = date.getDate();
-  const currentDay = date.getDay();
-  const newDate = date.setDate(today - (currentDay || orOtherDay));
-
-  return new Date(newDate);
-}
+import { getWeekDate } from "../../helpers/getWeekDate";
+import { addDays } from "../../helpers/addDays";
+import dayjs from "dayjs";
+import { Box, Typography, Stack } from "@mui/material";
+import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/InstallationShiftDetailsDialog";
 
 export default function ShiftsPersonal() {
   const { enqueueSnackbar } = useSnackbar();
   const { updateShowLoader } = useUser();
   const [shifts, setShfits] = useState<IshiftDetail[]>([]);
-  const [startDate, setStartDate] = useState(getLastSunday(7));
+  const [startDate, setStartDate] = useState(getWeekDate("start"));
+  const [finishDate, setFinishDate] = useState(getWeekDate("finish"));
+  const handleWeekChange = (move: "next" | "prev") => {
+    if (move === "next") {
+      setStartDate(addDays(startDate, 7));
+      setFinishDate(addDays(finishDate, 7));
+    } else {
+      setStartDate(addDays(startDate, -7));
+      setFinishDate(addDays(finishDate, -7));
+    }
+  };
+  const [currentShift, setCurrentShift] = useState<IshiftDetail | null>(null);
+  const [openShiftDetails, setOpenShiftDetails] = useState(false);
 
   const fetchShifts = async () => {
     updateShowLoader(true);
@@ -44,21 +52,56 @@ export default function ShiftsPersonal() {
     updateShowLoader(false);
   };
 
+  const handleShiftClick = (shift: IshiftDetail) => {
+    if (shift.jobTypeId === 1) {
+      setCurrentShift(shift);
+      setOpenShiftDetails(true);
+    }
+  };
+
   useEffect(() => {
     fetchShifts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate]);
 
   return (
-    <div>
-      <h2>המשמרות שלי</h2>
-      <DateSelect setDate={setStartDate} />
-      <div style={{ marginTop: "10px" }}>
+    <Box sx={{ px: 2 }}>
+      <Typography variant="subtitle1">המשמרות שלי</Typography>
+      <DateSelect
+        onPrev={() => handleWeekChange("prev")}
+        onNext={() => handleWeekChange("next")}
+        displayValue={`${dayjs(startDate).format("DD/MM/YYYY")} -
+          ${dayjs(finishDate).format("DD/MM/YYYY")}`}
+      />
+      <Stack style={{ marginTop: 24, gap: 8 }}>
         {shifts &&
-          shifts.map((day: IshiftDetail) => (
-            <WorkerShift key={day.id} shift={day} />
-          ))}
-      </div>
-    </div>
+          shifts
+            .sort(
+              (a, b) =>
+                new Date(a.startDateEN).getTime() -
+                new Date(b.startDateEN).getTime()
+            )
+            .map((shift: IshiftDetail) => (
+              <WorkerShift
+                key={shift.id}
+                shift={shift}
+                onClick={() => handleShiftClick(shift)}
+              />
+            ))}
+      </Stack>
+      {currentShift && currentShift.jobTypeId === 1 && (
+        <InstallationShiftDetailsDialog
+          isAdmin={false}
+          open={openShiftDetails}
+          adress={currentShift.address}
+          customer={currentShift.contactName}
+          remark={currentShift.remark}
+          onClose={() => setOpenShiftDetails(false)}
+          phone={currentShift.phone}
+          placeName={currentShift.placeName}
+          wifi="wifi"
+        />
+      )}
+    </Box>
   );
 }

@@ -1,50 +1,61 @@
-import { IshiftDetail } from '../../Model';
-import './WorkerShift.styles.css';
+import { IshiftDetail } from "../../Model";
+import { Stack, Typography } from "@mui/material";
+import DataField from "../DataField/DataField";
+import { color_blue } from "../../Consts/Consts";
 
 interface Iprop {
   shift: IshiftDetail;
+  onClick?: () => void;
 }
 
-export default function WorkerShift({ shift }: Iprop) {
+enum SHIFT_TYPE_NAME {
+  "בוקר",
+  "אמצע",
+  "ערב",
+  "לילה",
+}
+
+enum WEEK_DAY {
+  "ראשון",
+  "שני",
+  "שלישי",
+  "רביעי",
+  "חמישי",
+  "שישי",
+  "שבת",
+}
+
+export default function WorkerShift({ shift, onClick }: Iprop) {
+  const {
+    startHour,
+    finishHour,
+    shiftTypeId,
+    jobTypeName,
+    startDateEN,
+    jobTypeId,
+  } = shift;
+  const day = new Date(startDateEN).getDay();
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flex: 'row',
-        width: '100%',
-        borderBottom: '1px solid #EFEFEF',
-        transform: 'rotate(-0.43deg)',
-        padding: '5px',
+    <DataField
+      onClick={onClick}
+      sx={{
+        backgroundColor:
+          day === 5 || day === 6 ? "secondary.light" : "grey.400",
       }}
     >
-      <div style={{ width: '5%' }} className="dayDiv">
-        יום
-        <br />
-        <b>{shift.dayName}</b>
-      </div>
-      <div
-        style={{
-          width: '85%',
-          textAlign: 'right',
-          display: 'flex',
-          flexDirection: 'column',
-          marginRight: '10px',
-        }}
-      >
-        <div className="jobType">{shift.jobTypeName}</div>
-
-        <div className="placeName">{shift.placeName && shift.placeName}</div>
-      </div>
-      <div
-        style={{
-          width: '10%',
-        }}
-        className="hours"
-      >
-        {shift.startHour}
-        <br />
-        {shift.finishHour}
-      </div>
-    </div>
+      <Stack direction="row">
+        <Typography fontWeight={600} width="20%">
+          {WEEK_DAY[day]}
+        </Typography>
+        <Typography color={jobTypeId === 1 ? color_blue : ""} width="30%">
+          {jobTypeName}
+        </Typography>
+        <Typography width="25%">{SHIFT_TYPE_NAME[shiftTypeId]}</Typography>
+        <Typography width="25%">
+          {finishHour} - {startHour}
+        </Typography>
+      </Stack>
+    </DataField>
   );
 }

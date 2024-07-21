@@ -60,7 +60,9 @@ const ScrollableValues = ({
   const [timeOfLastDragEvent, setTimeOfLastDragEvent] = useState(0);
   const [prevTouchY, setPrevTouchY] = useState(0);
   const [touchStartY, setTouchStartY] = useState(0);
+  //@ts-ignore
   const [velocity, setVelocity] = useState(0);
+  //@ts-ignore
   const [intervalId, setIntervalId] = useState<number>();
   const [scrollableHeight, setScrollableHeight] = useState(800);
   const valueBoxRef = useRef<HTMLDivElement>(null);

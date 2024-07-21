@@ -1,4 +1,4 @@
-import { IShiftPlan, IshiftDetail, IshiftWeek } from "../Model";
+import { IshiftDetail, IshiftWeek } from "../Model";
 
 export type ConvertedShiftsTypes = {
   1: IshiftDetail[];

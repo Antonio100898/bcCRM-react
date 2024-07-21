@@ -47,7 +47,7 @@ export default function Days({
     setweekDays(weekDaysAll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekDaysAll, shiftGroupId]);
-
+//@ts-ignore
   const updateDayRemark = async (day: IDayInfo) => {
     const newRemark = await prompt("הזן הערה", day.remark || "");
     if (newRemark === null || newRemark === "") {

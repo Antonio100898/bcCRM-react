@@ -3,7 +3,6 @@ import {
   Typography,
   Box,
   Stack,
-  Divider,
   Button,
   useTheme,
   useMediaQuery,
@@ -16,7 +15,6 @@ import { IWorker } from "../../Model";
 import WorkersHeader from "../../components/Workers/WorkersHeader";
 import { useUser } from "../../Context/useUser";
 import { workerService } from "../../API/services";
-import { TextFieldsTwoTone } from "@mui/icons-material";
 
 export default function WorkerInfo() {
   const { enqueueSnackbar } = useSnackbar();

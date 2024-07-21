@@ -4,14 +4,12 @@ import {
   Toolbar,
   AppBar,
   IconButton,
-  useMediaQuery,
   Stack,
   Paper,
 } from "@mui/material";
 
 import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
 
 type Props = {
   onClose: () => void;
@@ -25,13 +23,12 @@ type Props = {
 
 const ProblemDialogHeader = ({
   onClose,
-  openEditPlace,
   customerName,
   placeName,
   startTimeEN,
   workerCreateName,
 }: Props) => {
-  const bigScreen = useMediaQuery("(min-width: 1200px)");
+  //const bigScreen = useMediaQuery("(min-width: 1200px)");
   return (
     <AppBar sx={{ position: "relative" }}>
       <Toolbar sx={{ height: "100px", backgroundColor: "#f5f5f5" }}>

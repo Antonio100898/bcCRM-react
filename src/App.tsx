@@ -13,7 +13,7 @@ import WorkerExpensesReports from "./Screens/WorkerExpensesReports/WorkerExpense
 import Stats from "./Screens/V3Settings/Stats/Stats";
 import HardwareCenter from "./components/Hardware/HardwareCenter";
 import V3Settings from "./Screens/V3Settings/V3Settings";
-import ShiftPlans from "./Screens/ShiftPlans/ShiftPlans";
+import ShiftPlans from "./Screens/ShiftPlans/ShiftPlansScreen";
 import PlacesBizNumber from "./Screens/PlacesBizNumber/PlacesBizNumber";
 import WorkersFreeday from "./Screens/WorkersFreeday/workersFreeday";
 import WorkersSickday from "./Screens/WorkersSickday/workersSickday";
@@ -26,6 +26,7 @@ import AppLayout from "./AppLayout";
 import { useUser } from "./Context/useUser";
 import { useLayoutEffect } from "react";
 import Shifts from "./components/Shifts/Shifts";
+import InfoScreen from "./Screens/Info/InfoScreen";
 
 function App() {
   const { showLoader } = useUser();
@@ -195,6 +196,14 @@ function App() {
             element={
               <AppLayout loading={showLoader}>
                 <HardwareCenter />{" "}
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/Info"
+            element={
+              <AppLayout loading={showLoader}>
+                <InfoScreen />
               </AppLayout>
             }
           />

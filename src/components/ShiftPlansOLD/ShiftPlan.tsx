@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import HailIcon from "@mui/icons-material/Hail";
-import { useSnackbar } from "notistack";
 import ShiftPlanEdit from "./ShiftPlanEdit";
 import { IshiftDetail } from "../../Model";
-import { useUser } from "../../Context/useUser";
-import { shiftService } from "../../API/services";
 
 export type Props = {
   shift: Partial<IshiftDetail>;
@@ -22,12 +19,9 @@ export default function ShiftPlan({
   defDate,
   refreshList,
 }: Props) {
-  const { enqueueSnackbar } = useSnackbar();
   const [currentShift, setCurrentShift] =
     useState<Partial<IshiftDetail>>(shift);
   const [showEditShift, setShowEditShift] = useState<boolean>(false);
-
-  const { user } = useUser();
 
   useEffect(() => {
     // console.log(shift);
@@ -42,24 +36,24 @@ export default function ShiftPlan({
 
   const showEmptyShift = async () => {
     if (currentShift === null || currentShift.id === 0) {
-      const d: Partial<IshiftDetail> = {
-        id: 0,
-        workerId: 199,
-        shiftTypeId,
-        remark: "",
-        startDate: defDate.toString(),
-        startDateEN: defDate.toString(),
-      };
+      // const d: Partial<IshiftDetail> = {
+      //   id: 0,
+      //   workerId: 199,
+      //   shiftTypeId,
+      //   remark: "",
+      //   startDate: defDate.toString(),
+      //   startDateEN: defDate.toString(),
+      // };
       try {
-        const data = await shiftService.updateShiftPlan(d);
-        if (!data?.d.success) {
-          enqueueSnackbar({
-            message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-            variant: "error",
-          });
-          return;
-        }
-        setCurrentShift(d);
+        // const data = await shiftService.updateShiftPlan(d);
+        // if (!data?.d.success) {
+        //   enqueueSnackbar({
+        //     message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+        //     variant: "error",
+        //   });
+        //   return;
+        // }
+        // setCurrentShift(d);
       } catch (error) {
         console.error(error);
       }
@@ -75,26 +69,26 @@ export default function ShiftPlan({
   };
 
   const addNewShiftPlan = async () => {
-    const d: Partial<IshiftDetail> = {
-      id: 0,
-      workerId: user!.workerId,
-      shiftTypeId,
-      remark: "",
-      startDate: defDate.toDateString(),
-      finishTime: defDate.toDateString(),
-      startDateEN: defDate.toDateString(),
-      finishTimeEN: defDate.toDateString(),
-    };
+    // const d: Partial<IshiftDetail> = {
+    //   id: 0,
+    //   workerId: user!.workerId,
+    //   shiftTypeId,
+    //   remark: "",
+    //   startDate: defDate.toDateString(),
+    //   finishTime: defDate.toDateString(),
+    //   startDateEN: defDate.toDateString(),
+    //   finishTimeEN: defDate.toDateString(),
+    // };
     try {
-      const data = await shiftService.updateShiftPlan(d);
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-          variant: "error",
-        });
-        return;
-      }
-      refreshList();
+      // const data = await shiftService.updateShiftPlan(d);
+      // if (!data?.d.success) {
+      //   enqueueSnackbar({
+      //     message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+      //     variant: "error",
+      //   });
+      //   return;
+      // }
+      // refreshList();
     } catch (error) {
       console.error(error);
     }

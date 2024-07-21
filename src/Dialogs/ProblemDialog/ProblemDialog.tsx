@@ -5,7 +5,6 @@ import {
   Slide,
   useMediaQuery,
   useTheme,
-  Box,
   CircularProgress,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";

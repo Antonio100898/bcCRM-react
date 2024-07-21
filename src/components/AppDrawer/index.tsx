@@ -38,6 +38,7 @@ import { IUser, ProblemSummery } from "../../Model";
 import MultiMenu from "./multi-menu";
 import SpeedDialAddNumber from "../SpeedDialMenu/SpeedDialAddNumber";
 import SpeedDialAnswerPhone from "../SpeedDialMenu/SpeedDialAnswerPhone";
+import FeedIcon from '@mui/icons-material/Feed';
 
 const drawerWidth = 240;
 
@@ -150,6 +151,11 @@ const menuEntities: MenuCategory[] = [
         label: "מסופונים",
         icon: <TwoWheelerIcon />,
         to: "/PlacesBizNumber",
+      },
+      {
+        label: "מידע",
+        icon: <FeedIcon />,
+        to: "/Info",
       },
     ],
   },

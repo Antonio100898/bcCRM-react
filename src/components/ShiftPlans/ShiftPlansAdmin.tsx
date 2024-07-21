@@ -1,43 +1,25 @@
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { ExcelShiftPlans } from "../../components/Excel/ExcelShiftPlans";
+import { ExcelShiftPlans } from "../Excel/ExcelShiftPlans";
 import { useUser } from "../../Context/useUser";
 import { shiftService } from "../../API/services";
-import DateSelect from "../../components/DateSelect/DateSelect";
+import DateSelect from "../DateSelect/DateSelect";
 import { getWeekDate } from "../../helpers/getWeekDate";
 import { CircularProgress, Typography, Box, Stack } from "@mui/material";
 import { addDays } from "../../helpers/addDays";
 import { ConvertedShifts, convertShifts } from "../../helpers/convertShifts";
-import ShiftsOfDay from "../../components/Shifts/ShiftsOfDay";
 import dayjs from "dayjs";
-import { IDays, IShiftPlan } from "../../Model";
-import { getShiftStartDate } from "../../helpers/getShiftStartDate";
+import ShiftPlansOfTheDay from "./ShiftPlansOfTheDay";
+import { IDays } from "../../Model";
 
-export interface IdayO {
-  date: string;
-  isToday: boolean;
-  dayName: string;
-}
-
-const defaultShiftPlan: IShiftPlan = {
-  id: 0,
-  cancel: false,
-  remark: "",
-  shiftTypeId: 0,
-  workerId: 0,
-  startDate: "",
-  startDateEN: "",
-};
-
-export default function ShiftPlans() {
+export default function ShiftPlansAdmin() {
   const { enqueueSnackbar } = useSnackbar();
   const { updateShowLoader } = useUser();
   const [shiftPlans, setShiftPlans] = useState<ConvertedShifts>();
   const [startDate, setStartDate] = useState(getWeekDate("start"));
   const [finishDate, setFinishDate] = useState(getWeekDate("finish"));
-  const [selectedShiftPlans, setSelectedShiftPlans] = useState<IShiftPlan[]>(
-    []
-  );
+
+  const { isAdmin } = useUser();
 
   const handleWeekChange = (move: "next" | "prev") => {
     if (move === "next") {
@@ -52,7 +34,7 @@ export default function ShiftPlans() {
   const fetchShifts = async () => {
     updateShowLoader(true);
     try {
-      const data = await shiftService.getShiftPlansForWorker(startDate);
+      const data = await shiftService.getShiftPlans(startDate);
 
       if (!data?.d.success) {
         enqueueSnackbar({
@@ -71,15 +53,16 @@ export default function ShiftPlans() {
           variant: "error",
         });
     }
+
     updateShowLoader(false);
   };
 
   useEffect(() => {
     fetchShifts();
-    setSelectedShiftPlans([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate]);
 
+  //@ts-ignore
   const exportFile = async () => {
     try {
       const data = await shiftService.getShiftPlansWeekReport(
@@ -94,54 +77,6 @@ export default function ShiftPlans() {
       }
 
       return ExcelShiftPlans.exportWeekFile(data.d.shiftPlanReport);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleShiftPlanChange = (shiftTypeId: number, day: keyof IDays) => {
-    const shiftStartTime = getShiftStartDate(startDate, shiftTypeId, day);
-    if (selectedShiftPlans?.length === 0) {
-      setSelectedShiftPlans([
-        {
-          ...defaultShiftPlan,
-          startDate: shiftStartTime,
-        },
-      ]);
-      return;
-    }
-
-    setSelectedShiftPlans((prev) =>
-      prev?.find((plan) => plan.startDate === shiftStartTime)
-        ? prev.filter((plan) => plan.startDate !== shiftStartTime)
-        : [
-            ...prev!,
-            {
-              ...defaultShiftPlan,
-              startDate: shiftStartTime,
-            },
-          ]
-    );
-  };
-
-  const onSave = async () => {
-    if (selectedShiftPlans.length === 0) {
-      enqueueSnackbar({
-        message: "לא בחרת שום משמרת",
-        variant: "error",
-      });
-      return;
-    }
-    try {
-      const data = await shiftService.updateShiftPlan(currentShift);
-
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-          variant: "error",
-        });
-        return;
-      }
     } catch (error) {
       console.error(error);
     }
@@ -172,7 +107,6 @@ export default function ShiftPlans() {
             }}
           >
             <div style={{ width: "50px" }}></div>
-            <div style={{ width: "50px" }}></div>
             {["בוקר", "אמצע", "ערב", "לילה"].map((i) => (
               <Typography
                 key={i}
@@ -192,66 +126,13 @@ export default function ShiftPlans() {
             {Object.keys(shiftPlans).map((key) => {
               const plan = shiftPlans[key as keyof ConvertedShifts];
               return (
-                <ShiftsOfDay
-                  selectedShiftPlans={selectedShiftPlans}
-                  startDate={startDate}
-                  onClick={handleShiftPlanChange}
-                  key={key}
+                <ShiftPlansOfTheDay
                   shifts={plan}
                   weekDay={key as keyof IDays}
                 />
               );
             })}
           </Stack>
-          {/* {shiftPlans && (
-            <ShiftPlansWeek
-              refreshList={fetchShifts}
-              shiftsList={shiftPlans}
-              startOfWeek={startDate}
-              title="בוקר"
-              shiftTypeId={1}
-            />
-          )}
-
-          {shiftPlans && (
-            <ShiftPlansWeek
-              refreshList={fetchShifts}
-              shiftsList={shiftPlans}
-              startOfWeek={startDate}
-              title="צהריים"
-              shiftTypeId={2}
-            />
-          )}
-
-          {shiftPlans && (
-            <ShiftPlansWeek
-              refreshList={fetchShifts}
-              shiftsList={shiftPlans}
-              startOfWeek={startDate}
-              title="ערב"
-              shiftTypeId={3}
-            />
-          )}
-
-          {shiftPlans && (
-            <ShiftPlansWeek
-              refreshList={fetchShifts}
-              shiftsList={shiftPlans}
-              startOfWeek={startDate}
-              title="לילה"
-              shiftTypeId={4}
-            />
-          )}
-
-          {shiftPlans && (
-            <ShiftPlansWeek
-              refreshList={fetchShifts}
-              shiftsList={shiftPlans}
-              startOfWeek={startDate}
-              title="בלתמ"
-              shiftTypeId={5}
-            />
-          )} */}
         </>
       </Box>
     </div>

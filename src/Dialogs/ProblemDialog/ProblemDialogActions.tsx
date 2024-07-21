@@ -3,7 +3,6 @@ import { SetStateAction, useState, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import { IProblem, IProblemType, IUser } from "../../Model";
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { useConfirm } from "../../Context/useConfirm";
 import { problemService } from "../../API/services";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import LockIcon from "@mui/icons-material/Lock";
@@ -45,7 +44,6 @@ export default function ProblemDialogActions({
   const { isAdmin } = useUser();
 
   const theme = useTheme();
-  const { confirm } = useConfirm();
 
   useEffect(() => {
     setSelfProblem({ ...problem });

@@ -30,12 +30,9 @@ export default function Shift({
   defDate,
   refreshList,
   showDetails,
-  shiftGroupId,
   setShowInstallationShiftDetailsDialog,
   setShowShiftDialog,
   setCurrentShift,
-  jobTypeId,
-  shiftTypeId,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const { isAdmin } = useUser();
@@ -43,6 +40,7 @@ export default function Shift({
     console.log(isAdmin);
   }, [isAdmin]);
   const handleShiftClicked = (
+    //@ts-ignore
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     setCurrentShift(shift);

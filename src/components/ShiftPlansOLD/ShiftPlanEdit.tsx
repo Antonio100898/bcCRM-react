@@ -67,15 +67,15 @@ export default function ShiftPlanEdit({ open, shift, handleClose }: Props) {
     currentShift.finishTimeEN = GetDateTimeFormatEN(currentShift.startDateEN);
     currentShift.startDateEN = GetDateTimeFormatEN(currentShift.startDateEN);
     try {
-      const data = await shiftService.updateShiftPlan(currentShift);
+      // const data = await shiftService.updateShiftPlan(currentShift);
 
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-          variant: "error",
-        });
-        return;
-      }
+      // if (!data?.d.success) {
+      //   enqueueSnackbar({
+      //     message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+      //     variant: "error",
+      //   });
+      //   return;
+      // }
     } catch (error) {
       console.error(error);
     }

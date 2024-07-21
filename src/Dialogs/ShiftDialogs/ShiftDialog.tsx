@@ -5,7 +5,6 @@ import CustomDialog from "../CustomDialog";
 import { enqueueSnackbar } from "notistack";
 import { useUser } from "../../Context/useUser";
 import { getTimeString } from "../../helpers/getTimeString";
-import { Dayjs } from "dayjs";
 import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
 import {
   Box,
@@ -43,6 +42,7 @@ const ShiftDialog = ({
   const [currentJobWorkers, setCurrentJobWorkers] = useState<IWorker[]>([]);
   const [startTime, setStartTime] = useState("00:00");
   const [finishTime, setFinishTime] = useState("00:00");
+  //@ts-ignore
   const [selectedWorker, setSelectedWorker] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedInstallationDesc, setSelectedInstallationDesc] = useState<
@@ -152,7 +152,7 @@ const ShiftDialog = ({
     }
     onClose();
   };
-
+//@ts-ignore
   const cancelShift = async () => {
     if (currentShift.workerId === user?.workerId || isAdmin) {
       if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
@@ -194,7 +194,7 @@ const ShiftDialog = ({
     setFinishTime(getTimeString(shift.finishTimeEN));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
-
+//@ts-ignore
   const handleClose = () => {
     setSelectedWorker(null);
     onClose();
