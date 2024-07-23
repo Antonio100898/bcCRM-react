@@ -13,7 +13,7 @@ type Props = {
   shiftGroupId: number;
   defDate: Date;
   userType: number;
-  showEmptyShift: (jobTypeId: number, shiftTypeId: number) => void;
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void;
   setShowInstallationShiftDetailsDialog: React.Dispatch<
     React.SetStateAction<boolean>
   >;
@@ -60,7 +60,7 @@ const ShiftsStack = ({
       })}
       {isAdmin && (
         <EmptyShift
-          showEmptyShift={() => showEmptyShift(jobTypeId, shiftTypeId)}
+          showEmptyShift={() => showEmptyShift(jobTypeId, shiftTypeId, defDate)}
         />
       )}
     </Stack>

@@ -36,9 +36,7 @@ export default function Shift({
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const { isAdmin } = useUser();
-  useEffect(() => {
-    console.log(isAdmin);
-  }, [isAdmin]);
+
   const handleShiftClicked = (
     //@ts-ignore
     e: React.MouseEvent<HTMLDivElement, MouseEvent>

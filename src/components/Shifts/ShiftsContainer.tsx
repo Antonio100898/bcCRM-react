@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import { IshiftDetail, IshiftWeek } from "../../Model";
 import { ShiftsWeek } from "./ShiftsWeek";
-import ShiftEdit from "../../Dialogs/ShiftDialogs/ShiftEditDialog";
 import { Box, Typography, Stack } from "@mui/material";
 
 export type Props = {
@@ -18,8 +17,10 @@ export type Props = {
     React.SetStateAction<boolean>
   >;
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  showEmptyShift: (jobTypeId: number, shiftTypeId: number) => void
-  setCurrentShift: React.Dispatch<React.SetStateAction<Partial<IshiftDetail> | null>>
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void;
+  setCurrentShift: React.Dispatch<
+    React.SetStateAction<Partial<IshiftDetail> | null>
+  >;
 };
 
 export function ShiftsContainer({
@@ -34,23 +35,9 @@ export function ShiftsContainer({
   setShowInstallationShiftDetailsDialog,
   setShowShiftDialog,
   showEmptyShift,
-  setCurrentShift
+  setCurrentShift,
 }: Props) {
   const [shifts, setShifts] = useState<IshiftWeek[]>([]);
-  const [showAddNew, setShowAddNew] = useState<boolean>(false);
-
-  const emptyShift: Partial<IshiftDetail> = {
-    id: 0,
-    workerId: 199,
-    jobTypeId: 1,
-    shiftTypeId,
-    placeName: "",
-    phone: "",
-    remark: "",
-    contactName: "",
-    startDateEN: startOfWeek.toString(),
-    finishTimeEN: startOfWeek.toString(),
-  };
 
   useEffect(() => {
     const wsData1: IshiftWeek[] | null =
@@ -64,11 +51,6 @@ export function ShiftsContainer({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shiftsList]);
-
-  const handleCloseAddNewShift = () => {
-    setShowAddNew(false);
-    refreshList();
-  };
 
   return (
     <div>
@@ -86,41 +68,13 @@ export function ShiftsContainer({
         </Typography>
       </Box>
       <Box mt={1}>
-        {/* <div
-          style={{
-            display: "flex",
-            flex: "row",
-            justifyContent: "center",
-            position: "relative",
-            borderRadius: "8px 8px 0px 0px",
-            fontFamily: "Inter",
-            fontStyle: "normal",
-            fontWeight: 800,
-            fontSize: "48px",
-            lineHeight: "58px",
-            alignItems: "center",
-            textAlign: "center",
-            color: "#000000",
-          }}
-        >
-          <Tooltip title="הוסף חדש">
-            <IconButton onClick={AddNewShift}>
-              <SaveIcon
-                style={{
-                  fontSize: 35,
-                  color: "rgba(255, 255, 255, 0.9)",
-                }}
-              />
-            </IconButton>
-          </Tooltip>
-        </div> */}
         {shifts && shifts.length > 0 && (
           <Stack>
             {shifts &&
               shifts.map((jobTypes) => {
                 return (
                   <ShiftsWeek
-                  setCurrentShift={setCurrentShift}
+                    setCurrentShift={setCurrentShift}
                     setShowInstallationShiftDetailsDialog={
                       setShowInstallationShiftDetailsDialog
                     }
@@ -143,12 +97,6 @@ export function ShiftsContainer({
           </Stack>
         )}
       </Box>
-      <ShiftEdit
-        handleClose={handleCloseAddNewShift}
-        shift={emptyShift}
-        open={showAddNew}
-        shiftGroupId={shiftGroupId}
-      />
     </div>
   );
 }

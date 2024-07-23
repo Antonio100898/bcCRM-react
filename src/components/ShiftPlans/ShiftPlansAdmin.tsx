@@ -127,6 +127,7 @@ export default function ShiftPlansAdmin() {
               const plan = shiftPlans[key as keyof ConvertedShifts];
               return (
                 <ShiftPlansOfTheDay
+                  key={key}
                   shifts={plan}
                   weekDay={key as keyof IDays}
                 />

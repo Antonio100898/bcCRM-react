@@ -27,7 +27,7 @@ export type Props = {
     React.SetStateAction<boolean>
   >;
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  showEmptyShift: (jobTypeId: number, shiftTypeId: number) => void
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void
   setCurrentShift: React.Dispatch<
     React.SetStateAction<Partial<IshiftDetail> | null>
   >;

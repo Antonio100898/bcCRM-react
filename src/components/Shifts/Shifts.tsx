@@ -23,7 +23,7 @@ export default function Shifts() {
   const [part, setPart] = useState<number>(1);
   //@ts-ignore
   const [showShiftDetails, setShowShiftDetails] = useState(false);
-   //@ts-ignore
+  //@ts-ignore
   const [shiftGroupId, setShiftGroupId] = useState(
     user?.department === 4 ? 2 : 1
   );
@@ -50,7 +50,11 @@ export default function Shifts() {
     }
   };
 
-  const showEmptyShift = (jobTypeId: number, shiftTypeId: number) => {
+  const showEmptyShift = (
+    jobTypeId: number,
+    shiftTypeId: number,
+    date: Date,
+  ) => {
     let emptyShift: Partial<IshiftDetail> = {
       id: 0,
       workerId: 199,
@@ -60,10 +64,8 @@ export default function Shifts() {
       phone: "",
       remark: "",
       contactName: "",
-      startDate: new Date().toString(),
-      finishTime: new Date().toString(),
-      startDateEN: new Date().toString(),
-      finishTimeEN: new Date().toString(),
+      startDate: new Date(date).toString(),
+      startDateEN: new Date(date).toString(),
     };
 
     setCurrentShift(emptyShift);
@@ -346,6 +348,7 @@ export default function Shifts() {
       </Box>
       {currentShift && (
         <ShiftDialog
+          onChange={onChange}
           onShiftDetailsOpen={() => setShowInstallationShiftDetailsDialog(true)}
           installation={currentShift?.jobTypeId === 1}
           shift={currentShift}

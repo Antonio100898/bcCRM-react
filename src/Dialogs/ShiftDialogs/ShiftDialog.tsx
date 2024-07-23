@@ -28,6 +28,10 @@ type Props = {
   shiftGroupId: number;
   onShiftDetailsOpen: () => void;
   installation?: boolean;
+  onChange: <K extends keyof IshiftDetail>(
+    key: K,
+    val: IshiftDetail[K]
+  ) => void;
 };
 
 const ShiftDialog = ({
@@ -37,9 +41,11 @@ const ShiftDialog = ({
   shiftGroupId,
   onShiftDetailsOpen,
   installation,
+  onChange,
 }: Props) => {
-  const [currentShift, setCurrentShift] = useState(shift);
   const [currentJobWorkers, setCurrentJobWorkers] = useState<IWorker[]>([]);
+  const [missingShiftPlansWorkers, setMissingShiftPlansWorkers] =
+    useState<string[]>();
   const [startTime, setStartTime] = useState("00:00");
   const [finishTime, setFinishTime] = useState("00:00");
   //@ts-ignore
@@ -58,7 +64,8 @@ const ShiftDialog = ({
     setLoading(true);
     try {
       const data = await shiftService.getShiftPlansDetails(
-        new Date(currentShift.startDateEN!).toDateString()
+        new Date(shift.startDateEN!).toDateString(),
+        shift.shiftTypeId || 0
       );
       if (!data?.d.success) {
         enqueueSnackbar({
@@ -67,36 +74,30 @@ const ShiftDialog = ({
         });
         return;
       }
+      const missingShiftsData = await shiftService.getWorkersMissingShiftsPlan(
+        new Date(shift.startDateEN!).toDateString()
+      );
+
+      setMissingShiftPlansWorkers(
+        Array.from(
+          new Set<string>(
+            missingShiftsData?.d.msg
+              .split("\r\n")
+              .filter((d) => d !== "" && d !== " ")
+          )
+        )
+      );
 
       const shi: IshiftDetail[] = data.d.shiftPlanDetails;
-      const result =
-        workers &&
-        workers
-          .filter((name: IWorker) => name.departmentId === user?.department)
-          .filter((worker: IWorker) => {
-            const isPlan =
-              shi.filter((a) => a.workerId === worker.Id).length > 0;
-
-            return { ...worker, active: isPlan };
-          });
-
+      const result = workers.filter((w) =>
+        shi.find((s) => s.workerId === w.Id)
+      );
       if (result) setCurrentJobWorkers(result);
     } catch (error) {
       console.error(error);
     }
     setLoading(false);
   };
-
-  const onChange = <K extends keyof IshiftDetail>(
-    key: K,
-    val: IshiftDetail[K]
-  ) => {
-    setCurrentShift({ ...currentShift, [key]: val });
-  };
-
-  // const handleChange = (newValue: Dayjs | null) => {
-  //   onChange("startDateEN", newValue?.format() || "01/01/2000");
-  // };
 
   const handleShiftDetailsClicked = (desc: string) => {
     if (!isBigScreen && selectedInstallationDesc === desc) onShiftDetailsOpen();
@@ -105,9 +106,9 @@ const ShiftDialog = ({
 
   const updateShift = async () => {
     if (
-      currentShift.workerId === undefined ||
-      currentShift.workerId === null ||
-      currentShift.workerId === 0
+      shift.workerId === undefined ||
+      shift.workerId === null ||
+      shift.workerId === 0
     ) {
       enqueueSnackbar({
         message: "אנא בחר עובד",
@@ -116,10 +117,7 @@ const ShiftDialog = ({
       return;
     }
 
-    if (
-      currentShift.finishTimeEN === undefined ||
-      currentShift.startDateEN === undefined
-    ) {
+    if (shift.finishTimeEN === undefined || shift.startDateEN === undefined) {
       enqueueSnackbar({
         message: "אנא בחר שעת סיום",
         variant: "error",
@@ -127,19 +125,10 @@ const ShiftDialog = ({
       return;
     }
 
-    currentShift.startDate = getDateTimeFormatEN(
-      currentShift!.startDateEN,
-      startTime
-    );
-    currentShift.finishTime = getDateTimeFormatEN(
-      currentShift!.finishTimeEN,
-      finishTime
-    );
+    shift.startDate = getDateTimeFormatEN(shift!.startDateEN, startTime);
+    shift.finishTime = getDateTimeFormatEN(shift!.finishTimeEN, finishTime);
     try {
-      const data = await shiftService.updateShiftDetails(
-        currentShift,
-        shiftGroupId
-      );
+      const data = await shiftService.updateShiftDetails(shift, shiftGroupId);
 
       if (!data?.d.success) {
         enqueueSnackbar({
@@ -152,11 +141,11 @@ const ShiftDialog = ({
     }
     onClose();
   };
-//@ts-ignore
+  //@ts-ignore
   const cancelShift = async () => {
-    if (currentShift.workerId === user?.workerId || isAdmin) {
+    if (shift.workerId === user?.workerId || isAdmin) {
       if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
-      if (!currentShift?.id) {
+      if (!shift?.id) {
         enqueueSnackbar({
           message: `משמרת לא קיימת`,
           variant: "error",
@@ -164,7 +153,7 @@ const ShiftDialog = ({
         return;
       }
       try {
-        const data = await shiftService.cancelShift(currentShift.id);
+        const data = await shiftService.cancelShift(shift.id);
 
         if (!data?.d.success) {
           enqueueSnackbar({
@@ -189,12 +178,11 @@ const ShiftDialog = ({
   }, [open]);
 
   useEffect(() => {
-    setCurrentShift(shift);
     setStartTime(getTimeString(shift.startDateEN));
     setFinishTime(getTimeString(shift.finishTimeEN));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
-//@ts-ignore
+  //@ts-ignore
   const handleClose = () => {
     setSelectedWorker(null);
     onClose();
@@ -220,10 +208,16 @@ const ShiftDialog = ({
                 <SelectChip
                   key={worker.Id}
                   onClick={() => onChange("workerId", worker.Id)}
-                  selected={currentShift.workerId === worker.Id}
+                  selected={shift.workerId === worker.Id}
                   label={`${worker.firstName} ${worker.lastName}`}
                 />
               ))}
+            </SelectsChipGroup>
+            <SelectsChipGroup label="לא הגישו">
+              {missingShiftPlansWorkers &&
+                missingShiftPlansWorkers.map((name) => (
+                  <SelectChip key={name} label={name} />
+                ))}
             </SelectsChipGroup>
             {installation && (
               <SelectsChipGroup label="תיאור משמרת">
@@ -242,12 +236,12 @@ const ShiftDialog = ({
               <Stack direction="row" justifyContent="space-between" gap={2}>
                 <TimePicker
                   onChange={(v) => onChange("startHour", v as string)}
-                  value={currentShift.startHour || "00:00"}
+                  value={shift.startHour || "00:00"}
                   label="שעת התחלה"
                 />
                 <TimePicker
                   onChange={(v) => onChange("finishHour", v as string)}
-                  value={currentShift.finishHour || "00:00"}
+                  value={shift.finishHour || "00:00"}
                   label="שעת סיום"
                 />
               </Stack>
@@ -265,14 +259,14 @@ const ShiftDialog = ({
               />
               <Box width="300px">
                 <InstallationDetails
-                  adress={currentShift.address!}
-                  customer={currentShift.contactName!}
+                  adress={shift.address!}
+                  customer={shift.contactName!}
                   isAdmin={isAdmin}
                   onChange={onChange}
-                  phone={currentShift.phone!}
-                  placeName={currentShift.placeName!}
+                  phone={shift.phone!}
+                  placeName={shift.placeName!}
                   wifi="wifi"
-                  remark={currentShift.remark}
+                  remark={shift.remark}
                 />
               </Box>
             </>

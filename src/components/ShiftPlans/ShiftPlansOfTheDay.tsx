@@ -30,6 +30,7 @@ const ShiftPlansOfTheDay = ({ shifts, weekDay }: Props) => {
         </Typography>
         {Object.keys(shifts).map((key) => (
           <Typography
+            key={key}
             fontWeight={700}
             color="secondary.main"
             sx={{

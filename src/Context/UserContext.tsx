@@ -203,7 +203,6 @@ export function UserContextProvider(props: Props) {
         navigate("/login");
         return null;
       }
-      console.log(data.d)
       updateUser(data.d);
       localStorage.setItem(TOKEN_KEY, data.d.key);
       updateWorkers(data.d.workers);
