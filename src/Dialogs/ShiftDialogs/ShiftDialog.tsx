@@ -24,7 +24,7 @@ import SelectsChipGroup from "../../components/SelectChipGroup/SelectsChipGroup"
 type Props = {
   open: boolean;
   onClose: () => void;
-  shift: Partial<IshiftDetail>;
+  shift: IshiftDetail;
   shiftGroupId: number;
   onShiftDetailsOpen: () => void;
   installation?: boolean;
@@ -54,7 +54,11 @@ const ShiftDialog = ({
   const [selectedInstallationDesc, setSelectedInstallationDesc] = useState<
     string | null
   >(null);
+  const [disableScroll, setDisableScroll] = useState(false);
 
+  const handleDisableDialogScroll = (val: boolean) => {
+    setDisableScroll(val);
+  };
   const { workers, user, isAdmin } = useUser();
 
   const theme = useTheme();
@@ -105,11 +109,7 @@ const ShiftDialog = ({
   };
 
   const updateShift = async () => {
-    if (
-      shift.workerId === undefined ||
-      shift.workerId === null ||
-      shift.workerId === 0
-    ) {
+    if (!shift.workerId) {
       enqueueSnackbar({
         message: "אנא בחר עובד",
         variant: "error",
@@ -125,20 +125,46 @@ const ShiftDialog = ({
       return;
     }
 
-    shift.startDate = getDateTimeFormatEN(shift!.startDateEN, startTime);
-    shift.finishTime = getDateTimeFormatEN(shift!.finishTimeEN, finishTime);
-    try {
-      const data = await shiftService.updateShiftDetails(shift, shiftGroupId);
-
-      if (!data?.d.success) {
-        enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-          variant: "error",
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    
+    console.log(shift);
+     try {
+       const data = await shiftService.updateShiftDetails(
+         {
+           address: shift.address,
+           color: null,
+           contactName: shift.contactName,
+           dayName: shift.dayName,
+           finishHour: shift.finishHour,
+           finishTime: shift.finishTime,
+           finishTimeEN: shift.finishTimeEN,
+           isShiftManager: false,
+           jobTypeId: shift.jobTypeId,
+           jobTypeName: shift.jobTypeName,
+           phone: shift.phone,
+           placeName: shift.placeName,
+           shiftGroupId: shiftGroupId,
+           shiftName: shift.shiftName,
+           startHour: shift.startHour,
+           workerName: shift.workerName,
+           cancel: false,
+           id: shift.id,
+           remark: shift.remark,
+           shiftTypeId: shift.shiftTypeId,
+           startDate: shift.startDate,
+           startDateEN: shift.startDateEN,
+           workerId: shift.workerId,
+         },
+         shiftGroupId
+       )
+       if (!data?.d.success) {
+         enqueueSnackbar({
+           message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+           variant: "error",
+         });
+       }
+     } catch (error) {
+       console.error(error);
+     }
     onClose();
   };
   //@ts-ignore
@@ -190,6 +216,7 @@ const ShiftDialog = ({
 
   return (
     <CustomDialog
+      disableScroll={disableScroll}
       onSubmit={updateShift}
       sx={{ maxWidth: "1200px", px: isBigScreen ? 4 : 0 }}
       fullScreen={!isBigScreen}
@@ -235,11 +262,13 @@ const ShiftDialog = ({
               <Typography fontWeight="bold">שעות המשמרת</Typography>
               <Stack direction="row" justifyContent="space-between" gap={2}>
                 <TimePicker
+                  disableDialogScroll={handleDisableDialogScroll}
                   onChange={(v) => onChange("startHour", v as string)}
                   value={shift.startHour || "00:00"}
                   label="שעת התחלה"
                 />
                 <TimePicker
+                  disableDialogScroll={handleDisableDialogScroll}
                   onChange={(v) => onChange("finishHour", v as string)}
                   value={shift.finishHour || "00:00"}
                   label="שעת סיום"

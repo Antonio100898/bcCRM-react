@@ -13,6 +13,7 @@ import ShiftDialog from "../../Dialogs/ShiftDialogs/ShiftDialog";
 import { getWeekDate } from "../../helpers/getWeekDate";
 import { addDays } from "../../helpers/addDays";
 import dayjs from "dayjs";
+import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
 
 export default function Shifts() {
   const { enqueueSnackbar } = useSnackbar();
@@ -21,14 +22,7 @@ export default function Shifts() {
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
   const [part, setPart] = useState<number>(1);
-  //@ts-ignore
-  const [showShiftDetails, setShowShiftDetails] = useState(false);
-  //@ts-ignore
-  const [shiftGroupId, setShiftGroupId] = useState(
-    user?.department === 4 ? 2 : 1
-  );
-  const [currentShift, setCurrentShift] =
-    useState<Partial<IshiftDetail> | null>(null);
+  const [currentShift, setCurrentShift] = useState<IshiftDetail | null>(null);
   const [showShiftDialog, setShowShiftDialog] = useState(false);
   const [
     showInstallationShiftDetailsDialog,
@@ -50,12 +44,17 @@ export default function Shifts() {
     }
   };
 
+  //department 4 = tafritim
+  //shiftGroupId 2 = tafritim
+  //shiftGroupId 1 = anan
+  const shiftGroupId = user?.department === 4 ? 2 : 1;
+
   const showEmptyShift = (
     jobTypeId: number,
     shiftTypeId: number,
-    date: Date,
+    date: Date
   ) => {
-    let emptyShift: Partial<IshiftDetail> = {
+    let emptyShift: IshiftDetail = {
       id: 0,
       workerId: 199,
       jobTypeId: jobTypeId,
@@ -66,6 +65,15 @@ export default function Shifts() {
       contactName: "",
       startDate: new Date(date).toString(),
       startDateEN: new Date(date).toString(),
+      address: "",
+      dayName: "",
+      finishHour: "",
+      finishTime: "",
+      finishTimeEN: "",
+      jobTypeName: "",
+      shiftName: "",
+      startHour: "",
+      workerName: "",
     };
 
     setCurrentShift(emptyShift);
@@ -76,7 +84,25 @@ export default function Shifts() {
     key: K,
     val: IshiftDetail[K]
   ) => {
-    setCurrentShift({ ...currentShift, [key]: val });
+    let startDate = "";
+    let finishTime = "";
+    if (key === "startHour" && currentShift) {
+      startDate = getDateTimeFormatEN(currentShift.startDateEN, val.toString());
+    }
+    if (key === "finishHour" && currentShift) {
+      finishTime = getDateTimeFormatEN(
+        currentShift.startDateEN,
+        val.toString()
+      );
+    }
+    if (!finishTime && !startDate) {
+      setCurrentShift({ ...currentShift!, [key]: val });
+    } else {
+      if (startDate)
+        setCurrentShift({ ...currentShift!, [key]: val, startDate });
+      if (finishTime)
+        setCurrentShift({ ...currentShift!, [key]: val, finishTime });
+    }
   };
 
   const handlePartChange = (action: "next" | "prev") => {
@@ -272,7 +298,6 @@ export default function Shifts() {
               startOfWeek={startDate}
               title="בוקר"
               shiftTypeId={1}
-              showDetails={showShiftDetails}
               shiftGroupId={shiftGroupId}
             />
 
@@ -289,7 +314,6 @@ export default function Shifts() {
               startOfWeek={startDate}
               title="צהריים"
               shiftTypeId={2}
-              showDetails={showShiftDetails}
               shiftGroupId={shiftGroupId}
             />
 
@@ -306,7 +330,6 @@ export default function Shifts() {
               startOfWeek={startDate}
               title="ערב"
               shiftTypeId={3}
-              showDetails={showShiftDetails}
               shiftGroupId={shiftGroupId}
             />
 
@@ -323,7 +346,6 @@ export default function Shifts() {
               startOfWeek={startDate}
               title="לילה"
               shiftTypeId={4}
-              showDetails={showShiftDetails}
               shiftGroupId={shiftGroupId}
             />
 
@@ -340,7 +362,6 @@ export default function Shifts() {
               startOfWeek={startDate}
               title="בלתמ"
               shiftTypeId={5}
-              showDetails={showShiftDetails}
               shiftGroupId={shiftGroupId}
             />
           </Box>

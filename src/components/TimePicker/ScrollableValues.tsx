@@ -18,6 +18,7 @@ type Props = {
   last: number;
   onChange?: (value: string) => void;
   initValue: string;
+  disableDialogScroll: (val: boolean) => void;
 };
 
 const ValueBox = forwardRef(
@@ -50,6 +51,7 @@ const ScrollableValues = ({
   step,
   onChange,
   initValue,
+  disableDialogScroll,
 }: Props) => {
   const initialTop = valueBoxHeight + 16;
   const initIndex = Number(initValue) / step;
@@ -77,6 +79,8 @@ const ScrollableValues = ({
   }, [first, last, step]);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    disableDialogScroll(true);
+    e.stopPropagation();
     setBeingTouched(true);
     setOriginalOffset(e.currentTarget.offsetTop);
     setTouchStartY(e.targetTouches[0].clientY);
@@ -85,6 +89,7 @@ const ScrollableValues = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     if (beingTouched) {
       const touchY = e.targetTouches[0].clientY;
       const currTime = Date.now();
@@ -117,6 +122,7 @@ const ScrollableValues = ({
   };
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    disableDialogScroll(false);
     e.stopPropagation();
     centralize();
     //setIntervalId(window.setInterval(animateSlidingToZero.bind(this), 33));

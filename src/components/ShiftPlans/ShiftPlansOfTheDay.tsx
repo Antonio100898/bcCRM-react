@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import {
   ConvertedShiftsTypes,
   HEBREW_WEEK_DAY,

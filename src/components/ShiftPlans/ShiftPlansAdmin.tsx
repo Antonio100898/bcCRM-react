@@ -19,8 +19,6 @@ export default function ShiftPlansAdmin() {
   const [startDate, setStartDate] = useState(getWeekDate("start"));
   const [finishDate, setFinishDate] = useState(getWeekDate("finish"));
 
-  const { isAdmin } = useUser();
-
   const handleWeekChange = (move: "next" | "prev") => {
     if (move === "next") {
       setStartDate(addDays(startDate, 7));

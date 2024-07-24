@@ -10,7 +10,6 @@ export type Props = {
   shiftTypeId: number;
   startOfWeek: Date;
   refreshList: () => void;
-  showDetails: boolean;
   shiftGroupId: number;
   part: number;
   setShowInstallationShiftDetailsDialog: React.Dispatch<
@@ -19,7 +18,7 @@ export type Props = {
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void;
   setCurrentShift: React.Dispatch<
-    React.SetStateAction<Partial<IshiftDetail> | null>
+    React.SetStateAction<IshiftDetail | null>
   >;
 };
 
@@ -29,7 +28,6 @@ export function ShiftsContainer({
   shiftTypeId,
   startOfWeek,
   refreshList,
-  showDetails,
   shiftGroupId,
   part,
   setShowInstallationShiftDetailsDialog,
@@ -89,7 +87,6 @@ export function ShiftsContainer({
                     color={jobTypes.color}
                     shiftTypeId={shiftTypeId}
                     refreshList={refreshList}
-                    showDetails={showDetails}
                     shiftGroupId={shiftGroupId}
                   />
                 );

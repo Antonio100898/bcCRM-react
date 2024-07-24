@@ -1,35 +1,27 @@
 import { IshiftDetail } from "../../Model";
 import { Box, Typography } from "@mui/material";
-import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
-import PersonIcon from "@mui/icons-material/Person";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useSnackbar } from "notistack";
 import { shiftService } from "../../API/services";
 import { useUser } from "../../Context/useUser";
-import { useEffect } from "react";
 
 export type Props = {
-  shift: Partial<IshiftDetail>;
+  shift: IshiftDetail;
   jobTypeId: number;
   shiftTypeId: number;
   defDate: Date;
   refreshList: () => void;
-  showDetails: boolean;
   shiftGroupId: number;
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
   setShowInstallationShiftDetailsDialog: React.Dispatch<
     React.SetStateAction<boolean>
   >;
-  setCurrentShift: React.Dispatch<
-    React.SetStateAction<Partial<IshiftDetail> | null>
-  >;
+  setCurrentShift: React.Dispatch<React.SetStateAction<IshiftDetail | null>>;
 };
 
 export default function Shift({
   shift,
   defDate,
   refreshList,
-  showDetails,
   setShowInstallationShiftDetailsDialog,
   setShowShiftDialog,
   setCurrentShift,
@@ -169,31 +161,6 @@ export default function Shift({
               )} */}
           </Box>
         )}
-
-        {showDetails && (
-          <div>
-            {shift.contactName && (
-              <div className="shiftDivMiddleSimple textSmall">
-                <PersonIcon />
-                {shift.contactName}
-              </div>
-            )}
-            {shift.phone && (
-              <div className="shiftDivMiddleSimple textSmall">
-                <PhoneEnabledIcon />
-                {shift.phone}
-              </div>
-            )}
-            {shift.address && shift.address.length > 2 && (
-              <div className="shiftDivMiddleSimple textSmall">
-                <LocationOnIcon />
-                {shift.address}
-              </div>
-            )}
-            <div className="shiftDivMiddleSimple textSmall">{shift.remark}</div>
-          </div>
-        )}
-
         <Box
           sx={{
             backgroundColor: "#F8F8F8",

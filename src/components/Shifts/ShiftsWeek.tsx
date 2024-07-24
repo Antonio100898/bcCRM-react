@@ -20,17 +20,14 @@ export type Props = {
   color: string;
   shiftTypeId: number;
   refreshList: () => void;
-  showDetails: boolean;
   shiftGroupId: number;
   part: number;
   setShowInstallationShiftDetailsDialog: React.Dispatch<
     React.SetStateAction<boolean>
   >;
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void
-  setCurrentShift: React.Dispatch<
-    React.SetStateAction<Partial<IshiftDetail> | null>
-  >;
+  showEmptyShift: (jobTypeId: number, shiftTypeId: number, date: Date) => void;
+  setCurrentShift: React.Dispatch<React.SetStateAction<IshiftDetail | null>>;
 };
 
 export function ShiftsWeek({
@@ -40,7 +37,6 @@ export function ShiftsWeek({
   shiftTypeId,
   startOfWeek,
   refreshList,
-  showDetails,
   shiftGroupId,
   part,
   setShowInstallationShiftDetailsDialog,
@@ -142,7 +138,6 @@ export function ShiftsWeek({
                 refreshList={refreshList}
                 shiftGroupId={shiftGroupId}
                 shiftTypeId={shiftTypeId}
-                showDetails={showDetails}
                 userType={user!.userType}
               />
             ))}
@@ -165,7 +160,6 @@ export function ShiftsWeek({
                 refreshList={refreshList}
                 shiftGroupId={shiftGroupId}
                 shiftTypeId={shiftTypeId}
-                showDetails={showDetails}
                 userType={user!.userType}
               />
             ))}
@@ -183,7 +177,6 @@ export function ShiftsWeek({
             refreshList={refreshList}
             shiftGroupId={shiftGroupId}
             shiftTypeId={shiftTypeId}
-            showDetails={showDetails}
             userType={user!.userType}
           />
         )}
@@ -203,7 +196,6 @@ export function ShiftsWeek({
               refreshList={refreshList}
               shiftGroupId={shiftGroupId}
               shiftTypeId={shiftTypeId}
-              showDetails={showDetails}
               userType={user!.userType}
             />
           ))}

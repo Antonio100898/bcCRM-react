@@ -7,6 +7,7 @@ type TimePickerProps = {
   fullWidth?: boolean;
   onChange?: (value: string) => void;
   width?: string | number;
+  disableDialogScroll: (val: boolean) => void;
 
   /**
    * @value Time string like 10:45
@@ -19,6 +20,7 @@ const TimePicker = ({
   onChange,
   value,
   width,
+  disableDialogScroll,
   ...props
 }: TimePickerProps & BoxProps) => {
   const hours = value.split(":")[0];
@@ -87,6 +89,7 @@ const TimePicker = ({
           :
         </Box>
         <ScrollableValues
+          disableDialogScroll={disableDialogScroll}
           initValue={hours}
           onChange={handleHoursValueChange}
           centerY={centerY}
@@ -98,6 +101,7 @@ const TimePicker = ({
           step={1}
         />
         <ScrollableValues
+          disableDialogScroll={disableDialogScroll}
           initValue={minutes}
           onChange={handleMinutesValueChange}
           centerY={centerY}

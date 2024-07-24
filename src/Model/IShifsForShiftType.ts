@@ -6,12 +6,10 @@ export interface IshiftDetail {
   jobTypeName: string;
   workerId: number;
   workerName: string;
-
   startDate: string;
   startDateEN: string;
   finishTime: string;
   finishTimeEN: string;
-
   startHour: string;
   finishHour: string;
   dayName: string;
@@ -85,4 +83,30 @@ export interface IShiftDetailsResponse {
     workerShifts: IshiftDetail[];
     shiftPlanDetails: IshiftDetail[];
   };
+}
+
+export interface ShiftDetailForServer {
+  id: number;
+  shiftTypeId: number;
+  workerId: number;
+  startDate: Date | string;
+  startDateEN: string;
+  remark: string;
+  cancel: boolean;
+  shiftName: string;
+  jobTypeId: number;
+  jobTypeName: string;
+  color: string | null;
+  workerName: string;
+  finishTime: Date | string;
+  finishTimeEN: string;
+  placeName: string;
+  address: string;
+  dayName: string | null;
+  contactName: string;
+  phone: string;
+  startHour: string;
+  finishHour: string;
+  shiftGroupId: number;
+  isShiftManager: boolean;
 }

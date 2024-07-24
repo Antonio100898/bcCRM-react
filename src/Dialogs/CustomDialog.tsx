@@ -19,6 +19,7 @@ type Props = {
   title?: string;
   sx?: SxProps<Theme> | undefined;
   onSubmit?: () => void;
+  disableScroll: boolean;
 };
 
 const CustomDialog = ({
@@ -29,6 +30,7 @@ const CustomDialog = ({
   title,
   sx,
   onSubmit,
+  disableScroll,
 }: Props & PropsWithChildren) => {
   return (
     <Dialog
@@ -61,7 +63,14 @@ const CustomDialog = ({
         </DialogTitle>
       )}
 
-      <DialogContent sx={{ px: 4, width: "100%", height: "600px" }}>
+      <DialogContent
+        sx={{
+          px: 4,
+          width: "100%",
+          height: "600px",
+          overflow: disableScroll ? "hidden" : "",
+        }}
+      >
         {children}
       </DialogContent>
       <DialogActions>

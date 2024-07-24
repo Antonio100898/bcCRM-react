@@ -6,7 +6,7 @@ import {
   IShiftDetailsResponse,
   IShiftPlan,
   IShiftPlanReportResponse,
-  IshiftDetail,
+  ShiftDetailForServer,
 } from "../../Model";
 import { ICustomResponse } from "../../Model/ICustomResponse";
 import { instance } from "../axoisConfig";
@@ -172,7 +172,7 @@ export const shiftService = {
         workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
         addDays: 1,
-        shiftTypeId
+        shiftTypeId,
       });
       return data;
     } catch (error) {
@@ -181,7 +181,7 @@ export const shiftService = {
   },
 
   async updateShiftDetails(
-    shiftDetail: Partial<IshiftDetail>,
+    shiftDetail: ShiftDetailForServer,
     shiftGroupID: number
   ): Promise<ICustomResponse | undefined> {
     try {

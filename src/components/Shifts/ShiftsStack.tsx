@@ -9,7 +9,6 @@ type Props = {
   jobTypeId: number;
   shiftTypeId: number;
   refreshList: () => void;
-  showDetails: boolean;
   shiftGroupId: number;
   defDate: Date;
   userType: number;
@@ -18,9 +17,7 @@ type Props = {
     React.SetStateAction<boolean>
   >;
   setShowShiftDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentShift: React.Dispatch<
-    React.SetStateAction<Partial<IshiftDetail> | null>
-  >;
+  setCurrentShift: React.Dispatch<React.SetStateAction<IshiftDetail | null>>;
 };
 
 const ShiftsStack = ({
@@ -29,7 +26,6 @@ const ShiftsStack = ({
   shiftTypeId,
   refreshList,
   shiftGroupId,
-  showDetails,
   defDate,
   showEmptyShift,
   setShowInstallationShiftDetailsDialog,
@@ -53,7 +49,6 @@ const ShiftsStack = ({
             shiftTypeId={shiftTypeId}
             defDate={defDate}
             refreshList={refreshList}
-            showDetails={showDetails}
             shiftGroupId={shiftGroupId}
           />
         );
