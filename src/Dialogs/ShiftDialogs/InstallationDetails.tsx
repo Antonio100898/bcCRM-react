@@ -77,6 +77,7 @@ const InstallationDetails = ({
       onChange: onChange ? (val: string) => onChange("remark", val) : undefined,
     },
   ];
+
   return (
     <Box maxWidth={400}>
       <Typography fontSize={20} fontWeight="bold">
@@ -116,6 +117,11 @@ const InstallationDetails = ({
                   />
                 ) : (
                   <TextField
+                    onChange={
+                      item.onChange
+                        ? (e) => item.onChange!(e.currentTarget.value)
+                        : undefined
+                    }
                     value={item.value}
                     fullWidth
                     inputProps={{

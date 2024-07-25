@@ -300,7 +300,7 @@ export function UserContextProvider(props: Props) {
         orderBy,
         setOrderBy,
         fileLoading,
-        isAdmin: true,
+        isAdmin,
       }}
       {...props}
     />

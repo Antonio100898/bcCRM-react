@@ -19,7 +19,7 @@ type Props = {
   title?: string;
   sx?: SxProps<Theme> | undefined;
   onSubmit?: () => void;
-  disableScroll: boolean;
+  disableScroll?: boolean;
 };
 
 const CustomDialog = ({

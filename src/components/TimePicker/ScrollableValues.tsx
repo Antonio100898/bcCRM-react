@@ -67,6 +67,8 @@ const ScrollableValues = ({
   //@ts-ignore
   const [intervalId, setIntervalId] = useState<number>();
   const [scrollableHeight, setScrollableHeight] = useState(800);
+    //@ts-ignore
+  const [isScrolling, setIsScrolling] = useState(false);
   const valueBoxRef = useRef<HTMLDivElement>(null);
   const scrollableRef = useRef<HTMLDivElement>(null);
 
@@ -141,6 +143,7 @@ const ScrollableValues = ({
         (prev) =>
           prev + (e.deltaY < 0 ? valueBoxHeight + 16 : -(valueBoxHeight + 16))
       );
+    setIsScrolling(false);
   };
 
   const handleItemClicked = (
@@ -157,6 +160,7 @@ const ScrollableValues = ({
       const height = valueBoxHeight + 16;
       const value =
         (((top - centerY) * step) / height) * (top - centerY < 0 ? -1 : 1);
+      if (value.toString().includes(".")) return;
       onChange((value < 10 ? `0${value}` : value).toString());
     }
   }, [top]);

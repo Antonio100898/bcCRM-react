@@ -153,9 +153,8 @@ export const shiftService = {
   ): Promise<IShiftDetailsResponse | undefined> {
     try {
       const { data } = await instance.post("/GetShiftsForWorker", {
-        //workerKey: localStorage.getItem(TOKEN_KEY),
+        workerKey: localStorage.getItem(TOKEN_KEY),
         startTime,
-        workerId: 197,
       });
       return data;
     } catch (error) {
@@ -188,7 +187,7 @@ export const shiftService = {
       const { data } = await instance.post("/UpdateShiftDetails", {
         workerKey: localStorage.getItem(TOKEN_KEY),
         shiftDetail,
-        shiftGroupID,
+        shiftGroupId: shiftGroupID,
       });
       return data;
     } catch (error) {

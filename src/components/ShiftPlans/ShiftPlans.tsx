@@ -39,8 +39,6 @@ export default function ShiftPlans() {
     []
   );
 
-  const { isAdmin } = useUser();
-
   const handleWeekChange = (move: "next" | "prev") => {
     if (move === "next") {
       setStartDate(addDays(startDate, 7));
@@ -128,32 +126,29 @@ export default function ShiftPlans() {
   };
   //@ts-ignore
   const onSave = async () => {
-    console.log(selectedShiftPlans);
-    return;
-    // if (selectedShiftPlans.length === 0) {
-    //   enqueueSnackbar({
-    //     message: "לא בחרת שום משמרת",
-    //     variant: "error",
-    //   });
-    //   return;
-    // }
-    // try {
-    //   const data = await shiftService.updateShiftPlan(selectedShiftPlans);
-
-    //   if (!data?.d.success) {
-    //     enqueueSnackbar({
-    //       message: `נכשל. ${data?.d.msg}`,
-    //       variant: "error",
-    //     });
-    //     return;
-    //   }
-    // } catch (error) {
-    //   if (error instanceof Error)
-    //     enqueueSnackbar({
-    //       message: `נכשל. ${error.message}`,
-    //       variant: "error",
-    //     });
-    // }
+    if (selectedShiftPlans.length === 0) {
+      enqueueSnackbar({
+        message: "לא בחרת שום משמרת",
+        variant: "error",
+      });
+      return;
+    }
+    try {
+      const data = await shiftService.updateShiftPlan(selectedShiftPlans);
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל. ${data?.d.msg}`,
+          variant: "error",
+        });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof Error)
+        enqueueSnackbar({
+          message: `נכשל. ${error.message}`,
+          variant: "error",
+        });
+    }
   };
 
   if (!shiftPlans) return <CircularProgress />;

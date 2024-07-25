@@ -58,15 +58,25 @@ export default function Shift({
       const data = await shiftService.updateShiftStartDate(id, defDate);
       if (!data?.d.success) {
         enqueueSnackbar({
-          message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
+          message: `נכשל לעדכן משמרת. ${data?.d.msg}`,
           variant: "error",
         });
         return;
+      } else {
+        enqueueSnackbar({
+          message: `משמרת עודכנה בהצלחה`,
+          variant: "success",
+        });
       }
-
       refreshList();
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error);
+        enqueueSnackbar({
+          message: `נכשל לעדכן משמרת. ${error.message}`,
+          variant: "error",
+        });
+      }
     }
   };
 

@@ -20,6 +20,7 @@ export default function Shifts() {
   const { confirm } = useConfirm();
   const { updateShowLoader, user, isAdmin } = useUser();
   const [shifts, setShfits] = useState<IshiftWeek[]>([]);
+
   const [myWeekDays, setweekDays] = useState<IDayInfo[]>([]);
   const [part, setPart] = useState<number>(1);
   const [currentShift, setCurrentShift] = useState<IshiftDetail | null>(null);
@@ -63,7 +64,7 @@ export default function Shifts() {
       phone: "",
       remark: "",
       contactName: "",
-      startDate: new Date(date).toString(),
+      startDate: dayjs(new Date(date).toString()).format("MM/DD/YYYY 00:00"),
       startDateEN: new Date(date).toString(),
       address: "",
       dayName: "",
@@ -98,8 +99,9 @@ export default function Shifts() {
     if (!finishTime && !startDate) {
       setCurrentShift({ ...currentShift!, [key]: val });
     } else {
-      if (startDate)
+      if (startDate) {
         setCurrentShift({ ...currentShift!, [key]: val, startDate });
+      }
       if (finishTime)
         setCurrentShift({ ...currentShift!, [key]: val, finishTime });
     }
@@ -369,6 +371,7 @@ export default function Shifts() {
       </Box>
       {currentShift && (
         <ShiftDialog
+          refreshList={fetchShifts}
           onChange={onChange}
           onShiftDetailsOpen={() => setShowInstallationShiftDetailsDialog(true)}
           installation={currentShift?.jobTypeId === 1}

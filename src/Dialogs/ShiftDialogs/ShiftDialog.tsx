@@ -4,8 +4,6 @@ import { IWorker, IshiftDetail } from "../../Model";
 import CustomDialog from "../CustomDialog";
 import { enqueueSnackbar } from "notistack";
 import { useUser } from "../../Context/useUser";
-import { getTimeString } from "../../helpers/getTimeString";
-import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
 import {
   Box,
   CircularProgress,
@@ -14,14 +12,19 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { installationShiftDesc } from "../../Temp/InstallationShiftDesc";
-import TimePicker from "../../components/TimePicker/TimePicker";
 import SelectChip from "../../components/SelectChip/SelectChip";
 import InstallationDetails from "./InstallationDetails";
 import SelectsChipGroup from "../../components/SelectChipGroup/SelectsChipGroup";
+import TimePicker from "../../components/TimePicker/TimePicker";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { getDateTimeFormatEN } from "../../helpers/getDateTimeFormatEN";
 
 type Props = {
+  refreshList: () => void;
   open: boolean;
   onClose: () => void;
   shift: IshiftDetail;
@@ -42,14 +45,11 @@ const ShiftDialog = ({
   onShiftDetailsOpen,
   installation,
   onChange,
+  refreshList,
 }: Props) => {
   const [currentJobWorkers, setCurrentJobWorkers] = useState<IWorker[]>([]);
   const [missingShiftPlansWorkers, setMissingShiftPlansWorkers] =
     useState<string[]>();
-  const [startTime, setStartTime] = useState("00:00");
-  const [finishTime, setFinishTime] = useState("00:00");
-  //@ts-ignore
-  const [selectedWorker, setSelectedWorker] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedInstallationDesc, setSelectedInstallationDesc] = useState<
     string | null
@@ -59,7 +59,7 @@ const ShiftDialog = ({
   const handleDisableDialogScroll = (val: boolean) => {
     setDisableScroll(val);
   };
-  const { workers, user, isAdmin } = useUser();
+  const { workers, isAdmin } = useUser();
 
   const theme = useTheme();
   const isBigScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -124,53 +124,56 @@ const ShiftDialog = ({
       });
       return;
     }
-
-    
-    console.log(shift);
-     try {
-       const data = await shiftService.updateShiftDetails(
-         {
-           address: shift.address,
-           color: null,
-           contactName: shift.contactName,
-           dayName: shift.dayName,
-           finishHour: shift.finishHour,
-           finishTime: shift.finishTime,
-           finishTimeEN: shift.finishTimeEN,
-           isShiftManager: false,
-           jobTypeId: shift.jobTypeId,
-           jobTypeName: shift.jobTypeName,
-           phone: shift.phone,
-           placeName: shift.placeName,
-           shiftGroupId: shiftGroupId,
-           shiftName: shift.shiftName,
-           startHour: shift.startHour,
-           workerName: shift.workerName,
-           cancel: false,
-           id: shift.id,
-           remark: shift.remark,
-           shiftTypeId: shift.shiftTypeId,
-           startDate: shift.startDate,
-           startDateEN: shift.startDateEN,
-           workerId: shift.workerId,
-         },
-         shiftGroupId
-       )
-       if (!data?.d.success) {
-         enqueueSnackbar({
-           message: `נכשל לעדכן תקלה. ${data?.d.msg}`,
-           variant: "error",
-         });
-       }
-     } catch (error) {
-       console.error(error);
-     }
-    onClose();
+    try {
+      const data = await shiftService.updateShiftDetails(
+        {
+          address: shift.address,
+          color: null,
+          contactName: shift.contactName,
+          dayName: shift.dayName,
+          finishHour: shift.finishHour,
+          finishTime: shift.finishTime,
+          finishTimeEN: shift.finishTimeEN,
+          isShiftManager: false,
+          jobTypeId: shift.jobTypeId,
+          jobTypeName: shift.jobTypeName,
+          phone: shift.phone,
+          placeName: shift.placeName,
+          shiftGroupId: shiftGroupId,
+          shiftName: shift.shiftName,
+          startHour: shift.startHour,
+          workerName: shift.workerName,
+          cancel: false,
+          id: shift.id,
+          remark: shift.remark,
+          shiftTypeId: shift.shiftTypeId,
+          startDate: getDateTimeFormatEN(shift.startDateEN, shift.startHour),
+          startDateEN: shift.startDateEN,
+          workerId: shift.workerId, 
+        },
+        shiftGroupId
+      );
+      if (!data?.d.success) {
+        enqueueSnackbar({
+          message: `נכשל. ${data?.d.msg}`,
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar({
+          variant: "success",
+          message: "המשמרת עודכנה בהצלחה",
+        });
+        refreshList();
+        onClose();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
-  //@ts-ignore
+
   const cancelShift = async () => {
-    if (shift.workerId === user?.workerId || isAdmin) {
-      if (!(await confirm("האם את בטוחה שברצונך לבטל?"))) return;
+    if (isAdmin) {
+      if (!(await confirm(" האם את בטוחה שברצונך לבטל?"))) return;
       if (!shift?.id) {
         enqueueSnackbar({
           message: `משמרת לא קיימת`,
@@ -188,10 +191,16 @@ const ShiftDialog = ({
           });
           return;
         }
+
+        enqueueSnackbar({
+          message: `המשמרת בוטלה`,
+          variant: "success",
+        });
+
+        refreshList();
+        onClose();
       } catch (error) {
         console.error(error);
-      } finally {
-        onClose();
       }
     }
   };
@@ -200,17 +209,9 @@ const ShiftDialog = ({
     if (open) {
       fetchShiftPlans();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-
-  useEffect(() => {
-    setStartTime(getTimeString(shift.startDateEN));
-    setFinishTime(getTimeString(shift.finishTimeEN));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shift]);
   //@ts-ignore
   const handleClose = () => {
-    setSelectedWorker(null);
     onClose();
   };
 
@@ -274,6 +275,16 @@ const ShiftDialog = ({
                   label="שעת סיום"
                 />
               </Stack>
+              {shift.id !== 0 && (
+                <Tooltip title="בטל משמרת">
+                  <IconButton
+                    sx={{ alignSelf: "flex-start" }}
+                    onClick={cancelShift}
+                  >
+                    <DeleteOutlineIcon color="error" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           </Stack>
           {isBigScreen && installation && (
