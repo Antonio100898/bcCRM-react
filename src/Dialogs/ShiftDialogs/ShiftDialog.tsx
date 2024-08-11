@@ -218,7 +218,6 @@ const ShiftDialog = ({
   return (
     <CustomDialog
       disableScroll={disableScroll}
-      onSubmit={updateShift}
       sx={{ maxWidth: "1200px", px: isBigScreen ? 4 : 0 }}
       fullScreen={!isBigScreen}
       onClose={onClose}

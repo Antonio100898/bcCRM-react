@@ -13,6 +13,7 @@ type Props = {
   onClick: (shiftTypeId: number, day: keyof IDays) => void;
   selectedShiftPlans: IShiftPlan[];
   startDate: Date;
+  onRemarkClick: (day: number) => void;
 };
 
 const boxContainerStyle = {
@@ -20,6 +21,7 @@ const boxContainerStyle = {
   width: "50px",
   display: "flex",
   justifyContent: "center",
+  cursor: "pointer",
 };
 
 const ShiftsOfDay = ({
@@ -28,7 +30,36 @@ const ShiftsOfDay = ({
   onClick,
   selectedShiftPlans,
   startDate,
+  onRemarkClick,
 }: Props) => {
+  let day = 0;
+  switch (weekDay) {
+    case "monday":
+      day = 1;
+      break;
+    case "tuesday":
+      day = 2;
+      break;
+    case "wendsday":
+      day = 3;
+      break;
+    case "thursday":
+      day = 4;
+      break;
+    case "friday":
+      day = 5;
+      break;
+    case "saturday":
+      day = 6;
+      break;
+    default:
+      day = 0;
+  }
+
+  const isDaySelected = selectedShiftPlans.find(
+    (s) => new Date(Number(s.startDate)).getDay() === day
+  );
+
   return (
     <DataField>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -38,7 +69,13 @@ const ShiftsOfDay = ({
             HEBREW_WEEK_DAY[weekDay]
           }
         </Typography>
-        <Box sx={boxContainerStyle}>
+        <Box
+          sx={{
+            ...boxContainerStyle,
+            visibility: isDaySelected ? "" : "hidden",
+          }}
+          onClick={() => onRemarkClick(day)}
+        >
           <img src="/comment.svg" />
         </Box>
         {Object.keys(shifts).map((key) => {

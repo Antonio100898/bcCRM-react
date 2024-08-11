@@ -17,9 +17,13 @@ import dayjs from "dayjs";
 import DataField from "../../components/DataField/DataField";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import WorkerExpenseDialog from "../../Dialogs/WorkerExpenseDialog/WorkerExpenseDialog";
+import UpdateWorkerExpenseDialog from "../../Dialogs/WorkerExpenseDialog/UpdateWorkerExpenseDialog";
 
 export default function WorkerExpenses() {
   const [openNewExpenceDialog, setOpenNewExpenceDialog] = useState(false);
+  const [openUpdateExpenseDialog, setOpenUpdateExpenseDialog] = useState(false);
+  const [currentExpense, setCurrentExpense] =
+    useState<IWorkExpensesType | null>(null);
   const { updateShowLoader, user } = useUser();
   const [totalSum, setTotalSum] = useState(0);
   const [workerExpenses, setWorkerExpenses] = useState<IWorkExpensesType[]>([]);
@@ -36,6 +40,16 @@ export default function WorkerExpenses() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { confirm } = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
+
+  const onExpenseClick = (id: string) => {
+    setCurrentExpense(workerExpenses.find((e) => e.id === id)!);
+    setOpenUpdateExpenseDialog(true);
+  };
+
+  const onCloseUpdateDialog = () => {
+    setOpenUpdateExpenseDialog(false);
+    setCurrentExpense(null);
+  };
 
   const handleMonthChange = (move: "next" | "prev") => {
     if (move === "next") {
@@ -188,7 +202,10 @@ export default function WorkerExpenses() {
           )}
           <Stack gap={1}>
             {workerExpenses.map((expense) => (
-              <DataField key={expense.id}>
+              <DataField
+                key={expense.id}
+                onClick={() => onExpenseClick(expense.id)}
+              >
                 <Stack
                   sx={{
                     flexDirection: "row",
@@ -207,6 +224,14 @@ export default function WorkerExpenses() {
             ))}
           </Stack>
         </Stack>
+        <Fab
+          onClick={() => setOpenNewExpenceDialog(true)}
+          sx={{ position: "fixed", right: 20, bottom: 30 }}
+          size="large"
+          color="warning"
+        >
+          <SpeedDialIcon />
+        </Fab>
         {/* <ToggleButtonGroup
             color="primary"
             value={selectedCategoryId}
@@ -287,19 +312,16 @@ export default function WorkerExpenses() {
         />
       )} */}
       </Box>
-      <Fab
-        onClick={() => setOpenNewExpenceDialog(true)}
-        sx={{ position: "absolute", right: 20, bottom: 30 }}
-        size="large"
-        color="warning"
-      >
-        <SpeedDialIcon />
-      </Fab>
       <WorkerExpenseDialog
         refreshList={refreshList}
         open={openNewExpenceDialog}
         onClose={() => setOpenNewExpenceDialog(false)}
         fullScreen={isMobile}
+      />
+      <UpdateWorkerExpenseDialog
+        expense={currentExpense}
+        onClose={onCloseUpdateDialog}
+        open={openUpdateExpenseDialog}
       />
     </>
   );

@@ -228,7 +228,7 @@ export default function Shifts() {
     <>
       <Box maxWidth={1400} mx={"auto"}>
         <Typography px={2} variant="subtitle1">
-          סידור משמרות
+         משמרות
         </Typography>
         <DateSelect
           onNext={() => handleWeekChange("next")}

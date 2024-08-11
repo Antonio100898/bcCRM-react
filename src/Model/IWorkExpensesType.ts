@@ -7,7 +7,7 @@ export interface IWorkExpensesType {
   defValue: string;
   workExpensCategoryId: number;
   expenseTypeUnitValue: number;
-  workExpensType: number;
+  expenseType: number;
   WorkerExpensesValueId: number;
   expenseValue: number;
   remark: string;

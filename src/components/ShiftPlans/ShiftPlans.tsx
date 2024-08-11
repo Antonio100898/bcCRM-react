@@ -12,6 +12,7 @@ import ShiftsOfDay from "../Shifts/ShiftsOfDay";
 import dayjs from "dayjs";
 import { IDays, IShiftPlan } from "../../Model";
 import { getShiftStartDate } from "../../helpers/getShiftStartDate";
+import ShiftRemarkDialog from "../../Dialogs/ShiftDialogs/ShiftRemarkDialog";
 
 export interface IdayO {
   date: string;
@@ -38,6 +39,39 @@ export default function ShiftPlans() {
   const [selectedShiftPlans, setSelectedShiftPlans] = useState<IShiftPlan[]>(
     []
   );
+  const [remarkDialogOpen, setRemarkDialogOpen] = useState(false);
+  const [remarkString, setRemarkString] = useState("");
+  const [currentDay, setCurrentDay] = useState<null | number>(null);
+
+  const onRemarkClick = (day: number) => {
+    setCurrentDay(day);
+    setRemarkString(
+      selectedShiftPlans.find(
+        (s) => new Date(Number(s.startDate)).getDay() === day
+      )?.remark || ""
+    );
+    setRemarkDialogOpen(true);
+  };
+
+  const onRemarkSave = () => {
+    const shiftPlans = selectedShiftPlans.filter(
+      (s) => new Date(Number(s.startDate)).getDay() === currentDay
+    );
+
+    shiftPlans.forEach((s) => (s.remark = remarkString));
+
+    setSelectedShiftPlans((prev) => [
+      ...prev.filter(
+        (s) => new Date(Number(s.startDate)).getDay() !== currentDay
+      ),
+      ...shiftPlans,
+    ]);
+    setRemarkDialogOpen(false);
+  };
+
+  useEffect(() => {
+    console.log(selectedShiftPlans)
+  }, [selectedShiftPlans])
 
   const handleWeekChange = (move: "next" | "prev") => {
     if (move === "next") {
@@ -154,60 +188,62 @@ export default function ShiftPlans() {
   if (!shiftPlans) return <CircularProgress />;
 
   return (
-    <div>
-      <Typography px={2} variant="subtitle1">
-        זמינות
-      </Typography>
-      <DateSelect
-        onNext={() => handleWeekChange("next")}
-        onPrev={() => handleWeekChange("prev")}
-        displayValue={`${dayjs(startDate).format("DD/MM/YYYY")} -
+    <>
+      <div>
+        <Typography px={2} variant="subtitle1">
+          זמינות
+        </Typography>
+        <DateSelect
+          onNext={() => handleWeekChange("next")}
+          onPrev={() => handleWeekChange("prev")}
+          displayValue={`${dayjs(startDate).format("DD/MM/YYYY")} -
           ${dayjs(finishDate).format("DD/MM/YYYY")}`}
-      />
-      <Box sx={{ px: 2 }}>
-        <>
-          <Stack
-            sx={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              mt: 3,
-              mb: 1.5,
-              px: 1,
-            }}
-          >
-            <div style={{ width: "50px" }}></div>
-            <div style={{ width: "50px" }}></div>
-            {["בוקר", "אמצע", "ערב", "לילה"].map((i) => (
-              <Typography
-                key={i}
-                fontWeight="bold"
-                fontSize={14}
-                sx={{
-                  width: "50px",
-                  textAlign: "center",
-                }}
-              >
-                {i}
-              </Typography>
-            ))}
-          </Stack>
+        />
+        <Box sx={{ px: 2 }}>
+          <>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                mt: 3,
+                mb: 1.5,
+                px: 1,
+              }}
+            >
+              <div style={{ width: "50px" }}></div>
+              <div style={{ width: "50px" }}></div>
+              {["בוקר", "אמצע", "ערב", "לילה"].map((i) => (
+                <Typography
+                  key={i}
+                  fontWeight="bold"
+                  fontSize={14}
+                  sx={{
+                    width: "50px",
+                    textAlign: "center",
+                  }}
+                >
+                  {i}
+                </Typography>
+              ))}
+            </Stack>
 
-          <Stack gap={4}>
-            {Object.keys(shiftPlans).map((key) => {
-              const plan = shiftPlans[key as keyof ConvertedShifts];
-              return (
-                <ShiftsOfDay
-                  selectedShiftPlans={selectedShiftPlans}
-                  startDate={startDate}
-                  onClick={handleShiftPlanChange}
-                  key={key}
-                  shifts={plan}
-                  weekDay={key as keyof IDays}
-                />
-              );
-            })}
-          </Stack>
-          {/* {shiftPlans && (
+            <Stack gap={4}>
+              {Object.keys(shiftPlans).map((key) => {
+                const plan = shiftPlans[key as keyof ConvertedShifts];
+                return (
+                  <ShiftsOfDay
+                    selectedShiftPlans={selectedShiftPlans}
+                    startDate={startDate}
+                    onClick={handleShiftPlanChange}
+                    key={key}
+                    shifts={plan}
+                    weekDay={key as keyof IDays}
+                    onRemarkClick={onRemarkClick}
+                  />
+                );
+              })}
+            </Stack>
+            {/* {shiftPlans && (
             <ShiftPlansWeek
               refreshList={fetchShifts}
               shiftsList={shiftPlans}
@@ -256,8 +292,16 @@ export default function ShiftPlans() {
               shiftTypeId={5}
             />
           )} */}
-        </>
-      </Box>
-    </div>
+          </>
+        </Box>
+      </div>
+      <ShiftRemarkDialog
+        open={remarkDialogOpen}
+        onChange={(e) => setRemarkString(e.currentTarget.value)}
+        remarkValue={remarkString}
+        onClose={() => setRemarkDialogOpen(false)}
+        onSave={onRemarkSave}
+      />
+    </>
   );
 }

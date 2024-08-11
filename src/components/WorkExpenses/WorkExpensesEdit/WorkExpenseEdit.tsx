@@ -51,7 +51,6 @@ export default function WorkExpenseEdit({
       newValue?.format("DD/MM/YYYY") || "01/01/2000"
     );
   };
-
   function showExpenceEdit() {
     setOpenDialog(true);
   }

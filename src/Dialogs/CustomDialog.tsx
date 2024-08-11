@@ -1,15 +1,13 @@
 import {
   Box,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
   SxProps,
   Theme,
 } from "@mui/material";
-import { PropsWithChildren } from "react";
-import CustomButton from "../components/Buttons/CustomButton";
+import { PropsWithChildren, ReactNode } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
 type Props = {
@@ -18,8 +16,8 @@ type Props = {
   fullScreen?: boolean;
   title?: string;
   sx?: SxProps<Theme> | undefined;
-  onSubmit?: () => void;
   disableScroll?: boolean;
+  dialogActions?: ReactNode;
 };
 
 const CustomDialog = ({
@@ -29,8 +27,8 @@ const CustomDialog = ({
   children,
   title,
   sx,
-  onSubmit,
   disableScroll,
+  dialogActions,
 }: Props & PropsWithChildren) => {
   return (
     <Dialog
@@ -73,11 +71,7 @@ const CustomDialog = ({
       >
         {children}
       </DialogContent>
-      <DialogActions>
-        <CustomButton onClick={onSubmit} fullWidth sx={{ mb: 4, mx: 2 }}>
-          שמירה
-        </CustomButton>
-      </DialogActions>
+      {dialogActions && dialogActions}
     </Dialog>
   );
 };

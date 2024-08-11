@@ -1,6 +1,8 @@
 import CustomDialog from "../CustomDialog";
 import { IshiftDetail } from "../../Model";
 import InstallationDetails from "./InstallationDetails";
+import CustomButton from "../../components/Buttons/CustomButton";
+import { DialogActions } from "@mui/material";
 
 type Props = {
   open: boolean;
@@ -31,12 +33,22 @@ const InstallationShiftDetailsDialog = ({
   remark,
   fullScreen,
 }: Props) => {
+  const Actions = () => {
+    return (
+      <DialogActions>
+        <CustomButton fullWidth onClick={() => {}} sx={{ mb: 4, mx: 2 }}>
+          שמירה
+        </CustomButton>
+      </DialogActions>
+    );
+  };
   return (
     <CustomDialog
       fullScreen={fullScreen}
       onClose={onClose}
       open={open}
       title="ליווי התחילת עבודה"
+      dialogActions={isAdmin ? Actions() : undefined}
     >
       <InstallationDetails
         adress={adress}

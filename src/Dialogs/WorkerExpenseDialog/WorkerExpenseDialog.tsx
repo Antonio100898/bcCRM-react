@@ -9,6 +9,7 @@ import {
   Theme,
   TextField,
   Typography,
+  DialogActions,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,6 +19,7 @@ import { workerService } from "../../API/services";
 import { enqueueSnackbar } from "notistack";
 import dayjs, { Dayjs } from "dayjs";
 import { useUser } from "../../Context/useUser";
+import CustomButton from "../../components/Buttons/CustomButton";
 
 type Props = {
   open: boolean;
@@ -48,7 +50,13 @@ function GetDateTimeFormatEN(d: string) {
   ).getFullYear()} ${new Date(d).getHours()}:${new Date(d).getMinutes()}`;
 }
 
-const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Props) => {
+const WorkerExpenseDialog = ({
+  onClose,
+  open,
+  fullScreen,
+  sx,
+  refreshList,
+}: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<null | number>(1);
   const [selectedExpenseType, setSelectedExpenseType] = useState<null | string>(
     null
@@ -90,8 +98,7 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
       setWorkerExpensesTypes(
         (data.d.workExpensesTypes as IWorkExpensesType[]).filter(
           (e) =>
-            e.workExpensType !== 27 &&
-            e.workExpensCategoryId === selectedCategory
+            e.expenseType !== 27 && e.workExpensCategoryId === selectedCategory
         )
       );
 
@@ -130,7 +137,7 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
     }
     //@ts-ignore
     const t: IWorkExpensesType[] = workerExpensesTypes.filter((e) => {
-      return e.workExpensType === parseInt(selectedExpenseType, 10);
+      return e.expenseType === parseInt(selectedExpenseType, 10);
     });
 
     updateShowLoader(true);
@@ -161,7 +168,7 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
         });
         return;
       }
-      refreshList()
+      refreshList();
     } catch (error) {
       console.error(error);
     }
@@ -172,7 +179,8 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
 
   const handleExpenseTypeChange = (id: string) => {
     setSelectedExpenseType(id);
-    selectedCategory === 2 && setSum(workerExpensesTypes.find((w) => w.id === id)?.defValue || 0);
+    selectedCategory === 2 &&
+      setSum(workerExpensesTypes.find((w) => w.id === id)?.defValue || 0);
   };
 
   useEffect(() => {
@@ -183,14 +191,28 @@ const WorkerExpenseDialog = ({ onClose, open, fullScreen, sx, refreshList }: Pro
     }
   }, [open]);
 
+  const Actions = () => {
+    return (
+      <DialogActions>
+        <CustomButton
+          fullWidth
+          onClick={saveWorkerExpence}
+          sx={{ mb: 4, mx: 2 }}
+        >
+          שמירה
+        </CustomButton>
+      </DialogActions>
+    );
+  };
+
   return (
     <CustomDialog
       onClose={onClose}
       open={open}
       fullScreen={fullScreen}
-      onSubmit={saveWorkerExpence}
       sx={sx}
       title="הוצאה חדשה"
+      dialogActions={Actions()}
     >
       <Stack gap={6} mt={4}>
         <SelectsChipGroup label="סוג הוצאה">
