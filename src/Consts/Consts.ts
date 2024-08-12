@@ -28,3 +28,10 @@ export const color_grey = "#F3F3F3";
 export const color_blue = "#1C3FBB";
 export const color_main = "#FBB965";
 export const color_light_blue = "#D4E3FF";
+
+export const JobTypeColors = {
+  1: "#E7EFFF",
+  2: "#FFF4D9",
+  5: "#FFF5FE",
+  
+}

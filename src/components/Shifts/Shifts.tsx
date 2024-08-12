@@ -75,6 +75,7 @@ export default function Shifts() {
       shiftName: "",
       startHour: "",
       workerName: "",
+      color: "",
     };
 
     setCurrentShift(emptyShift);
@@ -228,7 +229,7 @@ export default function Shifts() {
     <>
       <Box maxWidth={1400} mx={"auto"}>
         <Typography px={2} variant="subtitle1">
-         משמרות
+          משמרות
         </Typography>
         <DateSelect
           onNext={() => handleWeekChange("next")}

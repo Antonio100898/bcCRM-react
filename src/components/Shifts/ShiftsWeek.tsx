@@ -43,7 +43,9 @@ export function ShiftsWeek({
   setShowShiftDialog,
   showEmptyShift,
   setCurrentShift,
+  color
 }: Props) {
+  console.log(jobTypeId, jobTypeName)
   const [week, setWeeks] = useState<IshiftWeek[]>([]);
   const { user } = useUser();
 
@@ -109,8 +111,8 @@ export function ShiftsWeek({
     <Box mb={2}>
       <Box
         sx={{
-          backgroundColor: "primary.light",
-          color: "secondary.main",
+          backgroundColor: color,
+          color:  "secondary.main",
           borderRadius: "5px",
         }}
       >

@@ -18,6 +18,7 @@ export interface IshiftDetail {
   address: string;
   contactName: string;
   phone: string;
+  color: string;
 }
 
 export interface IShiftPlan {

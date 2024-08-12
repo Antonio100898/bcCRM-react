@@ -15,6 +15,8 @@ export default function ShiftsPersonal() {
   const { enqueueSnackbar } = useSnackbar();
   const { updateShowLoader } = useUser();
   const [shifts, setShfits] = useState<IshiftDetail[]>([]);
+  const [groupedShifts, setGroupedShifts] =
+    useState<Record<number, IshiftDetail[]>>();
   const [startDate, setStartDate] = useState(getWeekDate("start"));
   const [finishDate, setFinishDate] = useState(getWeekDate("finish"));
   const handleWeekChange = (move: "next" | "prev") => {
@@ -41,7 +43,17 @@ export default function ShiftsPersonal() {
         updateShowLoader(false);
         return;
       }
-      setShfits(data.d.workerShifts);
+      //setShfits(data.d.workerShifts);
+      let grouped: Record<number, IshiftDetail[]> = {};
+      data.d.workerShifts.forEach((s) => {
+        const day = new Date(s.startDateEN).getDay();
+        if (!grouped[day]) {
+          grouped[day] = [s];
+        } else {
+          grouped[day].push(s);
+        }
+      });
+      setGroupedShifts(grouped);
     } catch (error) {
       if (error instanceof Error)
         enqueueSnackbar({
@@ -51,7 +63,9 @@ export default function ShiftsPersonal() {
     }
     updateShowLoader(false);
   };
-
+  useEffect(() => {
+    console.log(groupedShifts);
+  }, [groupedShifts]);
   const handleShiftClick = (shift: IshiftDetail) => {
     if (shift.jobTypeId === 1) {
       setCurrentShift(shift);
@@ -74,20 +88,19 @@ export default function ShiftsPersonal() {
           ${dayjs(finishDate).format("DD/MM/YYYY")}`}
       />
       <Stack style={{ marginTop: 24, gap: 8 }}>
-        {shifts &&
-          shifts
-            .sort(
-              (a, b) =>
-                new Date(a.startDateEN).getTime() -
-                new Date(b.startDateEN).getTime()
-            )
-            .map((shift: IshiftDetail) => (
+        {groupedShifts &&
+          Object.keys(groupedShifts).map((key) => {
+            const day = Number(key);
+            const shifts = groupedShifts[day];
+            return (
               <WorkerShift
-                key={shift.id}
-                shift={shift}
-                onClick={() => handleShiftClick(shift)}
+                key={day}
+                shifts={shifts}
+                onClick={handleShiftClick}
+                day={day}
               />
-            ))}
+            );
+          })}
       </Stack>
       {currentShift && currentShift.jobTypeId === 1 && (
         <InstallationShiftDetailsDialog
