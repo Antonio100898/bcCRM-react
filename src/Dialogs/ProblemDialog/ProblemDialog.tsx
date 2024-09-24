@@ -138,6 +138,7 @@ export function ProblemDialog({
     }
   };
 
+
   const uploadFiles = async (
     inputFiles: FileList | null,
     isClipboard = false
@@ -219,10 +220,6 @@ export function ProblemDialog({
       }
     }
   };
-
-  // useEffect(() => {
-  //   updateProblem(selfProblem);
-  // }, [selfProblem.files]);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.stopPropagation();

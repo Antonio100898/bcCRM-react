@@ -107,7 +107,7 @@ const ShiftDialog = ({
     if (!isBigScreen && selectedInstallationDesc === desc) onShiftDetailsOpen();
     else setSelectedInstallationDesc(desc);
   };
-
+  //@ts-ignore
   const updateShift = async () => {
     if (!shift.workerId) {
       enqueueSnackbar({
@@ -149,7 +149,7 @@ const ShiftDialog = ({
           shiftTypeId: shift.shiftTypeId,
           startDate: getDateTimeFormatEN(shift.startDateEN, shift.startHour),
           startDateEN: shift.startDateEN,
-          workerId: shift.workerId, 
+          workerId: shift.workerId,
         },
         shiftGroupId
       );

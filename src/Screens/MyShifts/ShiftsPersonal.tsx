@@ -14,7 +14,7 @@ import InstallationShiftDetailsDialog from "../../Dialogs/ShiftDialogs/Installat
 export default function ShiftsPersonal() {
   const { enqueueSnackbar } = useSnackbar();
   const { updateShowLoader } = useUser();
-  const [shifts, setShfits] = useState<IshiftDetail[]>([]);
+  //const [shifts, setShfits] = useState<IshiftDetail[]>([]);
   const [groupedShifts, setGroupedShifts] =
     useState<Record<number, IshiftDetail[]>>();
   const [startDate, setStartDate] = useState(getWeekDate("start"));

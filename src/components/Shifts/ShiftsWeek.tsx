@@ -45,7 +45,6 @@ export function ShiftsWeek({
   setCurrentShift,
   color
 }: Props) {
-  console.log(jobTypeId, jobTypeName)
   const [week, setWeeks] = useState<IshiftWeek[]>([]);
   const { user } = useUser();
 

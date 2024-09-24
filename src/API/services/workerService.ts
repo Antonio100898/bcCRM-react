@@ -94,7 +94,9 @@ export const workerService = {
         workerId,
         workerKey: localStorage.getItem(TOKEN_KEY),
       });
+      console.log(data)
       return data;
+     
     } catch (error) {
       console.error(error);
     }

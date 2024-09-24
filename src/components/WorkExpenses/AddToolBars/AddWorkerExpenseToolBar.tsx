@@ -68,7 +68,7 @@ export default function AddWorkerExpenseToolBar({
 
       setWorkerExpensesTypes(
         (data.d.workExpensesTypes as IWorkExpensesType[]).filter(
-          (e) => e.workExpensType !== 27
+          (e) => e.expenseType !== 27
         )
       );
       updateShowLoader(false);
@@ -97,7 +97,7 @@ export default function AddWorkerExpenseToolBar({
     }
 
     const t: IWorkExpensesType[] = workerExpensesTypes.filter((e) => {
-      return e.workExpensType === parseInt(expensType, 10);
+      return e.expenseType === parseInt(expensType, 10);
     });
 
     updateShowLoader(true);
@@ -158,8 +158,8 @@ export default function AddWorkerExpenseToolBar({
               .map((expenseType: IWorkExpensesType) => {
                 return (
                   <MenuItem
-                    key={expenseType.workExpensType}
-                    value={expenseType.workExpensType}
+                    key={expenseType.expenseType}
+                    value={expenseType.expenseType}
                   >
                     {expenseType.workExpensName}
                   </MenuItem>

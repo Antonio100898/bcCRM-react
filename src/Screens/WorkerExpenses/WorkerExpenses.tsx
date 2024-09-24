@@ -318,11 +318,14 @@ export default function WorkerExpenses() {
         onClose={() => setOpenNewExpenceDialog(false)}
         fullScreen={isMobile}
       />
-      <UpdateWorkerExpenseDialog
-        expense={currentExpense}
-        onClose={onCloseUpdateDialog}
-        open={openUpdateExpenseDialog}
-      />
+      {currentExpense && (
+        <UpdateWorkerExpenseDialog
+          expense={currentExpense}
+          onClose={onCloseUpdateDialog}
+          open={openUpdateExpenseDialog}
+          refreshList={refreshList}
+        />
+      )}
     </>
   );
 }

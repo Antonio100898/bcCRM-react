@@ -1,5 +1,5 @@
 import { IshiftDetail } from "../../Model";
-import { Stack, Typography, Box } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import DataField from "../DataField/DataField";
 import { color_blue } from "../../Consts/Consts";
 
