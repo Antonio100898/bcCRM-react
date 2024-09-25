@@ -14,9 +14,11 @@ import {
   useTheme,
   styled,
   Box,
+  Fab,
+  SpeedDialIcon,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -39,6 +41,7 @@ import MultiMenu from "./multi-menu";
 import SpeedDialAddNumber from "../SpeedDialMenu/SpeedDialAddNumber";
 import SpeedDialAnswerPhone from "../SpeedDialMenu/SpeedDialAnswerPhone";
 import FeedIcon from "@mui/icons-material/Feed";
+import ChoosePlaceDialog from "../../Dialogs/ChoosePlaceDialog/ChoosePlaceDialog";
 
 const drawerWidth = 240;
 
@@ -185,6 +188,14 @@ export default function AppDrawer({
   handleAnchor,
 }: Props) {
   const theme = useTheme();
+  const [choosePlaceDialogOpen, setChoosePlaceDialogOpen] = useState(false);
+
+  const onNewProblemClick = () => {
+    setChoosePlaceDialogOpen(true);
+  };
+  const onChoosePlaceDialogClose = () => {
+    setChoosePlaceDialogOpen(false);
+  };
 
   return (
     <Drawer
@@ -267,9 +278,17 @@ export default function AppDrawer({
           justifyContent: isMobile ? "flex-start" : "center",
         }}
       >
-        <SpeedDialAddNumber />
+        <Tooltip title="הזן טלפון">
+          <Fab onClick={onNewProblemClick} color="primary">
+            <SpeedDialIcon />
+          </Fab>
+        </Tooltip>
         <SpeedDialAnswerPhone />
       </Box>
+      <ChoosePlaceDialog
+        open={choosePlaceDialogOpen}
+        onClose={onChoosePlaceDialogClose}
+      />
     </Drawer>
   );
 }

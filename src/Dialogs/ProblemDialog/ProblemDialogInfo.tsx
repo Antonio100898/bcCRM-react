@@ -20,13 +20,14 @@ import {
 import FormInputWrapper from "../../components/BaseCompnents/FormInputWrapper";
 import ProblemFiles from "./ProblemDialogFiles";
 import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
-import CustomInput from "../../components/customInput/customInput";
 import { useState, useEffect } from "react";
 import CustomCollapseTrigger from "../../components/CustomCollapseTrigger/CustomCollapse";
 import { useUser } from "../../Context/useUser";
 import ProblemMessages from "./ProblemMessages";
 import CallIcon from "@mui/icons-material/Call";
 import ProblemStatuses from "./ProblemStatuses";
+import CustomMultilineInput from "../../components/CustomInput/CustomMultilineInput";
+import CustomInput from "../../components/customInput/customInput";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -119,7 +120,14 @@ export default function ProblemDialogInfo({
     <Box sx={{ marginBottom: 6 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
         <Stack direction="row" justifyContent="space-between" gap={2}>
-          <Box sx={{ flex: isMobile ? 1 : undefined, justifyContent: "center", display: "flex", flexDirection: "column"}}>
+          <Box
+            sx={{
+              flex: isMobile ? 1 : undefined,
+              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             {selfProblem.phone && (
               <Box>
                 <Typography component="span" variant="h6">
@@ -134,10 +142,16 @@ export default function ProblemDialogInfo({
             )}
             {user?.workerType !== 0 && (
               <FormInputWrapper label="IP">
-                <NivTextField
+                <CustomInput
                   onChange={onIpChange}
                   value={problemIp}
-                  variant="filled"
+                  InputProps={{
+                    sx: {
+                      "& .MuiOutlinedInput-input": {
+                        p: 1,
+                      },
+                    },
+                  }}
                 />
               </FormInputWrapper>
             )}
@@ -289,42 +303,38 @@ export default function ProblemDialogInfo({
           }}
         >
           <Box sx={{ flex: 1, width: "100%" }}>
-            <CustomInput
-              labelProps={{
-                fontSize: 22,
-              }}
-              onChange={(e) => onChange("desc", e.target.value)}
-              label="תיאור תקלה"
-              fullWidth
-              multiline
-              type="text"
-              value={selfProblem?.desc}
-              sx={{
-                "& .MuiInputBase-root": {
-                  minHeight: "200px",
-                  alignItems: "flex-start",
-                },
-              }}
-            />
+            <FormInputWrapper label="תיאור תקלה">
+              <CustomMultilineInput
+                onChange={(e) => onChange("desc", e.target.value)}
+                fullWidth
+                multiline
+                type="text"
+                value={selfProblem?.desc}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    minHeight: "200px",
+                    alignItems: "flex-start",
+                  },
+                }}
+              />
+            </FormInputWrapper>
           </Box>
           <Box sx={{ flex: 1, width: "100%" }}>
-            <CustomInput
-              labelProps={{
-                fontSize: 22,
-              }}
-              onChange={(e) => onChange("solution", e.target.value)}
-              label="תיאור פתרון"
-              fullWidth
-              multiline
-              type="text"
-              value={selfProblem?.solution}
-              sx={{
-                "& .MuiInputBase-root": {
-                  minHeight: "200px",
-                  alignItems: "flex-start",
-                },
-              }}
-            />
+            <FormInputWrapper label="תיאור פתרון">
+              <CustomMultilineInput
+                onChange={(e) => onChange("solution", e.target.value)}
+                fullWidth
+                multiline
+                type="text"
+                value={selfProblem?.solution}
+                sx={{
+                  "& .MuiInputBase-root": {
+                    minHeight: "200px",
+                    alignItems: "flex-start",
+                  },
+                }}
+              />
+            </FormInputWrapper>
           </Box>
         </Stack>
 

@@ -1,17 +1,52 @@
-import { Box, SxProps, TextField, TextFieldProps, Theme } from "@mui/material";
+import {
+  TextField,
+  TextFieldVariants,
+  TextFieldProps,
+  OutlinedInputProps,
+  InputProps,
+  FilledInputProps,
+} from "@mui/material";
 
-type Props = TextFieldProps & {
-  labelProps?: SxProps<Theme> | undefined;
-};
-
-const CustomInput = (props: Props) => {
-  const { labelProps, label, ...inputProps } = props;
+const CustomInput = <Variant extends TextFieldVariants>(
+  props: {
+    variant?: Variant;
+    InputProps?:
+      | Partial<OutlinedInputProps>
+      | Partial<InputProps>
+      | Partial<FilledInputProps>
+      | undefined;
+  } & Omit<TextFieldProps, "variant">
+) => {
+  const { sx, InputProps, ...rest } = props;
 
   return (
-    <>
-      <Box sx={{ ...labelProps, fontWeight: "bold" }}>{label}</Box>
-      <TextField {...inputProps} />
-    </>
+    <TextField
+      {...rest}
+      sx={{
+        textAlign: "start",
+        "& label": {
+          color: "black",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "transparent",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "primary.light",
+          },
+        },
+        ...sx,
+      }}
+      InputProps={{
+        sx: {
+          borderRadius: 50,
+          backgroundColor: "grey.400",
+          outlineColor: "none",
+          ...InputProps?.sx,
+        },
+      }}
+    />
   );
 };
+
 export default CustomInput;

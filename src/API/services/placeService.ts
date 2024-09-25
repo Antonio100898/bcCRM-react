@@ -1,22 +1,8 @@
 import { TOKEN_KEY } from "../../Consts/Consts";
-import { IPlace, IProblemsResponse } from "../../Model";
+import { IPhonePlace, IProblemsResponse } from "../../Model";
 import { instance } from "../axoisConfig";
 
 export const placeService = {
-  async updatePlaceInfo(
-    placeInfo: Partial<IPlace>
-  ): Promise<IProblemsResponse | undefined> {
-    try {
-      const { data } = await instance.post("/UpdatePhonePlace", {
-        workerKey: localStorage.getItem(TOKEN_KEY),
-        ...placeInfo,
-      });
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-  },
-
   async getPlacesForPhone(
     phone: string
   ): Promise<IProblemsResponse | undefined> {
@@ -31,7 +17,7 @@ export const placeService = {
   },
 
   async updatePhonePlace(
-    place: Partial<IPlace>
+    place: Partial<IPhonePlace>
   ): Promise<IProblemsResponse | undefined> {
     try {
       const { data } = await instance.post("/UpdatePhonePlace", {

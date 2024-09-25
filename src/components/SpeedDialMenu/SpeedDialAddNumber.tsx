@@ -566,7 +566,6 @@ export default function SpeedDialAddNumber() {
                 labelPlacement="start"
               />
             )}
-
             <Button variant="contained" fullWidth onClick={InputNewPlace}>
               {newPlaceId > 0 ? "עדכן" : "הוסף חדש"}
             </Button>

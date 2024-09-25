@@ -7,11 +7,13 @@ import {
   IconButton,
   SxProps,
   Theme,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { PropsWithChildren, ReactNode } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
-export type CustomDialogProps = {
+type Props = {
   open: boolean;
   onClose: () => void;
   fullScreen?: boolean;
@@ -28,13 +30,17 @@ const CustomDialog = ({
   title,
   sx,
   dialogActions,
-}: CustomDialogProps & PropsWithChildren) => {
+}: Props & PropsWithChildren) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Dialog
       fullScreen={fullScreen}
       PaperProps={{
         sx: {
           borderRadius: fullScreen ? "" : "20px",
+          maxHeight: isMobile ? undefined : "860px",
           ...sx,
         },
       }}
@@ -43,7 +49,7 @@ const CustomDialog = ({
       onClose={onClose}
       open={open}
     >
-      <Box textAlign="end" p={1}>
+      <Box textAlign="end" sx={{ px: 4, pt: 2 }}>
         <IconButton onClick={onClose} aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -52,7 +58,7 @@ const CustomDialog = ({
         <DialogTitle
           sx={{ pt: 0, px: 4 }}
           component="span"
-          fontSize={22}
+          fontSize={20}
           fontWeight="bold"
           color="text.primary"
         >
@@ -63,13 +69,20 @@ const CustomDialog = ({
       <DialogContent
         sx={{
           px: 4,
-          width: "100%",
-          height: "600px",
+          scrollbarWidth: "none",
         }}
       >
         {children}
       </DialogContent>
-      {dialogActions && <DialogActions sx={{ px: 4, py: 2}}> {dialogActions}</DialogActions>}
+      <DialogActions
+        sx={{
+          p: 2,
+          borderTop: "1px solid white",
+          borderColor: "grey.300",
+        }}
+      >
+        {dialogActions && dialogActions}
+      </DialogActions>
     </Dialog>
   );
 };
