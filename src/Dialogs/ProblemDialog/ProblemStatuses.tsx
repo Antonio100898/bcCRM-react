@@ -4,8 +4,6 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
-import "./ProblemStatuses.style.css";
-
 type Props = {
   isLockEnable: boolean;
   setIsLocked: () => void;
@@ -29,29 +27,34 @@ const ProblemStatuses = ({
   takingCare,
   setCallCustomerBack,
   callCustomerBack,
-  bigScreen,
 }: Props) => {
   return (
-    <Box className={bigScreen? "statusButtonsWrapper" : "statusButtonsWrapper-small"}>
+    <Box sx={{display: "flex", justifyContent: "space-between"}}>
       <Button
-        className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setCallCustomerBack}
-        sx={{ opacity: callCustomerBack ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{
+          opacity: callCustomerBack ? 1 : 0.2,
+          color: "rgba(0, 0, 0, 0.87)",
+          p: 0
+        }}
       >
         <ContactPhoneIcon
-          style={{
+          sx={{
             color: "blue",
           }}
         />
         חזור ללקוח
       </Button>
       <Button
-        className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setEmergency}
-        sx={{ opacity: emergencyId === 0 ? 0.2 : 1,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{
+          opacity: emergencyId === 0 ? 0.2 : 1,
+          color: "rgba(0, 0, 0, 0.87)",
+          p: 0
+        }}
       >
         <NotificationsActiveIcon
-          style={{
+          sx={{
             color: "red",
           }}
         />
@@ -59,12 +62,11 @@ const ProblemStatuses = ({
       </Button>
 
       <Button
-        className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
         onClick={setTakeCare}
-        sx={{ opacity: takingCare ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
+        sx={{ opacity: takingCare ? 1 : 0.2, color: "rgba(0, 0, 0, 0.87)" ,p: 0 }}
       >
         <AccessTimeIcon
-          style={{
+          sx={{
             color: "orange",
           }}
         />
@@ -73,19 +75,18 @@ const ProblemStatuses = ({
       {isLockEnable && (
         <Tooltip title="נעול, רק היוצר והעובד שמטפל יכולים לשנות">
           <Button
-            className={`${bigScreen? "statusButton ": "statusButton-small"} button-flex-column`}
             onClick={setIsLocked}
-            sx={{ opacity: isLocked ? 1 : 0.2,  color: "rgba(0, 0, 0, 0.87)" }}
+            sx={{ opacity: isLocked ? 1 : 0.2, color: "rgba(0, 0, 0, 0.87)",p: 0 }}
           >
             {isLocked ? (
               <LockIcon
-                style={{
+                sx={{
                   color: "blue",
                 }}
               />
             ) : (
               <LockOpenIcon
-                style={{
+                sx={{
                   color: "blue",
                 }}
               />

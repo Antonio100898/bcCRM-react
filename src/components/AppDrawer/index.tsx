@@ -38,7 +38,7 @@ import { IUser, ProblemSummery } from "../../Model";
 import MultiMenu from "./multi-menu";
 import SpeedDialAddNumber from "../SpeedDialMenu/SpeedDialAddNumber";
 import SpeedDialAnswerPhone from "../SpeedDialMenu/SpeedDialAnswerPhone";
-import FeedIcon from '@mui/icons-material/Feed';
+import FeedIcon from "@mui/icons-material/Feed";
 
 const drawerWidth = 240;
 
@@ -260,8 +260,6 @@ export default function AppDrawer({
       <Divider />
       <Box
         sx={{
-          position: "absolute",
-          bottom: 0,
           display: "flex",
           gap: 3,
           padding: isMobile ? 1 : 2,

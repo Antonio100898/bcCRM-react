@@ -260,7 +260,7 @@ export function ProblemNote({
                   px: 0.5,
                 }}
               >
-                {`${problem!.workerCreateName} > ${problem!.updaterWorkerName}`}
+                {`${problem!.workerCreateName} > ${problem!.toWorkerName}`}
               </Typography>
             </Tooltip>
           </Box>

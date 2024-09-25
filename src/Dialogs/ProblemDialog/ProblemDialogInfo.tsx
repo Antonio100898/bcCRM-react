@@ -26,6 +26,7 @@ import CustomCollapseTrigger from "../../components/CustomCollapseTrigger/Custom
 import { useUser } from "../../Context/useUser";
 import ProblemMessages from "./ProblemMessages";
 import CallIcon from "@mui/icons-material/Call";
+import ProblemStatuses from "./ProblemStatuses";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -58,6 +59,7 @@ type Props = {
   onOpenFilesDialog: () => void;
   callDisabled: boolean;
   callClientPhone: () => Promise<void>;
+  isMobile: boolean;
 };
 
 export default function ProblemDialogInfo({
@@ -84,6 +86,12 @@ export default function ProblemDialogInfo({
   onOpenFilesDialog,
   callClientPhone,
   callDisabled,
+  isMobile,
+  setEmergency,
+  setIsLocked,
+  setTakeCare,
+  setCallCustomerBack,
+  isLockEnable,
 }: Props) {
   const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
   const [openFilesCollapse, setOpenFilesCollapse] = useState(false);
@@ -110,10 +118,10 @@ export default function ProblemDialogInfo({
   return (
     <Box sx={{ marginBottom: 6 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1.5 }}>
-        <Box>
-          <Box>
+        <Stack direction="row" justifyContent="space-between" gap={2}>
+          <Box sx={{ flex: isMobile ? 1 : undefined, justifyContent: "center", display: "flex", flexDirection: "column"}}>
             {selfProblem.phone && (
-              <>
+              <Box>
                 <Typography component="span" variant="h6">
                   {selfProblem.phone}
                 </Typography>
@@ -122,69 +130,89 @@ export default function ProblemDialogInfo({
                     <CallIcon />
                   </IconButton>
                 </span>
-              </>
+              </Box>
             )}
-            <Box>
-              <Typography component="span" variant="h6">
-                {selfProblem.ip}
-              </Typography>
-              <span>
-                <IconButton disabled={callDisabled} onClick={callClientPhone}>
-                  <CallIcon />
-                </IconButton>
-              </span>
-            </Box>
+            {user?.workerType !== 0 && (
+              <FormInputWrapper label="IP">
+                <NivTextField
+                  onChange={onIpChange}
+                  value={problemIp}
+                  variant="filled"
+                />
+              </FormInputWrapper>
+            )}
           </Box>
-        </Box>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          {user?.workerType !== 0 && (
-            <FormInputWrapper label="IP">
-              <NivTextField
-                onChange={onIpChange}
-                value={problemIp}
-                variant="filled"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              flex: isMobile ? 1 : undefined,
+              width: isMobile ? "50%" : "400px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                flexDirection: isMobile ? "column" : "row",
+              }}
+            >
+              <FormInputWrapper label="מחלקה">
+                <Select
+                  fullWidth
+                  variant="outlined"
+                  value={selfProblem?.departmentId}
+                  onChange={(e) =>
+                    onChange("departmentId", parseInt(`${e.target.value}`, 10))
+                  }
+                >
+                  {workerDepartments?.map((d) => {
+                    return (
+                      <MenuItem value={d.id} key={d.id}>
+                        {d.departmentName}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormInputWrapper>
+              <FormInputWrapper label="עובד מטפל">
+                <Select
+                  fullWidth
+                  variant="outlined"
+                  disabled={!isChangeToWorkerEnable()}
+                  value={selfProblem?.toWorker}
+                  onChange={(e) =>
+                    onChange("toWorker", parseInt(`${e.target.value}`, 10))
+                  }
+                >
+                  {workers &&
+                    workers.map((worker: IWorker) => {
+                      return (
+                        <MenuItem key={worker.Id} value={worker.Id}>
+                          {worker.workerName}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+              </FormInputWrapper>
+            </Box>
+            {!isMobile && (
+              <ProblemStatuses
+                bigScreen={bigScreen}
+                setCallCustomerBack={setCallCustomerBack}
+                callCustomerBack={selfProblem.callCustomerBack}
+                emergencyId={selfProblem.emergencyId}
+                isLockEnable={isLockEnable}
+                isLocked={selfProblem.isLocked}
+                setEmergency={setEmergency}
+                setIsLocked={setIsLocked}
+                setTakeCare={setTakeCare}
+                takingCare={selfProblem.takingCare}
               />
-            </FormInputWrapper>
-          )}
-          <FormInputWrapper label="מחלקה">
-            <Select
-              fullWidth
-              variant="outlined"
-              value={selfProblem?.departmentId}
-              onChange={(e) =>
-                onChange("departmentId", parseInt(`${e.target.value}`, 10))
-              }
-            >
-              {workerDepartments?.map((d) => {
-                return (
-                  <MenuItem value={d.id} key={d.id}>
-                    {d.departmentName}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormInputWrapper>
-          <FormInputWrapper label="עובד מטפל">
-            <Select
-              fullWidth
-              variant="outlined"
-              disabled={!isChangeToWorkerEnable()}
-              value={selfProblem?.toWorker}
-              onChange={(e) =>
-                onChange("toWorker", parseInt(`${e.target.value}`, 10))
-              }
-            >
-              {workers &&
-                workers.map((worker: IWorker) => {
-                  return (
-                    <MenuItem key={worker.Id} value={worker.Id}>
-                      {worker.workerName}
-                    </MenuItem>
-                  );
-                })}
-            </Select>
-          </FormInputWrapper>
-        </Box>
+            )}
+          </Box>
+        </Stack>
 
         <FormInputWrapper label="תיוגים">
           <Select
@@ -298,21 +326,8 @@ export default function ProblemDialogInfo({
               }}
             />
           </Box>
-          {/* <Box sx={{ flex: 1, width: "100%" }}>
-            <ProblemStatuses
-              bigScreen={bigScreen}
-              setCallCustomerBack={setCallCustomerBack}
-              callCustomerBack={selfProblem.callCustomerBack}
-              emergencyId={selfProblem.emergencyId}
-              isLockEnable={isLockEnable}
-              isLocked={selfProblem.isLocked}
-              setEmergency={setEmergency}
-              setIsLocked={setIsLocked}
-              setTakeCare={setTakeCare}
-              takingCare={selfProblem.takingCare}
-            />
-          </Box> */}
         </Stack>
+
         <CustomCollapseTrigger
           counter={selfProblem.files?.length || 0}
           open={openFilesCollapse}

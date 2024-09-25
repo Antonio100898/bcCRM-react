@@ -104,7 +104,7 @@ export function ProblemDialog({
     workers,
     problemTypes,
     updateDepartments,
-    isAdmin
+    isAdmin,
   } = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -137,7 +137,6 @@ export function ProblemDialog({
       }
     }
   };
-
 
   const uploadFiles = async (
     inputFiles: FileList | null,
@@ -607,6 +606,7 @@ export function ProblemDialog({
             problemTypes && (
               <>
                 <ProblemInfo
+                  isMobile={isMobile}
                   callClientPhone={callClientPhone}
                   onOpenFilesDialog={onOpenFilesDialog}
                   setCallCustomerBack={setCallCustomerBack}
