@@ -4,6 +4,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
+
 type Props = {
   isLockEnable: boolean;
   setIsLocked: () => void;
@@ -29,13 +30,13 @@ const ProblemStatuses = ({
   callCustomerBack,
 }: Props) => {
   return (
-    <Box sx={{display: "flex", justifyContent: "space-between"}}>
+    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
       <Button
         onClick={setCallCustomerBack}
         sx={{
           opacity: callCustomerBack ? 1 : 0.2,
           color: "rgba(0, 0, 0, 0.87)",
-          p: 0
+          p: 0,
         }}
       >
         <ContactPhoneIcon
@@ -50,7 +51,7 @@ const ProblemStatuses = ({
         sx={{
           opacity: emergencyId === 0 ? 0.2 : 1,
           color: "rgba(0, 0, 0, 0.87)",
-          p: 0
+          p: 0,
         }}
       >
         <NotificationsActiveIcon
@@ -63,7 +64,11 @@ const ProblemStatuses = ({
 
       <Button
         onClick={setTakeCare}
-        sx={{ opacity: takingCare ? 1 : 0.2, color: "rgba(0, 0, 0, 0.87)" ,p: 0 }}
+        sx={{
+          opacity: takingCare ? 1 : 0.2,
+          color: "rgba(0, 0, 0, 0.87)",
+          p: 0,
+        }}
       >
         <AccessTimeIcon
           sx={{
@@ -76,7 +81,11 @@ const ProblemStatuses = ({
         <Tooltip title="נעול, רק היוצר והעובד שמטפל יכולים לשנות">
           <Button
             onClick={setIsLocked}
-            sx={{ opacity: isLocked ? 1 : 0.2, color: "rgba(0, 0, 0, 0.87)",p: 0 }}
+            sx={{
+              opacity: isLocked ? 1 : 0.2,
+              color: "rgba(0, 0, 0, 0.87)",
+              p: 0,
+            }}
           >
             {isLocked ? (
               <LockIcon

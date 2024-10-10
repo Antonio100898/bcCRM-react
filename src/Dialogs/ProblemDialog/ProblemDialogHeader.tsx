@@ -31,7 +31,7 @@ const ProblemDialogHeader = ({
   //const bigScreen = useMediaQuery("(min-width: 1200px)");
   return (
     <AppBar sx={{ position: "relative" }}>
-      <Toolbar sx={{ height: "100px", backgroundColor: "#f5f5f5" }}>
+      <Toolbar sx={{ height: "100px", backgroundColor: "primary.main" }}>
         <IconButton
           sx={{ mr: 2 }}
           edge="start"
@@ -53,11 +53,6 @@ const ProblemDialogHeader = ({
                 {placeName}
               </Typography>
             </Paper>
-            {/* <span style={{ position: "absolute", marginRight: "1rem" }}>
-              <IconButton size="small" onClick={openEditPlace}>
-                <EditIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            </span> */}
             {customerName && (
               <Paper>
                 <Typography variant="h6">{customerName}</Typography>
@@ -68,7 +63,7 @@ const ProblemDialogHeader = ({
             <Typography variant="h6">
               {dayjs(startTimeEN).format("HH:mm DD/MM")}
             </Typography>
-            <Typography variant="h6"> {workerCreateName}</Typography>
+            <Typography variant="h6">{workerCreateName}</Typography>
           </Box>
         </Stack>
       </Toolbar>

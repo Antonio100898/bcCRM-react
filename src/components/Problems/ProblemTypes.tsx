@@ -14,17 +14,15 @@ export function ProblemTypes({ problemTypes }: IProp) {
           return (
             <Chip
               key={pType.id}
-              style={{ margin: "3px" }}
               label={pType.problemTypeName}
               size="small"
               variant="outlined"
+              sx={{ borderColor: pType.color, m: "3px" }}
               avatar={
                 <Avatar
                   sx={{ bgcolor: pType.color }}
                   style={{
                     marginRight: "5px",
-                    border: "1px solid black",
-                    opacity: "0.7",
                   }}
                 >
                   {" "}

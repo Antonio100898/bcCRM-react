@@ -88,7 +88,6 @@ export default function Problems() {
             title="היום"
             startDays={0}
             finishDays={1}
-            ticketColor="#FFF4E4"
             onClick={handleShowProblem}
           />
 
@@ -97,7 +96,6 @@ export default function Problems() {
             title="השבוע"
             startDays={2}
             finishDays={7}
-            ticketColor="#FFF4E4"
             onClick={handleShowProblem}
           />
 
@@ -106,7 +104,6 @@ export default function Problems() {
             title="החודש"
             startDays={8}
             finishDays={31}
-            ticketColor="#FFF4E4"
             onClick={handleShowProblem}
           />
 
@@ -115,7 +112,6 @@ export default function Problems() {
             title="יותר מחודש"
             startDays={32}
             finishDays={180}
-            ticketColor="#FFF4E4"
             onClick={handleShowProblem}
           />
 

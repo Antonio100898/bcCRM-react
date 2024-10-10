@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Masonry from "@mui/lab/Masonry";
 
-import { Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Typography, alpha, useMediaQuery, useTheme } from "@mui/material";
 import { IProblem } from "../../Model";
 import { ProblemNote } from "./ProblemNote";
 import { useUser } from "../../Context/useUser";
@@ -11,7 +11,7 @@ export type Props = {
   title: string;
   startDays: number;
   finishDays: number;
-  ticketColor: string;
+  ticketColor?: string;
   onClick: (pro: IProblem) => void;
 };
 
@@ -87,7 +87,7 @@ export function ProblemsContainer({
                       key={problem.id}
                       problem={problem}
                       onClick={onClick}
-                      ticketColor={ticketColor}
+                      ticketColor={ticketColor || alpha(theme.palette.primary.light, 0.3)}
                     />
                   );
                 })}

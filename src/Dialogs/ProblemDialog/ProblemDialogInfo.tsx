@@ -19,7 +19,6 @@ import {
 } from "../../Model";
 import FormInputWrapper from "../../components/BaseCompnents/FormInputWrapper";
 import ProblemFiles from "./ProblemDialogFiles";
-import { NivTextField } from "../../components/BaseCompnents/NivTextField/NivTextField";
 import { useState, useEffect } from "react";
 import CustomCollapseTrigger from "../../components/CustomCollapseTrigger/CustomCollapse";
 import { useUser } from "../../Context/useUser";
@@ -28,6 +27,7 @@ import CallIcon from "@mui/icons-material/Call";
 import ProblemStatuses from "./ProblemStatuses";
 import CustomMultilineInput from "../../components/CustomInput/CustomMultilineInput";
 import CustomInput from "../../components/customInput/customInput";
+import LoopIcon from "@mui/icons-material/Loop";
 
 type Props = {
   onChange: <K extends keyof IProblem>(key: K, val: IProblem[K]) => void;
@@ -61,6 +61,7 @@ type Props = {
   callDisabled: boolean;
   callClientPhone: () => Promise<void>;
   isMobile: boolean;
+  onReturnToSender: () => void;
 };
 
 export default function ProblemDialogInfo({
@@ -93,6 +94,7 @@ export default function ProblemDialogInfo({
   setTakeCare,
   setCallCustomerBack,
   isLockEnable,
+  onReturnToSender,
 }: Props) {
   const [openMessagesCollapse, setOpenMessagesCollapse] = useState(false);
   const [openFilesCollapse, setOpenFilesCollapse] = useState(false);
@@ -129,19 +131,24 @@ export default function ProblemDialogInfo({
             }}
           >
             {selfProblem.phone && (
-              <Box>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <IconButton disabled={callDisabled} onClick={callClientPhone}>
+                  <CallIcon />
+                </IconButton>
+
                 <Typography component="span" variant="h6">
                   {selfProblem.phone}
                 </Typography>
-                <span>
-                  <IconButton disabled={callDisabled} onClick={callClientPhone}>
-                    <CallIcon />
-                  </IconButton>
-                </span>
-              </Box>
+              </Stack>
             )}
             {user?.workerType !== 0 && (
-              <FormInputWrapper label="IP">
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={1}
+                sx={{ ml: 1.5 }}
+              >
+                <Typography fontWeight="700">IP</Typography>
                 <CustomInput
                   onChange={onIpChange}
                   value={problemIp}
@@ -153,7 +160,7 @@ export default function ProblemDialogInfo({
                     },
                   }}
                 />
-              </FormInputWrapper>
+              </Stack>
             )}
           </Box>
           <Box
@@ -162,7 +169,7 @@ export default function ProblemDialogInfo({
               flexDirection: "column",
               justifyContent: "space-between",
               flex: isMobile ? 1 : undefined,
-              width: isMobile ? "50%" : "400px",
+              width: isMobile ? "50%" : "450px",
             }}
           >
             <Box
@@ -210,20 +217,25 @@ export default function ProblemDialogInfo({
                     })}
                 </Select>
               </FormInputWrapper>
+              <IconButton onClick={onReturnToSender} sx={{ alignSelf: "end" }}>
+                <LoopIcon />
+              </IconButton>
             </Box>
             {!isMobile && (
-              <ProblemStatuses
-                bigScreen={bigScreen}
-                setCallCustomerBack={setCallCustomerBack}
-                callCustomerBack={selfProblem.callCustomerBack}
-                emergencyId={selfProblem.emergencyId}
-                isLockEnable={isLockEnable}
-                isLocked={selfProblem.isLocked}
-                setEmergency={setEmergency}
-                setIsLocked={setIsLocked}
-                setTakeCare={setTakeCare}
-                takingCare={selfProblem.takingCare}
-              />
+              <div style={{ marginTop: "1rem", marginLeft:  "3rem"}}>
+                <ProblemStatuses
+                  bigScreen={bigScreen}
+                  setCallCustomerBack={setCallCustomerBack}
+                  callCustomerBack={selfProblem.callCustomerBack}
+                  emergencyId={selfProblem.emergencyId}
+                  isLockEnable={isLockEnable}
+                  isLocked={selfProblem.isLocked}
+                  setEmergency={setEmergency}
+                  setIsLocked={setIsLocked}
+                  setTakeCare={setTakeCare}
+                  takingCare={selfProblem.takingCare}
+                />
+              </div>
             )}
           </Box>
         </Stack>
@@ -255,7 +267,11 @@ export default function ProblemDialogInfo({
                 {selected.map((value) => (
                   <Chip
                     key={value}
-                    style={{ margin: "3px" }}
+                    sx={{
+                      m: "3px",
+                      borderColor: problemTypes.find((p) => p.id === value)!
+                        .color,
+                    }}
                     label={
                       problemTypes.find((e) => e.id === value)?.problemTypeName
                     }
@@ -269,9 +285,10 @@ export default function ProblemDialogInfo({
                         }}
                         style={{
                           marginRight: "5px",
-                          border: "1px solid black",
                         }}
-                      ></Avatar>
+                      >
+                        {" "}
+                      </Avatar>
                     }
                   />
                 ))}
@@ -288,18 +305,12 @@ export default function ProblemDialogInfo({
               })}
           </Select>
         </FormInputWrapper>
-        {/* <WorkersList
-          workersSelected={selfProblem.toWorkers || []}
-          setWorkersSelected={(selected) => onChange("toWorkers", selected)}
-        /> */}
-
         <Stack
           sx={{
             display: "flex",
             flexDirection: bigScreen ? "row" : "column",
             width: "100%",
             gap: 1,
-            alignItems: "center",
           }}
         >
           <Box sx={{ flex: 1, width: "100%" }}>

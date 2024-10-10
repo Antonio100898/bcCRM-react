@@ -135,14 +135,12 @@ export default function ProblemDialogActions({
         width: "100%",
         textAlign: "center",
         zIndex: 2000,
+        background: "white",
       }}
     >
       <Box
         sx={{
-          width: "100%",
-          background: "white",
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
           paddingY: 1,
           paddingX: "5%",
@@ -151,10 +149,7 @@ export default function ProblemDialogActions({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
             width: "30%",
-            gap: "5%",
           }}
         >
           <Fab
@@ -165,7 +160,7 @@ export default function ProblemDialogActions({
             <Tooltip title="הצג הסטוריה">
               <HistoryIcon style={{ fontSize: 25, color: "black" }} />
             </Tooltip>
-          </Fab>{" "}
+          </Fab>
         </Box>
         <Box
           sx={{
@@ -173,7 +168,7 @@ export default function ProblemDialogActions({
             justifyContent: "flex-end",
             alignItems: "center",
             width: "70%",
-            gap: "10%",
+            gap: "5%",
           }}
         >
           {(!selfProblem.isLocked ||

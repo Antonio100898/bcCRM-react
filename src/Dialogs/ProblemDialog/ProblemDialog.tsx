@@ -268,6 +268,15 @@ export function ProblemDialog({
     }
   };
 
+  const onReturnToSender = () => {
+    onChange("toWorker", selfProblem.updaterWorkerId);
+  };
+
+  useEffect(() => {
+    if (selfProblem.toWorker === selfProblem.updaterWorkerId)
+      onChange("departmentId", selfProblem.updaterWorkerDepartmentId);
+  }, [selfProblem.toWorker]);
+
   const showProblemHistory = async () => {
     setShowHistory(true);
     setShowHistoryLoading(true);
@@ -635,6 +644,7 @@ export function ProblemDialog({
                   handleUploadFile={handleUploadFile}
                   fileInputRef={fileInputRef}
                   callDisabled={callDisabled}
+                  onReturnToSender={onReturnToSender}
                 />
                 <ProblemActions
                   bigScreen={bigScreen}
